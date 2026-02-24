@@ -12,7 +12,7 @@ A plugin marketplace for Claude Code. Provides plugins to extend and automate AI
 
 | Plugin | Version | Description |
 |--------|---------|-------------|
-| [cw](./plugins/context-aware-workflow) | 2.0.0 | Context-aware workflow orchestration - Plan Mode integration, automatic task planning, QA loops, Ralph Loop improvement cycles, model routing |
+| [cw](./plugins/context-aware-workflow) | 2.1.0 | Context-aware workflow orchestration - Plan Mode integration, automatic task planning, QA loops, Ralph Loop improvement cycles, model routing, Agent Teams, native worktree isolation |
 | [codex-cli](./plugins/codex-cli) | 1.0.0 | Codex CLI integration - code review, auto execution, session management, cloud tasks |
 | [gemini-cli](./plugins/gemini-cli) | 1.0.0 | Gemini CLI integration - code review, commit message generation, documentation, release notes |
 
