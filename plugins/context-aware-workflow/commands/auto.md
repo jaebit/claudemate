@@ -18,6 +18,8 @@ Execute the complete CW workflow in a single command with enhanced features:
 /cw:auto "Fix login validation" --skip-qa
 /cw:auto "Simple fix" --no-parallel-validation
 /cw:auto "Implement dark mode" --verbose
+/cw:auto "Implement auth system" --team
+/cw:auto "Large refactor" --team --team-size 3 --debate
 ```
 
 ## Workflow Stages (9-Stage Pipeline)
@@ -38,6 +40,9 @@ Execute the complete CW workflow in a single command with enhanced features:
 | `--no-parallel-validation` | Use single reviewer |
 | `--verbose` | Show detailed progress |
 | `--no-questions` | Minimize interactive questions |
+| `--team` | Use Agent Teams for parallel stages (requires `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS`) |
+| `--team-size N` | Number of Builder teammates (default: 2) |
+| `--debate` | Enable reviewer debate pattern (cross-validation via SendMessage) |
 
 ## Signal-Based Phase Transitions
 
@@ -70,6 +75,8 @@ Invoke Planner Agent with spec.md context. Output: `.caw/task_plan.md`
 ### Stage 4: Execution
 Execute pending steps via Builder Agent. Track files created/modified. On error: save state and report.
 
+**Team mode** (`--team`): Independent phases assigned to Builder teammates via Agent Teams. Each member works in an isolated worktree. `TeammateIdle` hook auto-assigns next tasks. Falls back to standard Task-based parallel if `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` is not set.
+
 ### Stage 5: QA Loop
 Invoke `/cw:qaloop` with max_cycles: 2, severity: major.
 
@@ -80,6 +87,8 @@ Spawn 3 Reviewer agents in parallel:
 - **Quality**: Check maintainability
 
 Aggregate verdicts. If any REJECTED → proceed to Fix (max 3 rounds).
+
+**Debate mode** (`--debate`): Reviewers exchange findings via SendMessage for cross-validation before producing consensus verdict. See [Team Validation](../_shared/team-validation.md).
 
 ### Stage 7: Fix
 Parse review issues. Auto-fix via Fixer Agent (Haiku tier). Track in validation-results.json.
@@ -98,7 +107,7 @@ State saved in `.caw/auto-state.json`:
   "schema_version": "2.0",
   "phase": "execution",
   "task_description": "Add logout button",
-  "config": { "skip_qa": false, "parallel_validation": true },
+  "config": { "skip_qa": false, "parallel_validation": true, "team_mode": false, "team_size": 2, "debate_mode": false },
   "execution": { "current_step": "2.1", "tasks_completed": 3 },
   "signals": { "detected_signals": [...] }
 }

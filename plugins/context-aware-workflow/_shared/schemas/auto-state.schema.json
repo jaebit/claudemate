@@ -95,6 +95,23 @@
           "type": "boolean",
           "default": true,
           "description": "Enable 3-architect parallel validation"
+        },
+        "team_mode": {
+          "type": "boolean",
+          "default": false,
+          "description": "Use Agent Teams for parallel stages (requires CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS)"
+        },
+        "team_size": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 8,
+          "default": 2,
+          "description": "Number of Builder teammates in team mode"
+        },
+        "debate_mode": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable reviewer debate pattern (cross-validation via SendMessage)"
         }
       }
     },

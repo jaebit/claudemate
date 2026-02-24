@@ -1,7 +1,7 @@
 # Module Context
 
 **Module:** Context-Aware Workflow (cw)
-**Version:** 2.0.0
+**Version:** 2.1.0
 **Role:** Advanced agentic workflow orchestration with intelligent model routing.
 **Tech Stack:** Python 3.x, Pytest, Markdown/YAML.
 
@@ -20,6 +20,8 @@
 - Rate limit handling with automatic resume
 - Swarm mode for parallel multi-agent execution
 - Pipeline mode for explicit sequential stages
+- Native worktree integration with Builder auto-isolation (v2.1)
+- Agent Teams orchestration for collaborative parallel execution (v2.1)
 
 ---
 
@@ -40,9 +42,10 @@ python tests/test_plugin_structure.py
 /cw:init       # Project initialization
 
 # Execution modes
-/cw:auto       # Autonomous workflow execution
+/cw:auto       # Autonomous workflow execution (supports --team, --debate)
 /cw:loop       # Continuous iteration loop
-/cw:swarm      # Parallel agent execution
+/cw:swarm      # Parallel agent execution (fire-and-forget)
+/cw:team       # Agent Teams orchestration (collaborative parallel)
 /cw:pipeline   # Sequential stage execution
 
 # Quality assurance
@@ -89,7 +92,7 @@ Plans and structures tasks into executable steps.
 - **Opus** (`planner-opus.md`): Architecture design, security-critical planning (> 0.7)
 
 ### Builder
-Implements code following TDD approach.
+Implements code following TDD approach. All tiers use `isolation: worktree` for file conflict prevention.
 - **Haiku** (`builder-haiku.md`): Boilerplate, simple CRUD, formatting (complexity <= 0.3)
 - **Sonnet** (`builder.md`): Standard implementation, pattern-following (0.3-0.7)
 - **Opus** (`builder-opus.md`): Complex algorithms, security-critical code (> 0.7)
@@ -188,6 +191,7 @@ color: blue                      # Extension: UI display color
 | `skills` | ✅ | No | Preloaded at agent startup |
 | `tier` | ❌ | No | Plugin extension for complexity indicator |
 | `whenToUse` | ❌ | No | Plugin extension for selection guidance |
+| `isolation` | ✅ | No | `worktree` for automatic worktree isolation |
 | `color` | ❌ | No | Plugin extension for UI |
 
 ## Tiered Agent Naming Convention
@@ -270,14 +274,32 @@ Category-based agent routing (research, implementation, review, design, maintena
 Automatic wait-and-resume for rate limit errors.
 - Location: `hooks/scripts/rate_limit_handler.py`
 
+## Native Worktree Integration (v2.1)
+Automatic worktree isolation for Builder agents.
+- Builder agents have `isolation: worktree` for automatic file conflict prevention
+- `WorktreeCreate` hook copies `.caw/` context files to new worktrees
+- `WorktreeRemove` hook cleans up metadata
+- CLI: `claude -w <name>` for manual worktree sessions
+- Location: `hooks/scripts/worktree_setup.py`
+
+## Agent Teams (v2.1)
+Multi-session collaborative execution with inter-agent communication.
+- Command: `/cw:team create <name> [--roles ...] [--size N]`
+- Requires: `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`
+- Features: Direct messaging (SendMessage), shared task list, quality gates
+- Debate pattern: Reviewer cross-validation for high-stakes reviews
+- Hooks: `TeammateIdle` (auto-assign), `TaskCompleted` (quality gate)
+- Location: `commands/team.md`, `hooks/scripts/team_hooks.py`
+- Schema: `_shared/schemas/team-state.schema.json`
+
 ---
 
 # Context Map
 
 - **[Agents](./agents/)** — 18 agents (4 tiered × 3 tiers + 6 specialized).
-- **[Commands](./commands/)** — 24 slash commands for workflow control.
+- **[Commands](./commands/)** — 25 slash commands for workflow control.
 - **[Skills](./skills/)** — 20 composable skills for workflow capabilities.
-- **[Hooks](./hooks/)** — Lifecycle hooks (SessionStart, Stop, PreToolUse, PostToolUse, SessionEnd).
+- **[Hooks](./hooks/)** — Lifecycle hooks (SessionStart, Stop, PreToolUse, PostToolUse, SessionEnd, WorktreeCreate, WorktreeRemove, TeammateIdle, TaskCompleted).
 - **[Schemas](./schemas/)** — JSON schemas (metrics, mode, model-routing, last_review).
 - **[Shared Resources](./_shared/)** — Model routing, agent registry, templates, skill composition, background heuristics.
 - **[Tests](./tests/)** — Plugin structure validation, unit tests.

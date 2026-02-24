@@ -93,9 +93,9 @@ plugins/<name>/
 | Type | Location | Key Fields |
 |------|----------|------------|
 | Commands | `commands/*.md` | description, allowed-tools, context, agent, model, hooks |
-| Agents | `agents/*.md` | name, description, model, tools, mcp_servers, whenToUse, color, tier, skills |
+| Agents | `agents/*.md` | name, description, model, tools, mcp_servers, whenToUse, color, tier, skills, isolation |
 | Skills | `skills/*/SKILL.md` | name, description, allowed-tools, context:fork |
-| Hooks | `hooks/hooks.json` | PreToolUse, PostToolUse, Stop, Setup, SessionStart, etc |
+| Hooks | `hooks/hooks.json` | PreToolUse, PostToolUse, Stop, SessionStart, SessionEnd, WorktreeCreate, WorktreeRemove, TeammateIdle, TaskCompleted |
 
 ## Agents Schema
 
@@ -117,6 +117,7 @@ plugins/<name>/
 | `color` | string | Display color hint for UI (green, blue, orange, purple, etc.) |
 | `tier` | string | Explicit tier label for tiered variants (haiku, sonnet, opus) |
 | `skills` | string | Comma-separated list of integrated skills |
+| `isolation` | string | `worktree` for automatic worktree isolation (v2.1) |
 
 ## Agents Tiering
 

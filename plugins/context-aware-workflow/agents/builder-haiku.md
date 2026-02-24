@@ -3,6 +3,7 @@ name: builder
 description: "Fast implementation agent for simple, boilerplate, and straightforward coding tasks"
 model: haiku
 tier: haiku
+isolation: worktree
 whenToUse: |
   Auto-selected when complexity ≤ 0.3:
   - Boilerplate, simple CRUD

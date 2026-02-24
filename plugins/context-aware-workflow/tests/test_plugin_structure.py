@@ -74,6 +74,10 @@ class TestPluginStructure(unittest.TestCase):
             "Notification",
             "Stop",
             "SubagentStop",
+            "WorktreeCreate",
+            "WorktreeRemove",
+            "TeammateIdle",
+            "TaskCompleted",
         }
 
         for event_name in data["hooks"].keys():

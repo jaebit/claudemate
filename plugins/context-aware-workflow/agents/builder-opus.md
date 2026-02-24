@@ -3,6 +3,7 @@ name: builder
 description: "Implementation agent that executes task plan steps using TDD approach with automatic test execution"
 model: opus
 tier: opus
+isolation: worktree
 whenToUse: |
   Use the Builder agent when executing implementation steps from a task_plan.md.
   This agent should be invoked:

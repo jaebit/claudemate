@@ -2,6 +2,7 @@
 name: builder
 description: "Balanced implementation agent for standard development tasks with TDD approach"
 model: sonnet
+isolation: worktree
 whenToUse: |
   Use when executing implementation steps from task_plan.md:
   - /cw:next to proceed with implementation
