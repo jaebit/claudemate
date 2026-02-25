@@ -13,7 +13,7 @@ A plugin marketplace for Claude Code. Provides plugins to extend and automate AI
 | Plugin | Version | Description |
 |--------|---------|-------------|
 | [cw](./plugins/context-aware-workflow) | 2.1.0 | Context-aware workflow orchestration - Plan Mode integration, automatic task planning, QA loops, Ralph Loop improvement cycles, model routing, Agent Teams, native worktree isolation |
-| [codex-cli](./plugins/codex-cli) | 1.0.0 | Codex CLI integration - code review, auto execution, session management, cloud tasks |
+| [codex-harness](./plugins/codex-harness) | 1.0.0 | Codex MCP integration - native codex/codex-reply tools + cloud operations |
 | [gemini-cli](./plugins/gemini-cli) | 1.0.0 | Gemini CLI integration - code review, commit message generation, documentation, release notes |
 
 ## Quick Start
@@ -24,7 +24,7 @@ claude plugins add github:jyyang/claude-marketplace
 
 # Install plugins
 claude plugins install cw
-claude plugins install codex-cli
+claude plugins install codex-harness
 claude plugins install gemini-cli
 ```
 
@@ -40,14 +40,15 @@ Structured development workflow orchestration:
 /cw:auto "Add logout button"      # Run full workflow automatically
 ```
 
-### Codex CLI
+### Codex Harness
 
-OpenAI Codex CLI integration:
+MCP-native Codex integration (auto-started `codex mcp-server`):
 
 ```bash
-/codex:code How to implement quicksort?
-/codex:review src/main.py
-/codex:auto Fix all linting errors
+# MCP tools: codex, codex-reply (available automatically)
+# CLI commands for cloud features:
+/codex:cloud --env env123 Review this PR
+/codex:apply task_abc123
 ```
 
 ### Gemini CLI

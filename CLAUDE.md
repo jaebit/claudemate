@@ -71,9 +71,9 @@ cd plugins/context-aware-workflow && python -m pytest tests/
 
 ## Plugin Types
 
-1. **Markdown-only:** Commands as `.md` files (codex-cli, gemini-cli)
+1. **Markdown-only:** Commands as `.md` files (gemini-cli)
 2. **Full-featured:** Agents, skills, hooks, commands (context-aware-workflow)
-3. **MCP Server:** TypeScript server + optional commands (future plugins)
+3. **MCP + Commands:** MCP server + CLI commands for non-MCP features (codex-harness)
 
 ## Required Plugin Structure
 
@@ -164,6 +164,6 @@ When rules diverge from actual code patterns, propose an update immediately. Ens
 ## Active Plugins (3)
 
 - **[Context-Aware Workflow](./plugins/context-aware-workflow/AGENTS.md)** — Full-featured plugin with agents, skills, hooks, Plan Mode integration, Ralph Loop, and Gemini CLI async reviews.
-- **[Codex CLI](./plugins/codex-cli/CLAUDE.md)** — Markdown-only plugin for Codex CLI integration (14 commands).
+- **[Codex Harness](./plugins/codex-harness/CLAUDE.md)** — MCP-native Codex integration (2 MCP tools + 2 commands).
 - **[Gemini CLI](./plugins/gemini-cli/AGENTS.md)** — Markdown-only plugin for Gemini CLI integration (6 commands).
 

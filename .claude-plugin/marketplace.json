@@ -6,9 +6,9 @@
   },
   "plugins": [
     {
-      "name": "codex-cli",
-      "description": "Codex CLI integration for Claude Code - Execute Codex commands directly",
-      "source": "./plugins/codex-cli",
+      "name": "codex-harness",
+      "description": "Codex MCP integration for Claude Code - native codex/codex-reply tools + cloud operations",
+      "source": "./plugins/codex-harness",
       "version": "1.0.0"
     },
     {
