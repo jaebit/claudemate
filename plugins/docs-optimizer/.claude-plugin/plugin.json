@@ -1,0 +1,5 @@
+{
+  "name": "docs-optimizer",
+  "version": "1.0.0",
+  "description": "Optimize CLAUDE.md/AGENTS.md files using research-backed classification rules to reduce token overhead and improve agent performance"
+}
