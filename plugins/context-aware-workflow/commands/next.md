@@ -18,8 +18,6 @@ Automatically proceed with the next pending step from the task plan, invoking th
 # Phase-based execution
 /cw:next phase 1              # Execute Phase 1 (auto parallel applied)
 /cw:next --parallel phase 1   # Force parallel Phase 1
-/cw:next --worktree phase 2   # Create worktree for Phase 2
-
 # Batch control
 /cw:next --batch 3            # Execute up to 3 steps in parallel
 /cw:next --all                # Execute all steps in current phase (sequential)
@@ -33,7 +31,6 @@ Automatically proceed with the next pending step from the task plan, invoking th
 | `--sequential` | Force sequential execution |
 | `--parallel` | Force parallel execution |
 | `--all` | Execute entire current phase sequentially |
-| `--worktree` | Create worktree per phase |
 | `--step N.M` | Execute specific step |
 | `--batch N` | Max N parallel executions (default: 5) |
 | `phase N` | Specify phase number |
@@ -72,13 +69,6 @@ Check Phase Deps are satisfied before proceeding.
 - Groups steps into waves based on dependencies
 - Launches background Builder agents per wave
 
-**Worktree:**
-```bash
-/cw:next --worktree phase 2
-```
-- Creates `.worktrees/phase-2/` with `caw/phase-2` branch
-- Outputs terminal commands for execution
-
 ## Status Icons
 
 | Icon | Status | Action |
@@ -88,17 +78,13 @@ Check Phase Deps are satisfied before proceeding.
 | ✅ | Complete | Done |
 | ❌ | Blocked | Cannot proceed |
 | ⏭️ | Skipped | Bypassed |
-| 🌳 | In Worktree | In separate worktree |
 
 ## Edge Cases
 
 - **All Complete**: Shows completion message with suggested actions
 - **Blocked Steps**: Lists incomplete dependencies with options
-- **Worktree Exists**: Offers continue, recreate, or view status
-
 ## Integration
 
 - **Reads**: `.caw/task_plan.md`
 - **Invokes**: Builder agent via Task tool
 - **Updates**: `.caw/task_plan.md` (via Builder)
-- **Creates**: `.worktrees/phase-N/` (with --worktree)

@@ -95,5 +95,4 @@ read_memory("lessons_learned") → .caw/learnings.md
 ## Integration
 
 - `/cw:init` - Checks Serena for onboarding
-- `/cw:reflect` - Can trigger sync after Ralph Loop
 - SessionEnd hook - Auto-sync if configured

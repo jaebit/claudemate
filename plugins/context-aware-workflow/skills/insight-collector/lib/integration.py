@@ -175,7 +175,7 @@ def get_evolution_candidates() -> EvolutionCandidates:
 
 
 # =============================================================================
-# Metrics API (for session-persister)
+# Metrics API
 # =============================================================================
 
 def get_insight_count() -> int:
@@ -206,7 +206,7 @@ def get_observation_count() -> int:
 
 
 def get_metrics() -> Metrics:
-    """Get all metrics for session-persister."""
+    """Get all metrics."""
     return {
         'insights_captured': get_insight_count(),
         'instincts_generated': get_instinct_count(),

@@ -145,23 +145,6 @@ After:  | 2.1 | Create JWT utility | ✅ | Builder | src/auth/jwt.ts |
 ✅ Step 2.1 Complete
 ```
 
-## Loop Mode Integration
-
-When invoked from `/cw:loop`:
-
-**Iteration Output**: Append to `.caw/iteration_output.md`:
-```markdown
-## Iteration [N]
-- **Step**: [id] - [description]
-- **Files Modified**: [list]
-- **Test Results**: [passed/failed]
-- **Status**: [Complete/Failed]
-```
-
-**Completion Signal**: When ALL tasks complete, include `DONE`:
-```
-All authentication steps complete. DONE
-```
 
 ## Commit Discipline (Tidy First)
 

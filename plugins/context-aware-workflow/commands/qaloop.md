@@ -93,22 +93,20 @@ State saved in `.caw/qaloop_state.json`:
 ## Integration
 
 ```bash
-/cw:loop "Task" --qa-each-step    # QA after each step
 /cw:auto "Feature"                # Auto mode includes QA
 /cw:next && /cw:qaloop            # QA after next step
 ```
 
 ## Comparison
 
-| Feature | /cw:qaloop | /cw:loop | /cw:review |
-|---------|------------|----------|------------|
-| Purpose | Quality gates | Task completion | One-time review |
-| Iteration | Review-Fix cycles | Build iterations | Single pass |
-| Auto-fix | ✅ Yes | ✅ Optional | ❌ No |
-| Best for | Quality assurance | Task execution | Manual review |
+| Feature | /cw:qaloop | /cw:review |
+|---------|------------|------------|
+| Purpose | Quality gates | One-time review |
+| Iteration | Review-Fix cycles | Single pass |
+| Auto-fix | ✅ Yes | ❌ No |
+| Best for | Quality assurance | Manual review |
 
 ## Related
 
 - [Model Routing](../_shared/model-routing.md)
-- [Loop Command](./loop.md)
 - [Review Command](./review.md)

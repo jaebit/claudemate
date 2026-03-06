@@ -119,14 +119,6 @@ State saved in `.caw/pipeline_state.json`:
 
 ## Integration
 
-### With /cw:swarm
-
-```yaml
-- name: implement-features
-  mode: swarm
-  tasks: ["Feature A", "Feature B", "Feature C"]
-```
-
 ### With Eco Mode
 
 ```bash
@@ -145,6 +137,4 @@ State saved in `.caw/pipeline_state.json`:
 
 ## Related
 
-- [/cw:swarm](./swarm.md) - Parallel execution
-- [/cw:loop](./loop.md) - Iterative execution
 - [/cw:auto](./auto.md) - Automatic workflow

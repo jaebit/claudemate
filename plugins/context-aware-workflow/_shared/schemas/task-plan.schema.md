@@ -246,6 +246,5 @@ Parallel execution combinations in the example above:
 cd .worktrees/phase-2 && claude
 /cw:next --parallel phase 2  # Run 2.2, 2.3 in parallel
 
-# After completion, from main
-/cw:merge --all
+# After completion, merge branches
 ```

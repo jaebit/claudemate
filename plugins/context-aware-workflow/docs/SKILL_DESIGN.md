@@ -15,7 +15,7 @@ Design document for automation skills that enhance Agents.
 |---|-------|-------------|--------|
 | 1 | plan-detector | Plan Mode detection and workflow start | ✅ Implemented |
 | 2 | insight-collector | Automatic insight collection and storage | ✅ Implemented |
-| 3 | session-persister | Session state save and restore | ✅ Implemented |
+| 3 | ~~session-persister~~ | ~~Session state save and restore~~ | ❌ Removed (delegated to built-in) |
 | 4 | quality-gate | Quality verification before step completion | ✅ Implemented |
 | 5 | progress-tracker | Work progress metric tracking | ✅ Implemented |
 | 6 | context-helper | Agent context understanding and management support | ✅ Implemented |
@@ -420,56 +420,9 @@ skills/knowledge-base/
 
 ---
 
-### 9. session-persister
-**Session state save and restore**
+### ~~9. session-persister~~ (Removed)
 
-| Property | Value |
-|----------|-------|
-| **Trigger** | Session start, manual request |
-| **Output** | `.caw/session.json` session data |
-| **Integration** | `/cw:status`, `/cw:start` |
-
-**Saved Data:**
-```json
-{
-  "session_id": "sess_20260104_143000",
-  "task_plan": ".caw/task_plan.md",
-  "current_phase": "phase_2",
-  "current_step": "2.3",
-  "context_files": [
-    "src/auth/jwt.ts",
-    "src/auth/middleware.ts"
-  ],
-  "pending_questions": [],
-  "last_checkpoint": "2026-01-04T14:45:00Z",
-  "notes": "JWT implementation in progress, working on token refresh logic"
-}
-```
-
-**Session Restore:**
-```
-🔄 Previous Session Found
-
-Session: sess_20260104_143000
-Task: JWT Authentication System Implementation
-Progress: Phase 2, Step 2.3 (45%)
-Last Activity: 30 minutes ago
-
-[1] Continue from previous session
-[2] Start new session (archive previous)
-[3] View session status only
-```
-
-**Directory:**
-```
-skills/session-persister/
-├── SKILL.md
-├── templates/
-│   └── session-template.json
-└── scripts/
-    ├── save_session.py
-    └── restore_session.py
-```
+> Removed — session/loop state persistence is now handled by Claude Code's built-in `/ralph-loop` feature.
 
 ---
 
@@ -619,9 +572,9 @@ skills/context-manager/
 
 | Property | Value |
 |----------|-------|
-| **Trigger** | /cw:next --parallel, before /cw:worktree |
+| **Trigger** | /cw:next --parallel |
 | **Output** | Dependency graph, parallel execution groups |
-| **Integration** | Builder, /cw:next, /cw:worktree |
+| **Integration** | Builder, /cw:next |
 
 **Analysis Targets:**
 ```
@@ -644,9 +597,8 @@ Parallel Execution Groups:
   Group A: Steps 2.1, 2.2, 2.3 (independent)
   Group B: Steps 3.1, 3.2 (after Group A)
 
-Worktree Recommendation:
+Parallel Recommendation:
   ✅ Phase 4 can run in parallel with Phase 3
-     Create worktree: caw-phase-4-tests
 ```
 
 **Directory:**
@@ -714,58 +666,9 @@ skills/quick-fix/
 
 ---
 
-### 15. reflect (NEW)
-**Ralph Loop continuous improvement cycle**
+### ~~15. reflect~~ (Removed)
 
-| Property | Value |
-|----------|-------|
-| **Trigger** | /cw:reflect, after task completion |
-| **Output** | `.caw/learnings.md`, Serena memory |
-| **Integration** | /cw:reflect, All Agents |
-
-**RALPH Cycle:**
-| Phase | Description | Output |
-|-------|-------------|--------|
-| **R**eflect | Review what happened during work | Work summary, outcome assessment |
-| **A**nalyze | Identify patterns and root causes | What worked, what didn't, patterns |
-| **L**earn | Extract actionable lessons | Key insights, improved skills, gaps |
-| **P**lan | Generate improvement actions | Prioritized action items |
-| **H**abituate | Apply to future work | Updated defaults, checklists, memories |
-
-**Output Example:**
-```
-🔮 Ralph Loop: Task Reflection
-
-## Reflect
-- Task: JWT authentication implementation
-- Duration: 2 hours 15 minutes
-- Outcome: ✅ Success (minor issues fixed)
-
-## Analyze
-- ✅ TDD approach was effective
-- ⚠️ Initial token expiry time set too short
-- Pattern: Security-related settings should be environment variables
-
-## Learn
-- Watch for race conditions in JWT refresh logic
-- Always set token expiry as environment variable
-
-## Plan
-1. [HIGH] Add JWT settings to .env.example
-2. [MED] Document token refresh logic
-
-## Habituate
-→ learnings.md update complete
-→ Serena memory sync complete
-```
-
-**Directory:**
-```
-skills/reflect/
-├── SKILL.md
-└── templates/
-    └── ralph-template.md
-```
+> Removed — reflection/improvement cycles are now handled by Claude Code's built-in `/ralph-loop` feature.
 
 ---
 
@@ -785,8 +688,7 @@ skills/reflect/
 | `project_onboarding` | Project type, framework, conventions, key files | Bootstrapper |
 | `domain_knowledge` | Business rules, domain concepts, patterns | Planner, Builder |
 | `lessons_learned` | Error resolution, debugging insights, cautions | Builder |
-| `workflow_patterns` | Successful workflow approaches, best practices | Reflect skill |
-| `session_backup` | Last session state (optional backup) | Session Persister |
+| `workflow_patterns` | Successful workflow approaches, best practices | All agents |
 
 **Sync Operation:**
 ```
@@ -822,11 +724,7 @@ skills/serena-sync/
     "SessionStart": [
       {
         "hooks": [
-          {
-            "type": "skill",
-            "skill": "session-persister",
-            "action": "restore"
-          }
+          { "type": "command", "command": "echo 'Session started'" }
         ]
       }
     ],
@@ -861,7 +759,6 @@ skills/serena-sync/
     "Stop": [
       {
         "hooks": [
-          { "type": "skill", "skill": "session-persister", "action": "save" },
           { "type": "skill", "skill": "serena-sync" }
         ]
       }
@@ -915,8 +812,6 @@ context-aware-workflow/
 │   ├── quality-gate/
 │   │   └── SKILL.md
 │   ├── knowledge-base/
-│   │   └── SKILL.md
-│   ├── session-persister/
 │   │   └── SKILL.md
 │   ├── review-assistant/
 │   │   └── SKILL.md

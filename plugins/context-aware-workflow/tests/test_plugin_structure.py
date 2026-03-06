@@ -317,12 +317,6 @@ class TestRequiredCommands(unittest.TestCase):
         cmd = PLUGIN_ROOT / "commands" / "init.md"
         self.assertTrue(cmd.exists(), "commands/init.md not found")
 
-    def test_reflect_command_exists(self):
-        """reflect command must exist for Ralph Loop."""
-        cmd = PLUGIN_ROOT / "commands" / "reflect.md"
-        self.assertTrue(cmd.exists(), "commands/reflect.md not found")
-
-
 class TestSkillFiles(unittest.TestCase):
     """Test skill file structure and SKILL.md files."""
 
@@ -399,11 +393,6 @@ class TestRequiredSkills(unittest.TestCase):
         skill = PLUGIN_ROOT / "skills" / "insight-collector" / "SKILL.md"
         self.assertTrue(skill.exists(), "insight-collector/SKILL.md not found")
 
-    def test_session_persister_skill_exists(self):
-        """session-persister skill must exist."""
-        skill = PLUGIN_ROOT / "skills" / "session-persister" / "SKILL.md"
-        self.assertTrue(skill.exists(), "session-persister/SKILL.md not found")
-
     def test_quality_gate_skill_exists(self):
         """quality-gate skill must exist."""
         skill = PLUGIN_ROOT / "skills" / "quality-gate" / "SKILL.md"
@@ -419,43 +408,14 @@ class TestRequiredSkills(unittest.TestCase):
         skill = PLUGIN_ROOT / "skills" / "context-helper" / "SKILL.md"
         self.assertTrue(skill.exists(), "context-helper/SKILL.md not found")
 
-    def test_reflect_skill_exists(self):
-        """reflect skill must exist for Ralph Loop."""
-        skill = PLUGIN_ROOT / "skills" / "reflect" / "SKILL.md"
-        self.assertTrue(skill.exists(), "reflect/SKILL.md not found")
-
     def test_quick_fix_skill_exists(self):
         """quick-fix skill must exist."""
         skill = PLUGIN_ROOT / "skills" / "quick-fix" / "SKILL.md"
         self.assertTrue(skill.exists(), "quick-fix/SKILL.md not found")
 
 
-class TestRalphLoopIntegration(unittest.TestCase):
-    """Test Ralph Loop continuous improvement integration."""
-
-    def test_ralph_loop_schema_exists(self):
-        """Ralph Loop schema must exist."""
-        schema = PLUGIN_ROOT / "_shared" / "schemas" / "ralph-loop.schema.json"
-        self.assertTrue(schema.exists(), "ralph-loop.schema.json not found")
-
-    def test_ralph_loop_schema_valid(self):
-        """Ralph Loop schema must be valid JSON with required fields."""
-        schema_path = PLUGIN_ROOT / "_shared" / "schemas" / "ralph-loop.schema.json"
-        with open(schema_path, "r") as f:
-            schema = json.load(f)
-
-        # Required schema properties
-        self.assertIn("properties", schema)
-        props = schema["properties"]
-
-        # Must have RALPH phases
-        self.assertIn("phases", props)
-        phases = props["phases"].get("properties", {})
-
-        # Check all 5 RALPH phases exist
-        required_phases = ["reflect", "analyze", "learn", "plan", "habituate"]
-        for phase in required_phases:
-            self.assertIn(phase, phases, f"Missing RALPH phase: {phase}")
+class TestLearningsIntegration(unittest.TestCase):
+    """Test learnings integration."""
 
     def test_learnings_template_exists(self):
         """Learnings template must exist."""

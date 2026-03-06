@@ -56,7 +56,7 @@ Phase-Level Parallel:
   Phase Deps: phase 1
     → Phase 2 ⏳ (5 steps)
     → Phase 3 ⏳ (4 steps)
-  💡 /cw:worktree create phase 2,3
+  💡 Phases 2,3 can run in parallel
 
 Step-Level Parallel:
   ⚡ 2.2, 2.3 - both depend on 2.1
@@ -83,9 +83,7 @@ merge_order = topological_sort(dependency_graph)
 ## Integration
 
 - `/cw:next --parallel`: Uses runnable steps
-- `/cw:next --worktree`: Uses worktree suggestions
 - `/cw:status`: Displays dependency summary
-- `/cw:merge`: Uses merge order
 
 ## Error Handling
 

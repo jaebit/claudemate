@@ -18,15 +18,13 @@ Execute the complete CW workflow in a single command with enhanced features:
 /cw:auto "Fix login validation" --skip-qa
 /cw:auto "Simple fix" --no-parallel-validation
 /cw:auto "Implement dark mode" --verbose
-/cw:auto "Implement auth system" --team
-/cw:auto "Large refactor" --team --team-size 3 --debate
 ```
 
-## Workflow Stages (9-Stage Pipeline)
+## Workflow Stages (8-Stage Pipeline)
 
 ```
-[1/9] expansion → [2/9] init → [3/9] planning → [4/9] execution →
-[5/9] qa → [6/9] review → [7/9] fix → [8/9] check → [9/9] reflect
+[1/8] expansion → [2/8] init → [3/8] planning → [4/8] execution →
+[5/8] qa → [6/8] review → [7/8] fix → [8/8] check
 ```
 
 ## Flags
@@ -36,13 +34,9 @@ Execute the complete CW workflow in a single command with enhanced features:
 | `--skip-expansion` | Skip expansion phase (well-defined tasks) |
 | `--skip-qa` | Skip QA loop stage |
 | `--skip-review` | Skip review, fix, and check stages |
-| `--skip-reflect` | Skip reflect stage |
 | `--no-parallel-validation` | Use single reviewer |
 | `--verbose` | Show detailed progress |
 | `--no-questions` | Minimize interactive questions |
-| `--team` | Use Agent Teams for parallel stages (requires `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS`) |
-| `--team-size N` | Number of Builder teammates (default: 2) |
-| `--debate` | Enable reviewer debate pattern (cross-validation via SendMessage) |
 
 ## Signal-Based Phase Transitions
 
@@ -58,7 +52,6 @@ Each phase outputs a completion signal. See [Signal Detection](../_shared/signal
 | Review | `REVIEW_COMPLETE` |
 | Fix | `FIX_COMPLETE` |
 | Check | `CHECK_COMPLETE` |
-| Reflect | `REFLECT_COMPLETE` |
 | Final | `AUTO_COMPLETE` |
 
 ## Stage Behaviors
@@ -75,8 +68,6 @@ Invoke Planner Agent with spec.md context. Output: `.caw/task_plan.md`
 ### Stage 4: Execution
 Execute pending steps via Builder Agent. Track files created/modified. On error: save state and report.
 
-**Team mode** (`--team`): Independent phases assigned to Builder teammates via Agent Teams. Each member works in an isolated worktree. `TeammateIdle` hook auto-assigns next tasks. Falls back to standard Task-based parallel if `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` is not set.
-
 ### Stage 5: QA Loop
 Invoke `/cw:qaloop` with max_cycles: 2, severity: major.
 
@@ -88,16 +79,11 @@ Spawn 3 Reviewer agents in parallel:
 
 Aggregate verdicts. If any REJECTED → proceed to Fix (max 3 rounds).
 
-**Debate mode** (`--debate`): Reviewers exchange findings via SendMessage for cross-validation before producing consensus verdict. See [Team Validation](../_shared/team-validation.md).
-
 ### Stage 7: Fix
 Parse review issues. Auto-fix via Fixer Agent (Haiku tier). Track in validation-results.json.
 
 ### Stage 8: Check
 Invoke ComplianceChecker Agent for CLAUDE.md rules and project conventions.
-
-### Stage 9: Reflect
-Invoke Ralph Loop: REFLECT → ANALYZE → LEARN → PLAN → HABITUATE.
 
 ## State Management
 
@@ -107,7 +93,7 @@ State saved in `.caw/auto-state.json`:
   "schema_version": "2.0",
   "phase": "execution",
   "task_description": "Add logout button",
-  "config": { "skip_qa": false, "parallel_validation": true, "team_mode": false, "team_size": 2, "debate_mode": false },
+  "config": { "skip_qa": false, "parallel_validation": true },
   "execution": { "current_step": "2.1", "tasks_completed": 3 },
   "signals": { "detected_signals": [...] }
 }
@@ -121,15 +107,14 @@ Stop hook (`hooks/scripts/auto_enforcer.py`) ensures persistence and auto-resume
 ```
 🚀 /cw:auto "Add logout button"
 
-[1/9] Expanding...        ✓ (spec.md created)
-[2/9] Initializing...     ✓ (already initialized)
-[3/9] Planning...         ✓ (2 phases, 5 steps)
-[4/9] Executing...        ✓ (5/5 steps complete)
-[5/9] QA Loop...          ✓ (build: ✓, tests: ✓)
-[6/9] Reviewing...        ✓ (parallel: 3/3 approved)
-[7/9] Fixing...           ✓ (2 auto-fixed)
-[8/9] Checking...         ✓ (compliant)
-[9/9] Reflecting...       ✓
+[1/8] Expanding...        ✓ (spec.md created)
+[2/8] Initializing...     ✓ (already initialized)
+[3/8] Planning...         ✓ (2 phases, 5 steps)
+[4/8] Executing...        ✓ (5/5 steps complete)
+[5/8] QA Loop...          ✓ (build: ✓, tests: ✓)
+[6/8] Reviewing...        ✓ (parallel: 3/3 approved)
+[7/8] Fixing...           ✓ (2 auto-fixed)
+[8/8] Checking...         ✓ (compliant)
 
 ✅ Workflow Complete
 
@@ -159,7 +144,7 @@ On error, state is saved to `.caw/auto-state.json`.
 ## Integration
 
 - **Reads**: Task description, .caw/spec.md, .caw/task_plan.md
-- **Invokes**: Analyst, Bootstrapper, Planner, Builder, Reviewer (x3), Fixer, ComplianceChecker, Ralph Loop
+- **Invokes**: Analyst, Bootstrapper, Planner, Builder, Reviewer (x3), Fixer, ComplianceChecker
 - **Updates**: .caw/auto-state.json, .caw/task_plan.md, .caw/learnings.md
 - **Creates**: .caw/spec.md, .caw/validation-results.json
 

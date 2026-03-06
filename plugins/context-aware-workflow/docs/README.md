@@ -18,7 +18,6 @@ docs/
 │   ├── 02_architecture_draft.md
 │   ├── 03_feature_selection.md
 │   ├── 04_plan_mode_integration.md
-│   └── 05_ralph_loop_integration.md
 └── references/            ← Reference documents (Claude Code features)
     ├── AgentSkills.md
     ├── Hooks.md
@@ -49,9 +48,7 @@ docs/
 
 | Feature | Description | Related Docs |
 |---------|-------------|--------------|
-| **`/cw:loop`** | Autonomous iteration loop (5-level error recovery) | [USER_GUIDE.md](./USER_GUIDE.md#-autonomous-loop) |
 | **Gemini CLI Review** | Gemini CLI review integration in Edit/Commit hooks | [USER_GUIDE.md](./USER_GUIDE.md#-hook-behavior) |
-| **Loop State Persistence** | Pause/resume via `.caw/loop_state.json` | [USER_GUIDE.md](./USER_GUIDE.md#generated-artifacts) |
 
 ---
 
@@ -69,8 +66,6 @@ docs/
 | Design Philosophy | [design/01_philosophy.md](./design/01_philosophy.md) |
 | Skill Design | [SKILL_DESIGN.md](./SKILL_DESIGN.md) |
 | Plan Mode Integration | [design/04_plan_mode_integration.md](./design/04_plan_mode_integration.md) |
-| Ralph Loop | [design/05_ralph_loop_integration.md](./design/05_ralph_loop_integration.md) |
-
 ### Claude Code Feature Reference
 
 | Topic | Document |
@@ -90,13 +85,10 @@ docs/
 
 **Key Contents**:
 - Quick start (2 minutes)
-- 17 commands detailed (`/cw:loop` included)
+- Commands detailed
 - 9 agents (17 including tiered variants)
-- 16 skills list
-- Autonomous execution loop (`/cw:loop` vs `/cw:auto`)
+- Skills list
 - Tidy First methodology
-- Git Worktree parallel execution
-- Ralph Loop continuous improvement
 - Gemini CLI review integration
 - Workflow examples
 - Troubleshooting guide
@@ -112,7 +104,6 @@ docs/
   - `context-manager` - Context window optimization
   - `dependency-analyzer` - Dependency analysis and parallel execution
   - `quick-fix` - Auto-fix
-  - `reflect` - Ralph Loop continuous improvement
   - `serena-sync` - Serena MCP synchronization
 - Hook integration patterns
 - Agent-Skill mapping
@@ -128,8 +119,6 @@ docs/
 | **02_architecture_draft.md** | Component structure, data flow, agent pipeline |
 | **03_feature_selection.md** | MVP feature selection criteria and roadmap |
 | **04_plan_mode_integration.md** | Integration design with Claude Code Plan Mode |
-| **05_ralph_loop_integration.md** | Continuous improvement cycle (RALPH) design |
-
 ---
 
 ## 📚 Reference Documents (references/)
@@ -171,9 +160,9 @@ Documentation improvements are welcome:
 |---------|------|---------------|
 | **1.9.0** | 2026-01-23 | `--with-guidelines`, `--deep` flags, template system |
 | 1.8.0 | 2026-01-22 | OMC integration, QA Loop, UltraQA, Research Mode |
-| 1.7.0 | 2026-01-21 | `/cw:loop` autonomous execution, Gemini CLI integration, 6 new skills |
-| 1.6.0 | 2026-01-19 | Tidy First, Git Worktree, Serena sync |
-| 1.5.0 | 2026-01-15 | Ralph Loop continuous improvement |
+| 1.7.0 | 2026-01-21 | Gemini CLI integration |
+| 1.6.0 | 2026-01-19 | Tidy First, Serena sync |
+| 1.5.0 | 2026-01-15 | Learnings persistence |
 | 1.4.0 | 2026-01-10 | Model routing, tiered agents, `/cw:auto` |
 
 ---

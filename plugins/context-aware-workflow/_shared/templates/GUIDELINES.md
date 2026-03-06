@@ -97,9 +97,7 @@ Automatic model selection based on task complexity:
 ### Advanced Commands
 
 ```bash
-/cw:loop              # Autonomous execution loop
 /cw:auto              # Full workflow automation
-/cw:reflect           # Post-completion learning
 /cw:tidy              # Apply structural improvements
 ```
 

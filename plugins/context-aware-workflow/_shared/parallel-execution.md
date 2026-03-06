@@ -463,10 +463,6 @@ WHEN steps_are_blocked:
       /cw:next --parallel --continue
 ```
 
-## Schema Reference
-
-See [parallel-state.schema.json](./schemas/parallel-state.schema.json) for complete schema.
-
 ## Related Documentation
 
 - [Agent Registry](./agent-registry.md) - Available agents

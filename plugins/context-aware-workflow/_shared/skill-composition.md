@@ -62,11 +62,9 @@ Skills that perform the primary workflow action.
 
 | Skill | Purpose | Required |
 |-------|---------|----------|
-| `reflect` | Ralph Loop reflection | Conditional |
 | `research` | Information gathering | Conditional |
 | `review-assistant` | Code review support | Conditional |
 | `quick-fix` | Apply quick fixes | Conditional |
-| `session-persister` | Persist session state | Yes |
 
 **Characteristics:**
 - Perform the actual work

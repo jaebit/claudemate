@@ -355,65 +355,11 @@ Key: ⏳ Pending | 🔄 In Progress | ✅ Complete | ❌ Blocked | ⏭️ Skippe
 
 ## Integration Points
 
-- **Invoked by**: `/cw:next` command, `/cw:loop` command
+- **Invoked by**: `/cw:next` command
 - **Reads**: `.caw/task_plan.md`, context files
-- **Writes**: Implementation code, test files, `.caw/insights/*.md`, `.caw/iteration_output.md` (loop mode)
+- **Writes**: Implementation code, test files, `.caw/insights/*.md`
 - **Updates**: `.caw/task_plan.md` status, `CLAUDE.md` (Lessons Learned)
 - **Runs**: Project test suite
-
-## Loop Mode Integration
-
-When invoked from `/cw:loop`, Builder operates in **loop mode** with additional requirements:
-
-### Iteration Output Logging
-
-**IMPORTANT**: In loop mode, append execution summary to `.caw/iteration_output.md` after each step:
-
-```markdown
-## Iteration [N]
-- **Step**: [step_id] - [step_description]
-- **Files Modified**: [list]
-- **Test Results**: [passed/failed count]
-- **Status**: [Complete/Failed/Partial]
-- **Notes**: [any relevant details]
-
-[If all tasks are complete, include the completion keyword]
-```
-
-### Completion Signal
-
-When ALL planned tasks are complete, include the **completion promise** keyword in output:
-- Default keyword: `DONE`
-- Must appear clearly in iteration_output.md
-- Examples: "All tasks DONE", "Implementation complete. DONE"
-
-### Loop Mode Detection
-
-Check if running in loop mode:
-```
-IF .caw/loop_state.json exists AND status == "running":
-  → Enable loop mode behaviors
-  → Append to iteration_output.md
-  → Include completion promise when finished
-```
-
-### Example Loop Mode Output
-
-```markdown
-## Iteration 3
-- **Step**: 2.1 - Create JWT utility module
-- **Files Modified**: src/auth/jwt.ts, tests/auth/jwt.test.ts
-- **Test Results**: 5 passed, 0 failed
-- **Status**: Complete
-
-## Iteration 4
-- **Step**: 2.2 - Add token validation middleware
-- **Files Modified**: src/middleware/auth.ts
-- **Test Results**: 3 passed, 0 failed
-- **Status**: Complete
-
-All authentication steps complete. DONE
-```
 
 ## Best Practices
 

@@ -26,10 +26,7 @@ python tests/test_plugin_structure.py
 /cw:init       # Project initialization
 
 # Execution modes
-/cw:auto       # Autonomous execution (supports --team, --debate)
-/cw:loop       # Continuous iteration loop
-/cw:swarm      # Parallel agent execution (fire-and-forget)
-/cw:team       # Agent Teams orchestration (collaborative parallel)
+/cw:auto       # Autonomous execution
 /cw:pipeline   # Sequential stage execution
 
 # Quality assurance
@@ -45,15 +42,12 @@ python tests/test_plugin_structure.py
 /cw:research   # Research task
 
 # Improvement & analysis
-/cw:reflect    # Run Ralph Loop
 /cw:evolve     # Self-improvement cycle
 /cw:analytics  # Token/cost analysis
 
 # Context & collaboration
 /cw:context    # Manage context variables
 /cw:sync       # Sync with external tools
-/cw:merge      # Merge worktree results
-/cw:worktree   # Git worktree management
 /cw:tidy       # Cleanup resources
 
 # Magic keywords: eco/ecomode, deepwork, quickfix, async
@@ -66,7 +60,7 @@ python tests/test_plugin_structure.py
 18 agents (4 tiered x 3 tiers + 6 specialized). See `_shared/agent-registry.md` for full inventory.
 Model routing: `_shared/model-routing.md`. Authoring patterns: `skills/plugin-authoring/SKILL.md`.
 
-20 skills: context-manager, progress-tracker, session-persister, plan-detector, quality-gate, review-assistant, commit-discipline, quick-fix, insight-collector, pattern-learner, knowledge-base, decision-logger, hud, dashboard, dependency-analyzer, context-helper, reflect, evolve, research, serena-sync.
+18 skills: context-manager, progress-tracker, plan-detector, quality-gate, review-assistant, commit-discipline, quick-fix, insight-collector, pattern-learner, knowledge-base, decision-logger, hud, dashboard, dependency-analyzer, context-helper, evolve, research, serena-sync.
 
 ---
 
