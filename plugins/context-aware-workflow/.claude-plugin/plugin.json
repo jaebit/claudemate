@@ -1,11 +1,5 @@
 {
   "name": "cw",
   "version": "3.1.0",
-  "description": "Context-aware workflow orchestration plugin with automation-first design, complexity-adaptive agents, and parallel execution",
-  "mcpServers": {
-    "codex": {
-      "command": "npx",
-      "args": ["-y", "@anthropic/codex-harness-mcp"]
-    }
-  }
+  "description": "Context-aware workflow orchestration plugin with automation-first design, complexity-adaptive agents, and parallel execution"
 }
