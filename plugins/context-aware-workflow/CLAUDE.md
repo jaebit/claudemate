@@ -1,7 +1,7 @@
 # Module Context
 
 **Module:** Context-Aware Workflow (cw)
-**Version:** 3.0.0
+**Version:** 3.1.0
 **Role:** Automation-first workflow orchestration with complexity-adaptive agents.
 
 ---

@@ -126,4 +126,4 @@ All `-haiku`, `-sonnet`, `-opus` variants are removed. Each agent now self-asses
 ## Timeline
 
 - **v3.0**: Deprecation stubs active, v2 commands still work
-- **v3.1**: Deprecation stubs removed, v2 commands stop working
+- **v3.1**: Deprecation stubs removed, only 6 active commands remain

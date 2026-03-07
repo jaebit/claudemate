@@ -1,6 +1,6 @@
 {
   "name": "cw",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "Context-aware workflow orchestration plugin with automation-first design, complexity-adaptive agents, and parallel execution",
   "mcpServers": {
     "codex": {

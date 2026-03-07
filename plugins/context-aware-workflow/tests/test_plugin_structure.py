@@ -272,31 +272,24 @@ class TestRequiredCommands(unittest.TestCase):
             cmd = PLUGIN_ROOT / "commands" / f"{cmd_name}.md"
             self.assertTrue(cmd.exists(), f"commands/{cmd_name}.md not found")
 
-    def test_deprecation_stubs_exist(self):
-        """Deprecated commands should still exist as stubs."""
-        deprecated = [
+    def test_deprecated_commands_removed(self):
+        """Deprecated v2 commands should be fully removed in v3.1."""
+        removed = [
             "auto", "pipeline", "loop", "start", "next",
             "analytics", "qaloop", "ultraqa", "check", "fix",
             "swarm", "team", "brainstorm", "design", "research",
             "context", "sync", "merge", "worktree", "tidy",
             "init", "evolve", "reflect",
         ]
-        for cmd_name in deprecated:
+        for cmd_name in removed:
             cmd = PLUGIN_ROOT / "commands" / f"{cmd_name}.md"
-            self.assertTrue(cmd.exists(), f"Deprecation stub commands/{cmd_name}.md not found")
+            self.assertFalse(cmd.exists(), f"Deprecated {cmd_name}.md should be removed in v3.1")
 
-    def test_deprecation_stubs_have_deprecated_marker(self):
-        """Deprecated command stubs should have DEPRECATED in description."""
-        deprecated = ["auto", "pipeline", "loop", "start", "next"]
-        for cmd_name in deprecated:
-            cmd_file = PLUGIN_ROOT / "commands" / f"{cmd_name}.md"
-            if cmd_file.exists():
-                content = cmd_file.read_text()
-                self.assertIn(
-                    "DEPRECATED",
-                    content,
-                    f"{cmd_name}.md should be marked as DEPRECATED"
-                )
+    def test_command_count(self):
+        """v3.1 should have exactly 6 commands."""
+        commands_dir = PLUGIN_ROOT / "commands"
+        cmds = list(commands_dir.glob("*.md"))
+        self.assertEqual(len(cmds), 6, f"Expected 6 commands, found {len(cmds)}: {[c.name for c in cmds]}")
 
 
 class TestSkillFiles(unittest.TestCase):
