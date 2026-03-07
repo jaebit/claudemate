@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """
-Tests for validating the context-aware-workflow plugin structure.
+Tests for validating the context-aware-workflow plugin structure (v3.0).
 
 Validates:
 - plugin.json schema and required fields
 - hooks.json schema and hook definitions
-- Agent and skill file structure (skills/ contains slash commands)
+- Agent and skill file structure
 - Required files existence
 """
 
@@ -49,6 +49,18 @@ class TestPluginStructure(unittest.TestCase):
         self.assertRegex(
             data["version"], r"^\d+\.\d+\.\d+", "Version must follow semver format"
         )
+
+    def test_plugin_json_allowed_fields_only(self):
+        """plugin.json must only contain allowed fields."""
+        plugin_json = PLUGIN_ROOT / ".claude-plugin" / "plugin.json"
+        with open(plugin_json, "r") as f:
+            data = json.load(f)
+
+        allowed_fields = {"name", "version", "description", "mcpServers"}
+        for key in data.keys():
+            self.assertIn(
+                key, allowed_fields, f"plugin.json has disallowed field: {key}"
+            )
 
     def test_hooks_json_exists(self):
         """hooks.json must exist in hooks directory."""
@@ -101,8 +113,6 @@ class TestPluginStructure(unittest.TestCase):
 
     def test_required_directories_exist(self):
         """Required plugin directories must exist."""
-        # commands/ contains the slash commands (e.g., /cw:start)
-        # _shared/ contains shared documentation and schemas
         required_dirs = ["agents", "hooks", "commands", "_shared", "skills"]
 
         for dir_name in required_dirs:
@@ -163,11 +173,26 @@ class TestAgentFiles(unittest.TestCase):
             with open(agent_file, "r", encoding="utf-8") as f:
                 content = f.read()
 
-            # Should have a heading with "System Prompt" or similar
             self.assertTrue(
                 "# " in content,
                 f"{agent_file.name} must have markdown headings for system prompt",
             )
+
+    def test_no_tier_variant_agents(self):
+        """No model tier variant agents should exist (removed in v3.0)."""
+        agents_dir = PLUGIN_ROOT / "agents"
+        tier_suffixes = ["-haiku.md", "-sonnet.md", "-opus.md"]
+        for suffix in tier_suffixes:
+            tier_files = list(agents_dir.glob(f"*{suffix}"))
+            self.assertEqual(
+                len(tier_files), 0,
+                f"Tier variant agents should not exist in v3.0: {[f.name for f in tier_files]}"
+            )
+
+    def test_agent_count(self):
+        """v3.0 should have exactly 8 agents."""
+        agents = self.get_agent_files()
+        self.assertEqual(len(agents), 8, f"Expected 8 agents, found {len(agents)}: {[a.name for a in agents]}")
 
 
 class TestCommandFiles(unittest.TestCase):
@@ -209,113 +234,70 @@ class TestCommandFiles(unittest.TestCase):
                 f"{cmd_file.name} missing 'description' in frontmatter",
             )
 
-    def test_command_has_usage(self):
-        """Each command should have a Usage or Invocation section."""
-        for cmd_file in self.get_command_files():
-            with open(cmd_file, "r", encoding="utf-8") as f:
-                content = f.read()
-            content_lower = content.lower()
 
-            # Should have Usage or Invocation section
-            has_usage = "## usage" in content_lower
-            has_invocation = "## invocation" in content_lower
-            self.assertTrue(
-                has_usage or has_invocation,
-                f"{cmd_file.name} should have a Usage or Invocation section",
+class TestRequiredAgents(unittest.TestCase):
+    """Test that required v3.0 agents are present."""
+
+    REQUIRED_AGENTS = [
+        "planner", "builder", "reviewer", "fixer",
+        "analyst", "architect", "bootstrapper", "compliance-checker",
+    ]
+
+    def test_required_agents_exist(self):
+        """All 8 required agents must exist."""
+        agents_dir = PLUGIN_ROOT / "agents"
+        for agent_name in self.REQUIRED_AGENTS:
+            agent_file = agents_dir / f"{agent_name}.md"
+            self.assertTrue(agent_file.exists(), f"{agent_name}.md agent not found")
+
+    def test_removed_agents_absent(self):
+        """Agents removed in v3.0 should not exist."""
+        agents_dir = PLUGIN_ROOT / "agents"
+        removed = ["ideator.md", "designer.md"]
+        for name in removed:
+            self.assertFalse(
+                (agents_dir / name).exists(),
+                f"{name} should have been removed in v3.0"
             )
 
 
-class TestRequiredAgents(unittest.TestCase):
-    """Test that required agents are present."""
-
-    def test_planner_agent_exists(self):
-        """Planner agent must exist."""
-        planner = PLUGIN_ROOT / "agents" / "planner.md"
-        self.assertTrue(planner.exists(), "planner.md agent not found")
-
-    def test_builder_agent_exists(self):
-        """Builder agent must exist."""
-        builder = PLUGIN_ROOT / "agents" / "builder.md"
-        self.assertTrue(builder.exists(), "builder.md agent not found")
-
-    def test_reviewer_agent_exists(self):
-        """Reviewer agent must exist."""
-        reviewer = PLUGIN_ROOT / "agents" / "reviewer.md"
-        self.assertTrue(reviewer.exists(), "reviewer.md agent not found")
-
-    def test_compliance_checker_exists(self):
-        """ComplianceChecker agent must exist."""
-        checker = PLUGIN_ROOT / "agents" / "compliance-checker.md"
-        self.assertTrue(checker.exists(), "compliance-checker.md agent not found")
-
-    def test_ideator_agent_exists(self):
-        """Ideator agent must exist."""
-        ideator = PLUGIN_ROOT / "agents" / "ideator.md"
-        self.assertTrue(ideator.exists(), "ideator.md agent not found")
-
-    def test_designer_agent_exists(self):
-        """Designer agent must exist."""
-        designer = PLUGIN_ROOT / "agents" / "designer.md"
-        self.assertTrue(designer.exists(), "designer.md agent not found")
-
-    def test_architect_agent_exists(self):
-        """Architect agent must exist."""
-        architect = PLUGIN_ROOT / "agents" / "architect.md"
-        self.assertTrue(architect.exists(), "architect.md agent not found")
-
-
 class TestRequiredCommands(unittest.TestCase):
-    """Test that required commands are present."""
+    """Test that required v3.0 commands are present."""
 
-    def test_start_command_exists(self):
-        """start command must exist."""
-        cmd = PLUGIN_ROOT / "commands" / "start.md"
-        self.assertTrue(cmd.exists(), "commands/start.md not found")
+    ACTIVE_COMMANDS = ["go", "status", "review", "parallel", "explore", "manage"]
 
-    def test_status_command_exists(self):
-        """status command must exist."""
-        cmd = PLUGIN_ROOT / "commands" / "status.md"
-        self.assertTrue(cmd.exists(), "commands/status.md not found")
+    def test_active_commands_exist(self):
+        """All 6 active v3.0 commands must exist."""
+        for cmd_name in self.ACTIVE_COMMANDS:
+            cmd = PLUGIN_ROOT / "commands" / f"{cmd_name}.md"
+            self.assertTrue(cmd.exists(), f"commands/{cmd_name}.md not found")
 
-    def test_next_command_exists(self):
-        """next command must exist."""
-        cmd = PLUGIN_ROOT / "commands" / "next.md"
-        self.assertTrue(cmd.exists(), "commands/next.md not found")
+    def test_deprecation_stubs_exist(self):
+        """Deprecated commands should still exist as stubs."""
+        deprecated = [
+            "auto", "pipeline", "loop", "start", "next",
+            "analytics", "qaloop", "ultraqa", "check", "fix",
+            "swarm", "team", "brainstorm", "design", "research",
+            "context", "sync", "merge", "worktree", "tidy",
+            "init", "evolve", "reflect",
+        ]
+        for cmd_name in deprecated:
+            cmd = PLUGIN_ROOT / "commands" / f"{cmd_name}.md"
+            self.assertTrue(cmd.exists(), f"Deprecation stub commands/{cmd_name}.md not found")
 
-    def test_review_command_exists(self):
-        """review command must exist."""
-        cmd = PLUGIN_ROOT / "commands" / "review.md"
-        self.assertTrue(cmd.exists(), "commands/review.md not found")
+    def test_deprecation_stubs_have_deprecated_marker(self):
+        """Deprecated command stubs should have DEPRECATED in description."""
+        deprecated = ["auto", "pipeline", "loop", "start", "next"]
+        for cmd_name in deprecated:
+            cmd_file = PLUGIN_ROOT / "commands" / f"{cmd_name}.md"
+            if cmd_file.exists():
+                content = cmd_file.read_text()
+                self.assertIn(
+                    "DEPRECATED",
+                    content,
+                    f"{cmd_name}.md should be marked as DEPRECATED"
+                )
 
-    def test_check_command_exists(self):
-        """check command must exist."""
-        cmd = PLUGIN_ROOT / "commands" / "check.md"
-        self.assertTrue(cmd.exists(), "commands/check.md not found")
-
-    def test_context_command_exists(self):
-        """context command must exist."""
-        cmd = PLUGIN_ROOT / "commands" / "context.md"
-        self.assertTrue(cmd.exists(), "commands/context.md not found")
-
-    def test_brainstorm_command_exists(self):
-        """brainstorm command must exist."""
-        cmd = PLUGIN_ROOT / "commands" / "brainstorm.md"
-        self.assertTrue(cmd.exists(), "commands/brainstorm.md not found")
-
-    def test_design_command_exists(self):
-        """design command must exist."""
-        cmd = PLUGIN_ROOT / "commands" / "design.md"
-        self.assertTrue(cmd.exists(), "commands/design.md not found")
-
-    def test_fix_command_exists(self):
-        """fix command must exist."""
-        cmd = PLUGIN_ROOT / "commands" / "fix.md"
-        self.assertTrue(cmd.exists(), "commands/fix.md not found")
-
-    def test_init_command_exists(self):
-        """init command must exist."""
-        cmd = PLUGIN_ROOT / "commands" / "init.md"
-        self.assertTrue(cmd.exists(), "commands/init.md not found")
 
 class TestSkillFiles(unittest.TestCase):
     """Test skill file structure and SKILL.md files."""
@@ -379,43 +361,46 @@ class TestSkillFiles(unittest.TestCase):
                 f"{skill_dir.name}/SKILL.md missing 'description'",
             )
 
+    def test_skill_count(self):
+        """v3.0 should have exactly 11 skills."""
+        skills = self.get_skill_dirs()
+        self.assertEqual(len(skills), 11, f"Expected 11 skills, found {len(skills)}: {[s.name for s in skills]}")
+
 
 class TestRequiredSkills(unittest.TestCase):
-    """Test that required skills are present."""
+    """Test that required v3.0 skills are present."""
 
-    def test_plan_detector_skill_exists(self):
-        """plan-detector skill must exist."""
-        skill = PLUGIN_ROOT / "skills" / "plan-detector" / "SKILL.md"
-        self.assertTrue(skill.exists(), "plan-detector/SKILL.md not found")
+    REQUIRED_SKILLS = [
+        "context-manager", "progress-tracker", "plan-detector",
+        "quality-gate", "commit-discipline", "insight-collector",
+        "pattern-learner", "plugin-authoring",
+        "knowledge-engine", "session-manager", "learning-loop",
+    ]
 
-    def test_insight_collector_skill_exists(self):
-        """insight-collector skill must exist."""
-        skill = PLUGIN_ROOT / "skills" / "insight-collector" / "SKILL.md"
-        self.assertTrue(skill.exists(), "insight-collector/SKILL.md not found")
+    def test_required_skills_exist(self):
+        """All 11 required skills must exist."""
+        for skill_name in self.REQUIRED_SKILLS:
+            skill = PLUGIN_ROOT / "skills" / skill_name / "SKILL.md"
+            self.assertTrue(skill.exists(), f"{skill_name}/SKILL.md not found")
 
-    def test_quality_gate_skill_exists(self):
-        """quality-gate skill must exist."""
-        skill = PLUGIN_ROOT / "skills" / "quality-gate" / "SKILL.md"
-        self.assertTrue(skill.exists(), "quality-gate/SKILL.md not found")
-
-    def test_progress_tracker_skill_exists(self):
-        """progress-tracker skill must exist."""
-        skill = PLUGIN_ROOT / "skills" / "progress-tracker" / "SKILL.md"
-        self.assertTrue(skill.exists(), "progress-tracker/SKILL.md not found")
-
-    def test_context_helper_skill_exists(self):
-        """context-helper skill must exist."""
-        skill = PLUGIN_ROOT / "skills" / "context-helper" / "SKILL.md"
-        self.assertTrue(skill.exists(), "context-helper/SKILL.md not found")
-
-    def test_quick_fix_skill_exists(self):
-        """quick-fix skill must exist."""
-        skill = PLUGIN_ROOT / "skills" / "quick-fix" / "SKILL.md"
-        self.assertTrue(skill.exists(), "quick-fix/SKILL.md not found")
+    def test_removed_skills_absent(self):
+        """Skills removed/merged in v3.0 should not exist."""
+        removed = [
+            "knowledge-base", "decision-logger", "review-assistant",
+            "session-persister", "context-helper", "hud", "dashboard",
+            "reflect", "evolve", "research", "serena-sync",
+            "quick-fix", "dependency-analyzer",
+        ]
+        for skill_name in removed:
+            skill_dir = PLUGIN_ROOT / "skills" / skill_name
+            self.assertFalse(
+                skill_dir.exists(),
+                f"{skill_name} should have been removed/merged in v3.0"
+            )
 
 
-class TestLearningsIntegration(unittest.TestCase):
-    """Test learnings integration."""
+class TestRalphLoopIntegration(unittest.TestCase):
+    """Test Ralph Loop continuous improvement integration."""
 
     def test_learnings_template_exists(self):
         """Learnings template must exist."""
@@ -428,61 +413,25 @@ class TestLearningsIntegration(unittest.TestCase):
         self.assertTrue(doc.exists(), "magic-keywords.md not found")
 
 
-class TestTieredAgents(unittest.TestCase):
-    """Test tiered agent variants exist."""
+class TestComplexityHints(unittest.TestCase):
+    """Test complexity-adaptive system (replaces model routing in v3.0)."""
 
-    def test_planner_tiers_exist(self):
-        """Planner agent tiers must exist."""
-        agents_dir = PLUGIN_ROOT / "agents"
-        self.assertTrue((agents_dir / "planner.md").exists(), "planner.md not found")
-        self.assertTrue(
-            (agents_dir / "planner-haiku.md").exists(), "planner-haiku.md not found"
-        )
-        self.assertTrue(
-            (agents_dir / "planner-opus.md").exists(), "planner-opus.md not found"
-        )
+    def test_complexity_hints_exists(self):
+        """complexity-hints.md must exist (replaces model-routing.md)."""
+        hints = PLUGIN_ROOT / "_shared" / "complexity-hints.md"
+        self.assertTrue(hints.exists(), "complexity-hints.md not found")
 
-    def test_builder_tiers_exist(self):
-        """Builder agent tiers must exist."""
-        agents_dir = PLUGIN_ROOT / "agents"
-        self.assertTrue((agents_dir / "builder.md").exists(), "builder.md not found")
-        self.assertTrue(
-            (agents_dir / "builder-haiku.md").exists(), "builder-haiku.md not found"
-        )
-        self.assertTrue(
-            (agents_dir / "builder-sonnet.md").exists(), "builder-sonnet.md not found"
-        )
+    def test_model_routing_removed(self):
+        """model-routing.md should not exist in v3.0."""
+        routing = PLUGIN_ROOT / "_shared" / "model-routing.md"
+        self.assertFalse(routing.exists(), "model-routing.md should have been removed in v3.0")
 
-    def test_reviewer_tiers_exist(self):
-        """Reviewer agent tiers must exist."""
-        agents_dir = PLUGIN_ROOT / "agents"
-        self.assertTrue((agents_dir / "reviewer.md").exists(), "reviewer.md not found")
-        self.assertTrue(
-            (agents_dir / "reviewer-haiku.md").exists(), "reviewer-haiku.md not found"
-        )
-        self.assertTrue(
-            (agents_dir / "reviewer-opus.md").exists(), "reviewer-opus.md not found"
-        )
-
-    def test_fixer_tiers_exist(self):
-        """Fixer agent tiers must exist."""
-        agents_dir = PLUGIN_ROOT / "agents"
-        self.assertTrue((agents_dir / "fixer.md").exists(), "fixer.md not found")
-        self.assertTrue(
-            (agents_dir / "fixer-haiku.md").exists(), "fixer-haiku.md not found"
-        )
-        self.assertTrue(
-            (agents_dir / "fixer-sonnet.md").exists(), "fixer-sonnet.md not found"
-        )
-
-
-class TestModelRoutingSchema(unittest.TestCase):
-    """Test model routing schema exists."""
-
-    def test_model_routing_schema_exists(self):
-        """Model routing schema must exist."""
-        schema = PLUGIN_ROOT / "schemas" / "model-routing.schema.json"
-        self.assertTrue(schema.exists(), "model-routing.schema.json not found")
+    def test_model_routing_schema_removed(self):
+        """model-routing.schema.json should not exist in v3.0."""
+        schema1 = PLUGIN_ROOT / "schemas" / "model-routing.schema.json"
+        schema2 = PLUGIN_ROOT / "_shared" / "schemas" / "model-routing.schema.json"
+        self.assertFalse(schema1.exists(), "schemas/model-routing.schema.json should be removed")
+        self.assertFalse(schema2.exists(), "_shared/schemas/model-routing.schema.json should be removed")
 
 
 class TestHooksConfiguration(unittest.TestCase):
@@ -495,10 +444,9 @@ class TestHooksConfiguration(unittest.TestCase):
             self.hooks_data = json.load(f)
 
     def test_required_hooks_exist(self):
-        """Required hooks (SessionStart, PreToolUse) must be configured."""
-        # PostToolUse is optional - only add if meaningful functionality needed
-        self.assertIn("SessionStart", self.hooks_data["hooks"])
+        """Required hooks must be configured."""
         self.assertIn("PreToolUse", self.hooks_data["hooks"])
+        self.assertIn("PostToolUse", self.hooks_data["hooks"])
 
     def test_hook_types_valid(self):
         """All hooks must have valid type field."""
@@ -518,7 +466,6 @@ class TestHooksConfiguration(unittest.TestCase):
         """PostToolUse hooks should have matchers for tool filtering."""
         post_hooks = self.hooks_data["hooks"].get("PostToolUse", [])
         for hook_group in post_hooks:
-            # PostToolUse hooks should have matcher to specify which tool
             self.assertIn(
                 "matcher",
                 hook_group,
@@ -538,69 +485,33 @@ class TestCrossPlatformCompatibility(unittest.TestCase):
 
     def test_no_single_quote_echo_in_hooks(self):
         """Hooks should not use echo with single quotes (Windows incompatible)."""
-        # Check for problematic patterns
         self.assertNotIn(
             "echo '",
             self.hooks_content,
             "Single quote echo found - use 'type: prompt' instead for Windows compatibility"
         )
 
-    def test_hooks_use_double_quotes_for_echo(self):
-        """SessionStart echo commands should use double quotes for Windows compatibility.
-
-        Note: 'type: prompt' is only supported in Stop/SubagentStop hooks per CLAUDE.md.
-        For SessionStart, we must use 'type: command' with echo.
-        """
-        session_start_hooks = self.hooks_data["hooks"].get("SessionStart", [])
-        for hook_group in session_start_hooks:
-            for hook in hook_group.get("hooks", []):
-                if hook.get("type") == "command":
-                    cmd = hook.get("command", "")
-                    if cmd.startswith("echo "):
-                        # Must use double quotes, not single quotes
-                        self.assertNotIn(
-                            "echo '",
-                            cmd,
-                            "echo should use double quotes for Windows compatibility"
-                        )
-
     def test_pretooluse_uses_claude_plugin_root_pattern(self):
-        """PreToolUse hooks using paths should use ${CLAUDE_PLUGIN_ROOT} pattern.
-
-        Per CLAUDE.md: ${CLAUDE_PLUGIN_ROOT} is a special variable that Claude Code
-        substitutes at runtime (not a shell environment variable).
-        This pattern works cross-platform when Claude Code processes the hook.
-        """
+        """PreToolUse hooks using paths should use ${CLAUDE_PLUGIN_ROOT} pattern."""
         pre_tool_hooks = self.hooks_data["hooks"].get("PreToolUse", [])
         for hook_group in pre_tool_hooks:
             for hook in hook_group.get("hooks", []):
                 if hook.get("type") == "command":
                     cmd = hook.get("command", "")
-                    # If referencing plugin paths, should use ${CLAUDE_PLUGIN_ROOT} pattern
-                    # (with curly braces, which Claude Code substitutes at runtime)
                     if "CLAUDE_PLUGIN_ROOT" in cmd:
                         self.assertIn(
                             "${CLAUDE_PLUGIN_ROOT}",
                             cmd,
-                            "Plugin paths should use ${CLAUDE_PLUGIN_ROOT} (with curly braces) for Claude Code substitution"
+                            "Plugin paths should use ${CLAUDE_PLUGIN_ROOT} (with curly braces)"
                         )
 
     def test_no_bare_shell_variable_in_path(self):
-        """Hook commands should use ${VAR} pattern, not $VAR without braces.
-
-        Per CLAUDE.md:
-        - ${CLAUDE_PLUGIN_ROOT} - Claude Code substitutes at runtime (OK)
-        - $CLAUDE_PLUGIN_ROOT - Shell variable, may not work (BAD)
-        - $CLAUDE_PROJECT_DIR - Environment variable, works in shell (OK for shell commands)
-        """
+        """Hook commands should use ${VAR} pattern, not $VAR without braces."""
         for event_name, event_hooks in self.hooks_data["hooks"].items():
             for hook_group in event_hooks:
                 for hook in hook_group.get("hooks", []):
                     if hook.get("type") == "command":
                         cmd = hook.get("command", "")
-                        # Check for bare $CLAUDE_PLUGIN_ROOT without braces
-                        # This pattern won't be substituted by Claude Code
-                        import re
                         bare_var_match = re.search(r'\$CLAUDE_PLUGIN_ROOT(?!\})', cmd)
                         if bare_var_match and "${CLAUDE_PLUGIN_ROOT}" not in cmd:
                             self.fail(

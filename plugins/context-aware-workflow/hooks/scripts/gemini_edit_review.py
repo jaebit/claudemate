@@ -25,6 +25,7 @@ Environment variables read by Claude Code:
 - CLAUDE_TOOL_INPUT: JSON containing the tool input parameters
 """
 
+import shutil
 import sys
 
 # Windows UTF-8 support
@@ -149,6 +150,12 @@ def main():
     try:
         # Check if feature is enabled and configured
         if not is_gemini_review_enabled():
+            print(approve_result())
+            return
+
+        # Check if gemini CLI is installed
+        if not shutil.which('gemini'):
+            debug_log("gemini CLI not found in PATH, skipping review")
             print(approve_result())
             return
 

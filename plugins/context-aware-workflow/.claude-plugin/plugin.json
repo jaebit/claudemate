@@ -1,5 +1,11 @@
 {
   "name": "cw",
-  "version": "2.1.0",
-  "description": "Context-aware workflow orchestration plugin with Plan Mode integration, intelligent context management, and structured task planning"
+  "version": "3.0.0",
+  "description": "Context-aware workflow orchestration plugin with automation-first design, complexity-adaptive agents, and parallel execution",
+  "mcpServers": {
+    "codex": {
+      "command": "npx",
+      "args": ["-y", "@anthropic/codex-harness-mcp"]
+    }
+  }
 }

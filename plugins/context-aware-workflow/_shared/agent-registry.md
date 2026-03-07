@@ -1,162 +1,116 @@
 # Agent Registry
 
-Comprehensive catalog of all available agents for CAW workflows.
+Comprehensive catalog of all available agents for CAW v3.0 workflows.
 
 ## Overview
 
-This registry documents all agents available in the CAW ecosystem with their tiers, capabilities, and use cases.
+8 agents total. Each agent adapts its behavior based on task complexity (see [Complexity-Adaptive Behavior](./complexity-hints.md)). Claude Code handles model selection - agents do not control which model runs.
 
-## CAW Agents
+## Core Agents
 
-### Core Agents (Tiered)
+### Planner
+Plans and structures tasks into executable steps. Includes brainstorm mode for ideation.
 
-#### Planner
-Plans and structures tasks into executable steps.
+| ID | File | Skills |
+|----|------|--------|
+| `cw:planner` | `planner.md` | pattern-learner, session-manager, knowledge-engine, insight-collector |
 
-| Variant | File | Model | Complexity Range |
-|---------|------|-------|------------------|
-| `cw:Planner` | `planner.md` | Sonnet | 0.3 - 0.7 (default) |
-| `cw:planner-haiku` | `planner-haiku.md` | Haiku | ≤ 0.3 |
-| `cw:planner-opus` | `planner-opus.md` | Opus | > 0.7 |
+**Capabilities**: Task decomposition, phase structuring, dependency analysis, Tidy First methodology, Socratic brainstorming, requirements discovery
 
-**Capabilities**:
-- Task decomposition
-- Phase structuring
-- Dependency analysis
-- Effort estimation
+**Commands**: `/cw:start`, `/cw:brainstorm`
 
 ---
 
-#### Builder
+### Builder
 Implements code following TDD approach.
 
-| Variant | File | Model | Complexity Range |
-|---------|------|-------|------------------|
-| `cw:Builder` | `builder.md` | Opus | > 0.7 (default) |
-| `cw:builder-haiku` | `builder-haiku.md` | Haiku | ≤ 0.3 |
-| `cw:builder-sonnet` | `builder-sonnet.md` | Sonnet | 0.3 - 0.7 |
+| ID | File | Skills |
+|----|------|--------|
+| `cw:builder` | `builder.md` | quality-gate, session-manager, progress-tracker, pattern-learner, insight-collector |
 
-**Capabilities**:
-- TDD implementation
-- Test-first development
-- Code generation
-- Pattern following
+**Capabilities**: TDD implementation, test-first development, code generation, pattern following, Serena symbolic editing, Tidy First commits
+
+**Commands**: `/cw:next`, `/cw:loop`
 
 ---
 
-#### Reviewer
-Reviews code for quality, bugs, and best practices.
+### Reviewer
+Reviews code for quality, security, and best practices.
 
-| Variant | File | Model | Complexity Range |
-|---------|------|-------|------------------|
-| `cw:Reviewer` | `reviewer.md` | Sonnet | 0.3 - 0.7 (default) |
-| `cw:reviewer-haiku` | `reviewer-haiku.md` | Haiku | ≤ 0.3 |
-| `cw:reviewer-opus` | `reviewer-opus.md` | Opus | > 0.7 |
+| ID | File | Skills |
+|----|------|--------|
+| `cw:reviewer` | `reviewer.md` | quality-gate, pattern-learner, knowledge-engine, insight-collector |
 
-**Capabilities**:
-- Code quality analysis
-- Bug detection
-- Security scanning
-- Performance review
+**Capabilities**: Code quality analysis, bug detection, security scanning, performance review, architecture validation
 
-**Special Flags**:
-- `--deep`: Thorough analysis (uses Opus tier)
-- `--security`: Security-focused review
-- `--quick`: Fast style check only (uses Haiku tier)
+**Commands**: `/cw:review`, `/cw:qaloop`, `/cw:ultraqa`
 
 ---
 
-#### Fixer
-Applies fixes based on review feedback.
+### Fixer
+Applies fixes based on review feedback, from auto-fix to deep remediation.
 
-| Variant | File | Model | Complexity Range |
-|---------|------|-------|------------------|
-| `cw:Fixer` | `fixer.md` | Opus | > 0.7 (default) |
-| `cw:fixer-haiku` | `fixer-haiku.md` | Haiku | ≤ 0.3 |
-| `cw:fixer-sonnet` | `fixer-sonnet.md` | Sonnet | 0.3 - 0.7 |
+| ID | File | Skills |
+|----|------|--------|
+| `cw:fixer` | `fixer.md` | quality-gate |
 
-**Capabilities**:
-- Auto-fixing lint issues
-- Refactoring
-- Pattern extraction
-- Security patching
+**Capabilities**: Auto-fixing lint issues, refactoring, pattern extraction, security patching, dependency analysis
+
+**Commands**: `/cw:fix`, `/cw:qaloop`
 
 ---
 
-### Specialized Agents (Single Tier)
+### Architect
+Designs system architecture and user experiences.
 
-#### Bootstrapper
-| ID | File | Model |
-|----|------|-------|
-| `cw:Bootstrapper` | `bootstrapper.md` | Haiku |
+| ID | File | Skills |
+|----|------|--------|
+| `cw:architect` | `architect.md` | knowledge-engine, pattern-learner, insight-collector |
 
-**Purpose**: Environment initialization, project detection, `.caw/` setup
+**Capabilities**: Architecture design, component diagrams, data models, API specs, wireframes, user flows, interaction specs, accessibility planning
 
-**Capabilities**:
-- Project type detection
-- Framework identification
-- Directory structure setup
-- Context manifest creation
+**Commands**: `/cw:design --arch`, `/cw:design --ui`, `/cw:design`
 
 ---
 
-#### Architect
-| ID | File | Model |
-|----|------|-------|
-| `cw:architect` | `architect.md` | Opus |
+## Specialized Agents
 
-**Purpose**: System design, component architecture, technical decisions
+### Analyst
+Extracts requirements during auto workflow expansion.
 
-**Capabilities**:
-- Architecture design
-- Component diagrams
-- Data model design
-- Technical trade-offs
+| ID | File | Skills |
+|----|------|--------|
+| `cw:analyst` | `analyst.md` | insight-collector, knowledge-engine |
 
----
+**Capabilities**: Requirements extraction, specification creation, edge case discovery, dependency mapping
 
-#### Designer
-| ID | File | Model |
-|----|------|-------|
-| `cw:designer` | `designer.md` | Sonnet |
-
-**Purpose**: UX/UI design, wireframes, user flows
-
-**Capabilities**:
-- Wireframe creation
-- User flow mapping
-- Interaction design
-- UI specifications
+**Commands**: `/cw:auto` (expansion phase)
 
 ---
 
-#### Ideator
-| ID | File | Model |
-|----|------|-------|
-| `cw:ideator` | `ideator.md` | Sonnet |
+### Bootstrapper
+Initializes workflow environment.
 
-**Purpose**: Requirements discovery, Socratic dialogue, brainstorming
+| ID | File | Skills |
+|----|------|--------|
+| `cw:bootstrapper` | `bootstrapper.md` | - |
 
-**Capabilities**:
-- Requirement gathering
-- Brainstorming facilitation
-- Clarifying questions
-- Scope definition
+**Capabilities**: Project type detection, framework identification, directory setup, context manifest creation, Serena onboarding
+
+**Commands**: `/cw:init`, `/cw:start` (when `.caw/` missing)
 
 ---
 
-#### ComplianceChecker
-| ID | File | Model |
-|----|------|-------|
-| `cw:ComplianceChecker` | `compliance-checker.md` | Sonnet |
+### ComplianceChecker
+Validates adherence to project rules and conventions.
 
-**Purpose**: Guideline validation, convention checking
+| ID | File | Skills |
+|----|------|--------|
+| `cw:compliance-checker` | `compliance-checker.md` | quality-gate, knowledge-engine |
 
-**Capabilities**:
-- Rule validation
-- Convention checking
-- Style enforcement
-- Compliance reporting
+**Capabilities**: Rule validation, convention checking, style enforcement, compliance reporting
+
+**Commands**: `/cw:check`
 
 ---
 
@@ -166,79 +120,35 @@ Applies fixes based on review feedback.
 
 | Task Type | Recommended Agent |
 |-----------|-------------------|
-| Planning | `cw:Planner` |
-| Implementation | `cw:Builder` |
-| Code Review | `cw:Reviewer` |
-| Bug Fixing | `cw:Fixer` |
+| Planning | `cw:planner` |
+| Brainstorming | `cw:planner` (brainstorm mode) |
+| Implementation | `cw:builder` |
+| Code Review | `cw:reviewer` |
+| Bug Fixing | `cw:fixer` |
 | Architecture | `cw:architect` |
-| Research | `cw:Planner` + WebSearch |
-| Testing | `cw:Reviewer` + Bash |
-| Security | `cw:reviewer-opus` |
+| UX/UI Design | `cw:architect` (--ui mode) |
+| Requirements | `cw:analyst` |
+| Initialization | `cw:bootstrapper` |
+| Compliance | `cw:compliance-checker` |
 
-### By Complexity
+### By Command
 
-| Complexity | Planner | Builder | Reviewer | Fixer |
-|------------|---------|---------|----------|-------|
-| Low (≤0.3) | Haiku | Haiku | Haiku | Haiku |
-| Medium (0.3-0.7) | Sonnet | Sonnet | Sonnet | Sonnet |
-| High (>0.7) | Opus | Opus | Opus | Opus |
-
-## Usage Examples
-
-### Basic Agent Invocation
-
-```markdown
-## Using CAW Agent
-Task tool:
-  subagent_type: "cw:Builder"
-  model: "sonnet"
-  prompt: "Implement the login feature..."
-```
-
-### Tiered Agent Selection
-
-```markdown
-## Automatic tier selection based on complexity
-complexity = calculate_complexity(task)
-
-IF complexity <= 0.3:
-  agent = "cw:builder-haiku"
-ELIF complexity <= 0.7:
-  agent = "cw:builder-sonnet"
-ELSE:
-  agent = "cw:Builder"  # Opus default
-```
-
-## Integration Points
-
-### With Model Routing
-
-Tier selection integrates with model routing:
-
-```markdown
-tier = calculate_tier(task_complexity)
-agent = get_tiered_agent("builder", tier)
-// Returns: cw:builder-haiku, cw:builder-sonnet, or cw:Builder
-```
-
-### With Commands
-
-Commands use registry for agent selection:
-
-| Command | Primary Agent | Fallback Logic |
-|---------|---------------|----------------|
-| `/cw:next` | `cw:Builder` | Tier-based |
-| `/cw:review` | `cw:Reviewer` | Tier-based |
-| `/cw:fix` | `cw:Fixer` | Tier-based |
-| `/cw:qaloop` | Multiple | Tier-based |
-| `/cw:ultraqa` | `cw:reviewer-opus` | Deep analysis |
-| `/cw:research` | `cw:Planner` | WebSearch tools |
-
-## Schema Reference
-
-See [agent-registry.schema.json](./schemas/agent-registry.schema.json) for the complete schema definition.
+| Command | Primary Agent |
+|---------|---------------|
+| `/cw:start` | `cw:planner` |
+| `/cw:brainstorm` | `cw:planner` |
+| `/cw:next` | `cw:builder` |
+| `/cw:loop` | `cw:builder` |
+| `/cw:review` | `cw:reviewer` |
+| `/cw:qaloop` | `cw:reviewer` + `cw:fixer` |
+| `/cw:ultraqa` | `cw:reviewer` |
+| `/cw:fix` | `cw:fixer` |
+| `/cw:design` | `cw:architect` |
+| `/cw:auto` | `cw:analyst` + `cw:planner` + `cw:builder` |
+| `/cw:init` | `cw:bootstrapper` |
+| `/cw:check` | `cw:compliance-checker` |
 
 ## Related Documentation
 
-- [Model Routing](./model-routing.md) - Tier selection
+- [Complexity-Adaptive Behavior](./complexity-hints.md) - How agents adapt to task complexity
 - [Parallel Execution](./parallel-execution.md) - Concurrent agent execution

@@ -139,14 +139,19 @@ def main():
         caw_root = find_caw_root()
 
         if not caw_root:
-            # CAW not active - silently approve
-            print(json.dumps({"result": "approve"}))
+            print(json.dumps({
+                "result": "approve",
+                "additionalContext": "[CAW] No active workflow. Use /cw:go to start one."
+            }))
             return
 
         # Read task_plan.md
         plan_file = caw_root / "task_plan.md"
         if not plan_file.exists():
-            print(json.dumps({"result": "approve"}))
+            print(json.dumps({
+                "result": "approve",
+                "additionalContext": "[CAW] No task plan found. Use /cw:go to create one."
+            }))
             return
 
         content = plan_file.read_text(encoding="utf-8")

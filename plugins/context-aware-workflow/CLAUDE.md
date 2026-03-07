@@ -1,8 +1,8 @@
 # Module Context
 
 **Module:** Context-Aware Workflow (cw)
-**Version:** 2.1.0
-**Role:** Advanced agentic workflow orchestration with intelligent model routing.
+**Version:** 3.0.0
+**Role:** Automation-first workflow orchestration with complexity-adaptive agents.
 
 ---
 
@@ -19,48 +19,31 @@ python tests/test_plugin_structure.py
 ## Slash Commands
 
 ```bash
-# Core workflow
-/cw:start      # Initialize workflow
-/cw:status     # Check progress
-/cw:next       # Execute next step
-/cw:init       # Project initialization
-
-# Execution modes
-/cw:auto       # Autonomous execution
-/cw:pipeline   # Sequential stage execution
+# Primary automation
+/cw:go         # Full 9-stage pipeline (plan → build → review → fix)
+/cw:status     # Progress + cost/token analytics
 
 # Quality assurance
-/cw:review     # Run code review
-/cw:qaloop     # Review-Fix cycles
-/cw:ultraqa    # Auto QA with diagnosis
-/cw:check      # Run compliance checks
-/cw:fix        # Apply fixes
+/cw:review     # Unified QA (--loop, --build, --compliance, --fix, --gemini)
 
-# Planning & design
-/cw:brainstorm # Ideation session
-/cw:design     # UI/UX design workflow
-/cw:research   # Research task
+# Parallel execution
+/cw:parallel   # Swarm (default) or Agent Teams (--team)
 
-# Improvement & analysis
-/cw:evolve     # Self-improvement cycle
-/cw:analytics  # Token/cost analysis
+# Discovery & planning
+/cw:explore    # Brainstorm (--arch, --ui, --research)
 
-# Context & collaboration
-/cw:context    # Manage context variables
-/cw:sync       # Sync with external tools
-/cw:tidy       # Cleanup resources
-
-# Magic keywords: eco/ecomode, deepwork, quickfix, async
+# Utilities
+/cw:manage     # context, sync, merge, worktree, tidy, init, evolve, reflect
 ```
 
 ---
 
 # Agents & Skills
 
-18 agents (4 tiered x 3 tiers + 6 specialized). See `_shared/agent-registry.md` for full inventory.
-Model routing: `_shared/model-routing.md`. Authoring patterns: `skills/plugin-authoring/SKILL.md`.
+8 agents (complexity-adaptive, no tier variants). See `_shared/agent-registry.md` for inventory.
+Complexity signals: `_shared/complexity-hints.md`. Authoring patterns: `skills/plugin-authoring/SKILL.md`.
 
-18 skills: context-manager, progress-tracker, plan-detector, quality-gate, review-assistant, commit-discipline, quick-fix, insight-collector, pattern-learner, knowledge-base, decision-logger, hud, dashboard, dependency-analyzer, context-helper, evolve, research, serena-sync.
+11 skills: context-manager, progress-tracker, plan-detector, quality-gate, commit-discipline, insight-collector, pattern-learner, plugin-authoring, knowledge-engine, session-manager, learning-loop.
 
 ---
 
@@ -71,11 +54,10 @@ Model routing: `_shared/model-routing.md`. Authoring patterns: `skills/plugin-au
 - **DO** add tests in `tests/` for every new agent or skill.
 - **DO** ensure YAML frontmatter is valid before committing.
 - **DO** clear context variables when workflows finish.
-- **DO** create tier variants when agents need different complexity handling.
-- **DO** use Model Routing System for automatic tier selection.
+- **DO** let agents self-assess complexity using `_shared/complexity-hints.md`.
 
 ## Don'ts
 
 - **DON'T** rely on global state across agent executions.
 - **DON'T** use complex logic in Markdown; delegate to Python scripts.
-- **DON'T** hardcode model selection; use the routing system.
+- **DON'T** create model tier variants; agents adapt behavior internally.

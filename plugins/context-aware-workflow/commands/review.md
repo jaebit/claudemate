@@ -1,23 +1,83 @@
 ---
-description: Review implemented code for quality, best practices, and potential issues
-argument-hint: "[path] [--phase N] [--step N.M]"
+description: "Unified code review, QA, compliance checking, and auto-fix"
+argument-hint: "[path] [flags]"
 ---
 
-# /cw:review - Code Review
+# /cw:review - Code Review & QA
 
-Analyze implemented code for quality and potential issues using the Reviewer agent.
+Unified code review, QA loop, compliance checking, and auto-fix.
 
 ## Usage
 
 ```bash
-/cw:review                    # Review current phase
-/cw:review src/auth/          # Review directory
-/cw:review src/auth/jwt.ts    # Review file
-/cw:review --phase 2          # Review phase 2
-/cw:review --step 2.3         # Review specific step
-/cw:review --deep             # Deep analysis (Opus)
-/cw:review --focus security   # Focused review
+# Standard review
+/cw:review                        # Review current phase
+/cw:review src/auth/              # Review directory
+/cw:review src/auth/jwt.ts        # Review file
+/cw:review --phase 2              # Review phase 2
+/cw:review --step 2.3             # Review specific step
+/cw:review --deep                 # Deep analysis (Opus)
+/cw:review --focus security       # Focused review
+
+# QA loop mode
+/cw:review --loop                 # Build-Review-Fix cycles
+/cw:review --loop --max-cycles 5  # Custom max cycles
+/cw:review --loop --deep          # QA with Opus diagnosis
+
+# Build/test verification
+/cw:review --build                # Verify build and tests pass
+/cw:review --build --target test  # Test failures only
+
+# Compliance checking
+/cw:review --compliance           # CLAUDE.md rules + conventions
+/cw:review --compliance --rules   # Only CLAUDE.md rules
+/cw:review --compliance --docs    # Only documentation
+
+# Auto-fix
+/cw:review --fix                  # Auto-fix simple issues
+/cw:review --fix --deep           # Use Fixer agent for complex issues
+/cw:review --fix --interactive    # Review each fix
+
+# Combined
+/cw:review --all                  # Full review + compliance + build
+/cw:review --gemini               # Cross-model review via Gemini
 ```
+
+## Modes
+
+| Mode | Flag | Description |
+|------|------|-------------|
+| **Standard** | (default) | Code quality review via Reviewer agent |
+| **Deep** | `--deep` | Thorough analysis via Opus |
+| **Loop** | `--loop` | Automated Build → Review → Fix cycles |
+| **Build** | `--build` | Verify build/tests pass, diagnose failures |
+| **Compliance** | `--compliance` | CLAUDE.md rules and project conventions |
+| **Fix** | `--fix` | Auto-fix issues from review |
+| **All** | `--all` | Everything combined |
+| **Gemini** | `--gemini` | Cross-model review |
+
+## Flags
+
+| Flag | Description |
+|------|-------------|
+| `--phase N` | Review specific phase |
+| `--step N.M` | Review specific step |
+| `--deep` | Deep analysis (Opus) |
+| `--focus <area>` | Focused: security, performance, correctness |
+| `--loop` | QA loop mode (Build → Review → Fix) |
+| `--max-cycles N` | Max QA iterations (default: 3) |
+| `--severity <level>` | Min severity to fix: minor, major, critical |
+| `--build` | Verify build and tests |
+| `--target <type>` | Build target: build, test, lint, all |
+| `--compliance` | Compliance checking |
+| `--rules` | Only CLAUDE.md rules (with --compliance) |
+| `--docs` | Only documentation (with --compliance) |
+| `--conventions` | Only code patterns (with --compliance) |
+| `--fix` | Auto-fix issues |
+| `--interactive` | Review each fix (with --fix) |
+| `--dry-run` | Preview fixes only |
+| `--all` | Full review + compliance + build |
+| `--gemini` | Cross-model review |
 
 ## Scope Detection
 
@@ -28,14 +88,6 @@ Analyze implemented code for quality and potential issues using the Reviewer age
 | `--phase N` | All files modified in phase N |
 | `--step N.M` | Files from specific step |
 | `--all` | All files in task_plan.md |
-
-## Review Modes
-
-| Mode | Depth | Agent |
-|------|-------|-------|
-| Standard | Blocking issues | cw:Reviewer (Sonnet) |
-| Deep (`--deep`) | Thorough analysis | cw:reviewer-opus |
-| Focused (`--focus`) | Specific concern | Specialized |
 
 ## Review Categories
 
@@ -49,48 +101,105 @@ Analyze implemented code for quality and potential issues using the Reviewer age
 
 ## Severity Levels
 
-| Icon | Level | Meaning |
-|------|-------|---------|
-| 🔴 | Critical | Must fix - bugs, security |
-| 🟠 | Major | Should fix - significant |
-| 🟡 | Minor | Consider - improvements |
-| 🟢 | Suggestion | Optional - nice to have |
+| Level | Meaning |
+|-------|---------|
+| Critical | Must fix - bugs, security |
+| Major | Should fix - significant |
+| Minor | Consider - improvements |
+| Suggestion | Optional - nice to have |
+
+## QA Loop Mode (`--loop`)
+
+Automated Build → Review → Fix cycle that continues until quality criteria met.
+
+```
+BUILD → REVIEW → FIX → EXIT CHECK → (loop or exit)
+
+Exit Conditions:
+  No critical/major issues
+  Max cycles reached
+  Same issues 3 times (stalled)
+  Build failure persists
+```
+
+**Agent Selection:**
+
+| Phase | Standard | Deep (--deep) |
+|-------|----------|---------------|
+| Build | cw:Builder (Sonnet) | cw:Builder (Sonnet) |
+| Diagnose | cw:Reviewer (Sonnet) | cw:reviewer-opus |
+| Fix | cw:Fixer (Sonnet) | cw:Fixer (Opus) |
+
+**Stall Detection**: Issues hashed (`file_path + line_range + issue_type + severity`). Same hashes 3 cycles in a row triggers stall, requiring manual intervention.
+
+## Build Verification (`--build`)
+
+Detects and diagnoses build/test/lint failures with targeted fixes.
+
+```
+DETECT → DIAGNOSE → FIX → VERIFY → (loop or exit)
+```
+
+| Target | Detection |
+|--------|-----------|
+| Build | `npm run build`, `cargo build`, etc. |
+| Test | `npm test`, `pytest`, etc. |
+| Lint | `eslint`, `pylint`, etc. |
+
+## Compliance Mode (`--compliance`)
+
+| Check | Focus |
+|-------|-------|
+| (default) | Workflow structure + CLAUDE.md rules |
+| `--rules` | CLAUDE.md: naming, structure, forbidden patterns |
+| `--docs` | JSDoc, README, changelog |
+| `--conventions` | Imports, error handling, logging, tests |
+
+## Fix Mode (`--fix`)
+
+| Category | Auto-Fix | Notes |
+|----------|----------|-------|
+| constants | Yes | Magic numbers → NAMED_CONSTANTS |
+| docs | Yes | Generate JSDoc templates |
+| style | Yes | Run linter auto-fix |
+| imports | Yes | Organize imports |
+| naming | Semi | Suggest + confirm |
+| logic | `--deep` | Algorithm improvements via Fixer agent |
+| performance | `--deep` | Query optimization via Fixer agent |
+| security | `--deep` | Vulnerability fixes via Fixer agent |
 
 ## Output
 
 ```
-📋 Code Review Complete
+Code Review Complete
 
 Files reviewed: 3 | Time: 15s
 
 | Category | Score | Issues |
 |----------|-------|--------|
-| Correctness | 🟢 Good | 0 |
-| Code Quality | 🟡 Fair | 2 |
-| Security | 🟢 Good | 0 |
+| Correctness | Good | 0 |
+| Code Quality | Fair | 2 |
+| Security | Good | 0 |
 
-Overall: 🟢 Approved with suggestions
+Overall: Approved with suggestions
 
-📄 src/auth/jwt.ts
-  🟢 Clean token generation logic
-  🟡 Line 45: Extract magic number
-  🟡 Line 78: Batch DB queries
+src/auth/jwt.ts
+  Clean token generation logic
+  Line 45: Extract magic number
+  Line 78: Batch DB queries
 
-💡 Next: /cw:fix or /cw:next
+Next: /cw:review --fix or /cw:go --continue
 ```
 
-## Workflow Integration
+## State Files
 
-```
-/cw:next (Implement) → /cw:review (Check)
-                            ↓
-                    Pass: Next step
-                    Fail: Fix & re-review
-```
+- Standard review: `.caw/last_review.json`
+- QA loop: `.caw/qaloop_state.json`
+- Build verification: `.caw/ultraqa_state.json`
 
 ## Integration
 
-- **Reads**: task_plan.md, source files, config files
-- **Invokes**: Reviewer agent via Task tool
-- **Updates**: task_plan.md with review notes
-- **Suggests**: `/cw:fix`, `/cw:next`
+- **Reads**: `.caw/task_plan.md`, source files, config files
+- **Invokes**: Reviewer, Fixer, ComplianceChecker, Builder agents
+- **Updates**: `.caw/task_plan.md` with review notes
+- **Suggests**: `/cw:review --fix`, `/cw:go --continue`
