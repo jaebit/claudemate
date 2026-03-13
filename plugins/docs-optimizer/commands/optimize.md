@@ -12,9 +12,9 @@ Reduce token overhead in CLAUDE.md/AGENTS.md files using classification rules fr
 
 1. **Determine target files:**
    - If a path argument is provided, use that file directly
-   - If no argument, scan the project for all `CLAUDE.md` and `AGENTS.md` files:
-     ```bash
-     find . -name "CLAUDE.md" -o -name "AGENTS.md" | head -20
+   - If no argument, scan the project for all `CLAUDE.md` and `AGENTS.md` files using Glob:
+     ```
+     Glob pattern: "**/CLAUDE.md" and "**/AGENTS.md"
      ```
 
 2. **Check flags:**

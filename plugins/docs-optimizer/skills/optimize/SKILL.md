@@ -1,7 +1,6 @@
 ---
 name: optimize
-description: "Optimize a CLAUDE.md/AGENTS.md file using research-backed classification rules (arxiv 2602.11988v1)"
-forked-context: false
+description: "Optimize a CLAUDE.md/AGENTS.md file using research-backed classification rules (arxiv 2602.11988v1). Use this skill whenever the user wants to reduce token overhead, clean up agent instructions, shrink or audit CLAUDE.md/AGENTS.md bloat, compress documentation for AI agents, or improve instruction file efficiency — even if they don't say 'optimize' explicitly."
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 ---
 
@@ -36,7 +35,7 @@ Content that neither helps nor hurts, but wastes tokens:
 
 | Strategy | When | How |
 |----------|------|-----|
-| **Pointer** | Content exists in another file | Replace with 1-line reference: `See path/to/file` |
+| **Pointer** | Content exists in another file | Replace with 1-line reference: `See path/to/file`. If multiple sections become single-line pointers, consolidate them into one `## References` section |
 | **Skill** | Needed only during specific tasks | Move to `skills/*/SKILL.md` for on-demand loading |
 | **Delete** | Pure duplicate or auto-discoverable | Remove (source of truth already exists) |
 | **Merge** | Scattered Do's/Don'ts lists | Consolidate into single Constraints section |
@@ -44,8 +43,8 @@ Content that neither helps nor hurts, but wastes tokens:
 ## 5-Step Process
 
 ### Step 1: SCAN
-- Read the target file
-- Count total lines: `wc -l <file>`
+- Read the target file (use the Read tool — line numbers are included automatically)
+- Note total line count from the last line number
 - List each `##` section with its line count
 
 ### Step 2: CLASSIFY
