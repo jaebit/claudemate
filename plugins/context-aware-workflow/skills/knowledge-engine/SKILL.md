@@ -10,19 +10,19 @@ Unified knowledge management combining project knowledge capture, architectural 
 
 ## Triggers
 
-### Knowledge Capture (from knowledge-base)
+### Knowledge Capture
 1. Agent questions ("How does X work?") → search knowledge first
 2. Session completion → auto-capture important findings
 3. Explicit request ("Save this information")
 4. Domain rules discovered during implementation
 
-### Decision Recording (from decision-logger)
+### Decision Recording
 1. AskUserQuestion response contains decision
 2. Architecture choice discussion completed
 3. Trade-off analysis completed
 4. Explicit request ("Record this decision")
 
-### Review Checklist (from review-assistant)
+### Review Checklist
 1. /cw:review execution
 2. Phase completion review
 3. Pre-merge review

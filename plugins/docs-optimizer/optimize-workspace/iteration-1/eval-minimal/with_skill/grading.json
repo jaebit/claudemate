@@ -1,0 +1,9 @@
+{
+  "eval_name": "minimal-claude-md-no-over-optimization",
+  "configuration": "with_skill",
+  "expectations": [
+    {"text": "Core commands preserved", "passed": true, "evidence": "pytest, mypy, ruff all present"},
+    {"text": "Rules preserved", "passed": true, "evidence": "'structlog' present on line 15"},
+    {"text": "No over-optimization", "passed": true, "evidence": "16 lines output, unchanged from input"}
+  ]
+}

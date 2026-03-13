@@ -1,0 +1,11 @@
+{
+  "eval_name": "mixed-claude-md-optimization",
+  "configuration": "with_skill",
+  "expectations": [
+    {"text": "Build commands preserved", "passed": true, "evidence": "'cargo test' present on line 11"},
+    {"text": "Constraints preserved", "passed": true, "evidence": "'50ms p99' present on line 23"},
+    {"text": "REST conventions removed", "passed": true, "evidence": "No '## REST API Conventions' header found"},
+    {"text": "Dependencies list removed", "passed": false, "evidence": "'## Dependencies' header still exists on line 43, though content replaced with pointer 'See Cargo.toml'"},
+    {"text": "20%+ line reduction", "passed": true, "evidence": "86 -> 51 lines (42% reduction)"}
+  ]
+}

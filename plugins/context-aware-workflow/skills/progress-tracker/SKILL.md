@@ -2,21 +2,29 @@
 name: progress-tracker
 description: Tracks workflow progress metrics including completion percentage, time spent, and step status
 allowed-tools: Read, Write, Bash
-forked-context: true
-forked-context-returns: |
-  progress: Progress %
-  current: { phase: N, step: X.Y }
-  eta: Estimated completion time
-  visualization: Compact progress bar
-hooks:
-  StepStarted: record_start
-  StepCompleted: record_completion
-  PhaseCompleted: generate_summary
+context: fork
 ---
 
 # Progress Tracker
 
 Track and visualize workflow progress with detailed metrics.
+
+## Forked Context Returns
+
+```yaml
+progress: Progress %
+current: { phase: N, step: X.Y }
+eta: Estimated completion time
+visualization: Compact progress bar
+```
+
+## Event Hooks
+
+| Event | Action |
+|-------|--------|
+| StepStarted | record_start |
+| StepCompleted | record_completion |
+| PhaseCompleted | generate_summary |
 
 ## Triggers
 

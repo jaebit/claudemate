@@ -10,7 +10,7 @@ Analyzes codebase to extract and document project-specific coding patterns.
 
 ## Triggers
 
-1. `/cw:start` → auto-analyze at workflow start
+1. `/cw:go` → auto-analyze at workflow start
 2. Agent request ("What are the patterns?")
 3. Pattern refresh ("Re-analyze patterns")
 4. Before new file creation
@@ -103,8 +103,8 @@ Cache: .caw/patterns/.pattern-cache.json
 ## Integration
 
 - **quality-gate**: Uses patterns in conventions check
-- **review-assistant**: Generates pattern-based checklist
-- **context-helper**: Provides pattern docs as context
+- **knowledge-engine**: Generates pattern-based review checklist
+- **session-manager**: Provides pattern docs as context
 - **Agents**: Builder follows, Reviewer checks compliance
 
 ## Boundaries

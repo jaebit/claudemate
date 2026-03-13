@@ -2,18 +2,20 @@
 name: learning-loop
 description: Continuous improvement through Ralph Loop reflection, instinct evolution, integrated research, and cross-session memory sync
 allowed-tools: Read, Write, Glob, Grep, Bash, WebSearch, WebFetch
-mcp_servers:
-  - serena
-  - context7
 ---
 
 # Learning Loop
 
 Combines Ralph Loop continuous improvement, instinct evolution, integrated research, and Serena memory synchronization. Cooperates with Claude Code's auto memory system.
 
+## MCP Servers
+
+- `serena` — Semantic code analysis, symbol search, memory sync
+- `context7` — Library documentation lookup
+
 ## Components
 
-### Ralph Loop (from reflect)
+### Ralph Loop
 REFLECT → ANALYZE → LEARN → PLAN → HABITUATE cycle.
 - Reflect: Task summary, outcome, duration, blockers
 - Analyze: What worked/didn't, root causes, patterns
@@ -21,19 +23,19 @@ REFLECT → ANALYZE → LEARN → PLAN → HABITUATE cycle.
 - Plan: Action items by priority, process changes
 - Habituate: Update .caw/learnings.md, create Serena memories
 
-### Instinct Evolution (from evolve)
+### Instinct Evolution
 Transform high-confidence instincts (>=0.6) into reusable components.
 - Types: command (multi-step workflows), skill (auto-activated), agent (complex reasoning)
 - Output: `.caw/evolved/{commands,skills,agents}/`
 - State: `.caw/instincts/index.json`
 
-### Integrated Research (from research)
+### Integrated Research
 Combines internal codebase analysis with external documentation research.
 - Internal: Serena symbol search, pattern search, reference analysis
 - External: WebSearch, WebFetch, Context7 library docs
 - Synthesis: Compare current vs recommended, priority-ordered recommendations
 
-### Memory Sync (from serena-sync)
+### Memory Sync
 Bidirectional sync between CAW workflow state and Serena memory.
 - To Serena: knowledge, insights, learnings, lessons
 - From Serena: domain_knowledge, workflow_patterns, session backup

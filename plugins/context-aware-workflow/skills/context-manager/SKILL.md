@@ -2,7 +2,6 @@
 name: context-manager
 description: Manage and optimize context window usage through file analysis, packing, and pruning
 allowed-tools: Read, Glob, Grep, Bash
-forked-context: false
 ---
 
 # Context Manager Skill
@@ -42,6 +41,6 @@ from prune_context import analyze_files
 ## Integration
 
 Used by:
-- Session Persister skill for session state analysis
+- Session Manager skill for session state analysis
 - Progress Tracker skill for completion tracking
 - Quality Gate skill for context health checks

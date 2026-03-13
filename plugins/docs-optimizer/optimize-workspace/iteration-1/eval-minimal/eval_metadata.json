@@ -1,0 +1,10 @@
+{
+  "eval_id": 2,
+  "eval_name": "minimal-claude-md-no-over-optimization",
+  "prompt": "Optimize this minimal CLAUDE.md file following the skill's 5-step process",
+  "assertions": [
+    {"id": "A12", "text": "All 3 core commands preserved (pytest, mypy, ruff)", "type": "content_present", "pattern": "pytest|mypy|ruff"},
+    {"id": "A13", "text": "Rules preserved (structlog mentioned)", "type": "content_present", "pattern": "structlog"},
+    {"id": "A14", "text": "No over-optimization (output >= 10 lines)", "type": "line_count_min", "min_lines": 10}
+  ]
+}

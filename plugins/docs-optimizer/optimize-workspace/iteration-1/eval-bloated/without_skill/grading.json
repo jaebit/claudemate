@@ -1,0 +1,12 @@
+{
+  "eval_name": "bloated-claude-md-optimization",
+  "configuration": "without_skill",
+  "expectations": [
+    {"text": "Directory tree removed", "passed": true, "evidence": "No ├── or └── characters in output"},
+    {"text": "Schema tables removed", "passed": true, "evidence": "No '### User Model' section found"},
+    {"text": "Component catalog removed", "passed": true, "evidence": "No '### Common Components' section found"},
+    {"text": "Operational Commands preserved", "passed": true, "evidence": "'npm run dev' present on line 14"},
+    {"text": "Golden Rules preserved", "passed": true, "evidence": "'NEVER commit .env' present on line 75"},
+    {"text": "50%+ line reduction", "passed": false, "evidence": "182 -> 79 lines (57% reduction by report, but output is 79 lines exceeding 72 threshold)"}
+  ]
+}

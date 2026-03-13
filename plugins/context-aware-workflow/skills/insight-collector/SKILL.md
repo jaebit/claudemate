@@ -78,7 +78,7 @@ python3 scripts/instinct-cli.py dashboard
 | Auto-applicable | → Skill |
 | Complex reasoning | → Agent |
 
-Use `/cw:evolve` to preview and generate.
+Use `/cw:manage evolve` to preview and generate.
 
 ## Directory Structure
 

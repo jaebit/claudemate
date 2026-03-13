@@ -1,0 +1,43 @@
+{
+  "skill_name": "optimize",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "Optimize this bloated CLAUDE.md file following the skill's 5-step process",
+      "expected_output": "Concise CLAUDE.md with directory tree, schema tables, component catalog removed; operational commands and golden rules preserved; 50%+ reduction",
+      "files": ["test-inputs/bloated-CLAUDE.md"],
+      "assertions": [
+        {"id": "A1", "text": "Directory tree removed", "type": "content_absent", "pattern": "├──"},
+        {"id": "A2", "text": "Schema tables removed", "type": "section_absent", "pattern": "### User Model"},
+        {"id": "A3", "text": "Component catalog removed", "type": "section_absent", "pattern": "### Common Components"},
+        {"id": "A4", "text": "Operational Commands preserved", "type": "content_present", "pattern": "npm run dev"},
+        {"id": "A5", "text": "Golden Rules preserved", "type": "content_present", "pattern": "NEVER.*commit.*\\.env"},
+        {"id": "A6", "text": "50%+ line reduction", "type": "line_count_max", "max_lines": 72}
+      ]
+    },
+    {
+      "id": 1,
+      "prompt": "Optimize this mixed CLAUDE.md file following the skill's 5-step process",
+      "expected_output": "CLAUDE.md with build commands and constraints preserved; REST conventions removed; dependency details migrated to pointer or removed; 20%+ reduction",
+      "files": ["test-inputs/mixed-CLAUDE.md"],
+      "assertions": [
+        {"id": "A7", "text": "Build commands preserved", "type": "content_present", "pattern": "cargo test"},
+        {"id": "A8", "text": "Constraints preserved", "type": "content_present", "pattern": "50ms p99"},
+        {"id": "A9", "text": "REST conventions removed", "type": "section_absent", "pattern": "## REST API Conventions"},
+        {"id": "A10", "text": "Dependencies migrated to pointer or removed", "type": "content_absent", "pattern": "tokio.*1\\.35|rdkafka.*0\\.36"},
+        {"id": "A11", "text": "20%+ line reduction", "type": "line_count_max", "max_lines": 66}
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Optimize this minimal CLAUDE.md file following the skill's 5-step process",
+      "expected_output": "File largely unchanged - all commands and rules preserved, no over-optimization",
+      "files": ["test-inputs/minimal-CLAUDE.md"],
+      "assertions": [
+        {"id": "A12", "text": "Core commands preserved", "type": "content_present", "pattern": "pytest|mypy|ruff"},
+        {"id": "A13", "text": "Rules preserved", "type": "content_present", "pattern": "structlog"},
+        {"id": "A14", "text": "No over-optimization", "type": "line_count_min", "min_lines": 10}
+      ]
+    }
+  ]
+}

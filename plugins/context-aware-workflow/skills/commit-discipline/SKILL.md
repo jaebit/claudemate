@@ -2,16 +2,20 @@
 name: commit-discipline
 description: Enforces Kent Beck's Tidy First commit separation rules
 allowed-tools: Bash, Read, Grep
-forked-context: true
-forked-context-returns: |
-  status: VALID | INVALID | MIXED_CHANGE_DETECTED
-  change_type: tidy | build | mixed
-  suggestion: [commit split recommendation if mixed]
+context: fork
 ---
 
 # Commit Discipline
 
 Enforces Tidy First: separate structural and behavioral changes.
+
+## Forked Context Returns
+
+```yaml
+status: VALID | INVALID | MIXED_CHANGE_DETECTED
+change_type: tidy | build | mixed
+suggestion: [commit split recommendation if mixed]
+```
 
 > "Never mix structural and behavioral changes in the same commit."
 > — Kent Beck, Tidy First

@@ -2,25 +2,31 @@
 name: quality-gate
 description: Validates quality criteria before marking workflow steps as complete
 allowed-tools: Read, Bash, Glob, Grep
-forked-context: true
-forked-context-returns: |
-  status: PASSED | FAILED | PASSED_WITH_WARNINGS
-  summary: { passed: N, warnings: N, failed: N }
-  key_errors: [Max 3 key error messages]
-  action_needed: [Next step suggestions]
-triggers:
-  BuilderComplete: { action: validate, required: true }
-  ManualRequest: { action: validate, required: false }
-  PhaseTransition: { action: validate, required: true }
+context: fork
 ---
 
 # Quality Gate
 
 Automated quality validation before step completion.
 
+## Forked Context Returns
+
+```yaml
+status: PASSED | FAILED | PASSED_WITH_WARNINGS
+summary: { passed: N, warnings: N, failed: N }
+key_errors: [Max 3 key error messages]
+action_needed: [Next step suggestions]
+```
+
 ## Triggers
 
-Activates when: Builder completes step, `/cw:next` finishes, manual request, phase transition
+Activates when: Builder completes step, phase transition, manual request
+
+| Event | Action | Required |
+|-------|--------|----------|
+| BuilderComplete | validate | Yes |
+| ManualRequest | validate | No |
+| PhaseTransition | validate | Yes |
 
 ## Quality Checks
 
@@ -69,7 +75,7 @@ mixed_change: FAIL → "Split into separate [tidy] and [feat] commits"
 
 ❌ Quality Gate: Step 2.1 FAILED (Tidy First Violation)
   Mixed changes: structural (rename, extract) + behavioral (new function)
-  → Split: /cw:tidy --split or manual separation
+  → Split: /cw:manage tidy --split or manual separation
 ```
 
 ## Framework Detection

@@ -513,5 +513,108 @@ class TestCrossPlatformCompatibility(unittest.TestCase):
                             )
 
 
+class TestSkillFrontmatterFields(unittest.TestCase):
+    """Test that SKILL.md frontmatter only uses recognized fields."""
+
+    RECOGNIZED_FIELDS = {"name", "description", "allowed-tools", "context"}
+
+    def get_skill_frontmatters(self):
+        """Parse frontmatter from all SKILL.md files."""
+        skills_dir = PLUGIN_ROOT / "skills"
+        results = []
+        for skill_dir in sorted(skills_dir.iterdir()):
+            if not skill_dir.is_dir():
+                continue
+            skill_md = skill_dir / "SKILL.md"
+            if not skill_md.exists():
+                continue
+            content = skill_md.read_text(encoding="utf-8")
+            parts = content.split("---", 2)
+            if len(parts) >= 3:
+                frontmatter = parts[1].strip()
+                fields = set()
+                for line in frontmatter.splitlines():
+                    if ":" in line and not line.startswith(" ") and not line.startswith("\t"):
+                        key = line.split(":", 1)[0].strip()
+                        if key:
+                            fields.add(key)
+                results.append((skill_dir.name, fields, frontmatter))
+        return results
+
+    def test_no_non_standard_frontmatter_fields(self):
+        """SKILL.md frontmatter should only use recognized fields."""
+        for skill_name, fields, _ in self.get_skill_frontmatters():
+            non_standard = fields - self.RECOGNIZED_FIELDS
+            self.assertEqual(
+                non_standard, set(),
+                f"{skill_name}/SKILL.md has non-standard frontmatter fields: {non_standard}"
+            )
+
+    def test_forked_context_uses_correct_syntax(self):
+        """Skills should use 'context: fork', not 'forked-context: true'."""
+        for skill_name, fields, frontmatter in self.get_skill_frontmatters():
+            self.assertNotIn(
+                "forked-context",
+                fields,
+                f"{skill_name}/SKILL.md uses 'forked-context' instead of 'context: fork'"
+            )
+            self.assertNotIn(
+                "forked-context-returns",
+                fields,
+                f"{skill_name}/SKILL.md has 'forked-context-returns' in frontmatter (move to body)"
+            )
+
+
+class TestSkillStaleReferences(unittest.TestCase):
+    """Test that SKILL.md files don't reference removed commands or skills."""
+
+    REMOVED_COMMANDS = [
+        "/cw:start", "/cw:next", "/cw:design", "/cw:tidy",
+        "/cw:evolve", "/cw:reflect", "/cw:init",
+    ]
+    REMOVED_SKILLS = [
+        "review-assistant", "context-helper", "session-persister",
+        "knowledge-base", "decision-logger", "hud", "dashboard",
+    ]
+
+    def get_skill_contents(self):
+        """Read all SKILL.md file contents."""
+        skills_dir = PLUGIN_ROOT / "skills"
+        results = []
+        for skill_dir in sorted(skills_dir.iterdir()):
+            if not skill_dir.is_dir():
+                continue
+            skill_md = skill_dir / "SKILL.md"
+            if skill_md.exists():
+                content = skill_md.read_text(encoding="utf-8")
+                results.append((skill_dir.name, content))
+        return results
+
+    def test_no_removed_command_references(self):
+        """SKILL.md files should not reference removed commands."""
+        for skill_name, content in self.get_skill_contents():
+            for cmd in self.REMOVED_COMMANDS:
+                # Match exact command (e.g., /cw:start but not /cw:status)
+                pattern = re.escape(cmd) + r'(?:\s|`|$|"|\))'
+                match = re.search(pattern, content)
+                self.assertIsNone(
+                    match,
+                    f"{skill_name}/SKILL.md references removed command '{cmd}'"
+                )
+
+    def test_no_removed_skill_references(self):
+        """SKILL.md files should not reference removed/merged skills by name."""
+        for skill_name, content in self.get_skill_contents():
+            for removed in self.REMOVED_SKILLS:
+                # Skip if the reference is about the removal itself
+                # Look for references like "review-assistant" as a skill name
+                pattern = r'(?:skill|from|by)\b.*?\b' + re.escape(removed)
+                match = re.search(pattern, content, re.IGNORECASE)
+                self.assertIsNone(
+                    match,
+                    f"{skill_name}/SKILL.md references removed skill '{removed}'"
+                )
+
+
 if __name__ == "__main__":
     unittest.main()

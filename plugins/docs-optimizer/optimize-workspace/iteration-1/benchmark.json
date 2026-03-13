@@ -1,0 +1,54 @@
+{
+  "skill_name": "optimize",
+  "iteration": 1,
+  "configurations": [
+    {
+      "name": "with_skill",
+      "pass_rate": 0.929,
+      "mean_tokens": 17407,
+      "stddev_tokens": 1781,
+      "mean_duration_seconds": 41.5,
+      "stddev_duration_seconds": 21.4
+    },
+    {
+      "name": "without_skill",
+      "pass_rate": 0.929,
+      "mean_tokens": 14534,
+      "stddev_tokens": 1366,
+      "mean_duration_seconds": 28.9,
+      "stddev_duration_seconds": 10.5
+    }
+  ],
+  "delta": {
+    "pass_rate": 0.0,
+    "tokens": "+19.8%",
+    "duration": "+43.6%"
+  },
+  "evals": [
+    {
+      "eval_name": "bloated-claude-md-optimization",
+      "with_skill": {"pass_rate": 1.0, "passed": 6, "total": 6, "tokens": 18881, "duration_seconds": 62.7},
+      "without_skill": {"pass_rate": 0.833, "passed": 5, "total": 6, "tokens": 15891, "duration_seconds": 38.2},
+      "notes": "with_skill achieved 73% reduction (50 lines) vs without_skill 57% (79 lines). Skill produced more aggressive but correct optimization."
+    },
+    {
+      "eval_name": "mixed-claude-md-optimization",
+      "with_skill": {"pass_rate": 0.8, "passed": 4, "total": 5, "tokens": 17910, "duration_seconds": 70.3},
+      "without_skill": {"pass_rate": 1.0, "passed": 5, "total": 5, "tokens": 14551, "duration_seconds": 30.9},
+      "notes": "with_skill kept ## Dependencies header as pointer instead of fully removing. Baseline was more aggressive in removal."
+    },
+    {
+      "eval_name": "minimal-claude-md-no-over-optimization",
+      "with_skill": {"pass_rate": 1.0, "passed": 3, "total": 3, "tokens": 15430, "duration_seconds": 31.5},
+      "without_skill": {"pass_rate": 1.0, "passed": 3, "total": 3, "tokens": 13160, "duration_seconds": 17.5},
+      "notes": "Both correctly identified file as already optimal. No changes made."
+    }
+  ],
+  "analyst_observations": [
+    "with_skill excels at the bloated case: 73% reduction vs 57% baseline, while preserving all high-value content. The structured classification framework drives more aggressive removal.",
+    "with_skill's Pointer migration strategy caused A10 failure: it converts Dependencies to a See-Cargo.toml pointer instead of removing the section entirely. This is arguably correct behavior (the pointer is useful) but fails the strict assertion.",
+    "Both configurations handle the minimal case identically — this assertion set is non-discriminating for already-optimized files.",
+    "with_skill costs ~20% more tokens and ~44% more time due to the 5-step structured process (SCAN/CLASSIFY/PLAN/REWRITE/VERIFY). The overhead is meaningful but the quality improvement on bloated files justifies it.",
+    "Baseline over-removed content in mixed case: dropped Monitoring URLs (Grafana dashboard) which are actionable references. with_skill correctly preserved these."
+  ]
+}

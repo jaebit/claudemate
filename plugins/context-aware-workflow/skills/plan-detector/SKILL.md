@@ -2,16 +2,17 @@
 name: plan-detector
 description: Detects Plan Mode completion and suggests starting CAW workflow. Use when ExitPlanMode is called or when a plan file is created/updated in the configured plansDirectory (resolves from settings).
 allowed-tools: Read, Glob, AskUserQuestion
-hooks:
-  ExitPlanMode:
-    action: suggest_caw_workflow
-    priority: 1
-    condition: "requires .caw/ directory"
 ---
 
 # Plan Detector
 
 Automatically detect Plan Mode completion and offer to start a structured CAW workflow.
+
+## Event Hook
+
+| Event | Action | Priority | Condition |
+|-------|--------|----------|-----------|
+| ExitPlanMode | suggest_caw_workflow | 1 | requires .caw/ directory |
 
 ## Triggers
 
@@ -75,8 +76,8 @@ Analysis result:
   [✅/⚠️] Technical decisions: [documented/not found]
 
 CAW Workflow Options:
-[1] Auto start - Execute /cw:start --from-plan
-[2] Design first - Start after detailed design with /cw:design
+[1] Auto start - Execute /cw:go
+[2] Design first - Start after detailed design with /cw:explore --arch
 [3] Manual proceed - Start manually later
 [4] Edit plan - Return to Plan Mode
 ```
@@ -87,8 +88,8 @@ Based on user selection:
 
 | Option | Action |
 |--------|--------|
-| 1 | Invoke `/cw:start --from-plan` |
-| 2 | Invoke `/cw:design --all` |
+| 1 | Invoke `/cw:go` |
+| 2 | Invoke `/cw:explore --arch` |
 | 3 | Display reminder message |
 | 4 | Suggest re-entering Plan Mode |
 
@@ -97,7 +98,7 @@ Based on user selection:
 - **Hook Trigger**: PostToolUse (ExitPlanMode)
 - **Pattern Reference**: `patterns.md` for plan file recognition
 - **Output**: User decision → appropriate command invocation
-- **Next Steps**: `/cw:start`, `/cw:design`, or manual workflow
+- **Next Steps**: `/cw:go`, `/cw:explore --arch`, or manual workflow
 
 ## Output Messages
 
@@ -125,7 +126,7 @@ Plan file was found but is not suitable for CAW workflow:
 
 Recommendations:
   • Write more detailed implementation stages in Plan Mode
-  • Or start fresh with /cw:start "task description"
+  • Or start fresh with /cw:go "task description"
 ```
 
 ## Directory Structure

@@ -1,0 +1,12 @@
+{
+  "eval_id": 1,
+  "eval_name": "mixed-claude-md-optimization",
+  "prompt": "Optimize this mixed CLAUDE.md file following the skill's 5-step process",
+  "assertions": [
+    {"id": "A7", "text": "Build & Test commands preserved (cargo test present)", "type": "content_present", "pattern": "cargo test"},
+    {"id": "A8", "text": "Constraints preserved (50ms p99 latency requirement)", "type": "content_present", "pattern": "50ms p99"},
+    {"id": "A9", "text": "REST API Conventions section removed (generic knowledge)", "type": "section_absent", "pattern": "## REST API Conventions"},
+    {"id": "A10", "text": "Dependencies list removed or significantly reduced", "type": "section_absent", "pattern": "## Dependencies"},
+    {"id": "A11", "text": "At least 20% line reduction (output <= 66 lines from 82)", "type": "line_count_max", "max_lines": 66}
+  ]
+}
