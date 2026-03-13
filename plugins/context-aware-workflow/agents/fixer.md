@@ -7,7 +7,8 @@ whenToUse: |
   - /cw:fix --deep for comprehensive refactoring
   - Multi-file changes, performance/architecture/logic improvements
   - Security vulnerability remediation
-color: orange
+model: sonnet
+color: yellow
 tools:
   - Read
   - Write

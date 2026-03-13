@@ -7,6 +7,7 @@ whenToUse: |
   - /cw:next to proceed with implementation
   - Specific step implementation
   - TDD-based code changes
+model: sonnet
 color: green
 tools:
   - Read

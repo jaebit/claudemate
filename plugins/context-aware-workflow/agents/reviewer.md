@@ -7,6 +7,7 @@ whenToUse: |
   - Phase completion quality validation
   - Security audits, architecture reviews
   - Specific file review
+model: sonnet
 color: blue
 tools:
   - Read
