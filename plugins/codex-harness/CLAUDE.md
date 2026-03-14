@@ -1,37 +1,10 @@
-# Module Context
+# Codex Harness
 
-**Module:** Codex Harness
-**Version:** 1.0.0
-**Role:** MCP-native Codex integration for Claude Code.
+MCP-native Codex integration. Requires Codex CLI with `codex mcp-server` support.
 
-## Prerequisites
+## MCP Tools
 
-- Codex CLI installed and authenticated
-- `codex mcp-server` support (Codex App Server version)
-
----
-
-# Architecture
-
-## MCP Server
-
-Declared in `plugin.json`. Auto-starts on plugin load, exposing two MCP tools:
-
-- **`codex`**: Start a new session (prompt, model, approval-policy, sandbox, reasoning-effort)
-- **`codex-reply`**: Continue an existing session (thread_id, message)
-
-## CLI Commands (2)
-
-Only cloud features not exposed via MCP:
-
-- **cloud** (`commands/cloud.md`): `codex cloud --env <id> "<task>"`
-- **apply** (`commands/apply.md`): `codex apply <task_id>`
-
----
-
-# MCP Tool Parameters
-
-## `codex` tool
+**`codex`** — Start session
 
 | Parameter | Type | Default | Values |
 |-----------|------|---------|--------|
@@ -41,33 +14,24 @@ Only cloud features not exposed via MCP:
 | `sandbox` | string | read-only | read-only, workspace-write, full-access |
 | `reasoning-effort` | string | medium | low, medium, high |
 
-## `codex-reply` tool
+**`codex-reply`** — Continue session
 
 | Parameter | Type | Default | Values |
 |-----------|------|---------|--------|
 | `thread_id` | string | (required) | Thread ID from previous `codex` call |
 | `message` | string | (required) | Follow-up message |
 
----
+## CLI Commands
 
-# Constraints
+Only for features not exposed via MCP:
 
-## MCP-First Routing
+- **cloud**: `codex cloud --env <id> "<task>"`
+- **apply**: `codex apply <task_id>`
 
-- **DO** rely on MCP tools (`codex`, `codex-reply`) for all standard Codex operations.
-- **DON'T** wrap `codex exec` in Bash when the MCP `codex` tool can do the same — even if the user explicitly asks for Bash execution. MCP routing preserves thread IDs for session continuity and provides structured error handling that raw CLI subprocess calls lose.
+## Constraints
 
-## Session Continuity
+**MCP-First**: Always use MCP tools over Bash `codex exec` — even if user asks for Bash. MCP preserves thread IDs and structured error handling.
 
-- **DO** use `codex-reply` with the `thread_id` returned from the initial `codex` call for multi-turn conversations. This maintains Codex's full context across turns.
-- **DON'T** make separate `codex` calls for follow-up questions — this creates stateless sessions and loses prior context.
+**Session Continuity**: Use `codex-reply` with `thread_id` for follow-ups. Never make separate `codex` calls for the same conversation.
 
-## Sandbox Safety
-
-- **DO** default to `sandbox: "read-only"` for all operations.
-- **DON'T** escalate to `workspace-write` or `full-access` without first explaining the permission change to the user and receiving explicit confirmation. File modification tasks require this gate — acknowledge the write requirement, present the sandbox options, and wait for user approval before proceeding.
-
-## CLI Boundary
-
-- **DO** keep CLI commands (`cloud`, `apply`) only for features not available via MCP.
-- **DON'T** add CLI wrapper commands for features the MCP server already exposes.
+**Sandbox Safety**: Default `read-only`. Escalating to `workspace-write` or `full-access` requires explicit user confirmation before proceeding.
