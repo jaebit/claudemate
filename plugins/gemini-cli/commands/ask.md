@@ -11,18 +11,25 @@ Execute general queries using Google Gemini CLI in headless mode.
 ## Instructions
 
 1. Get the user's question from the arguments
-2. Run Gemini CLI with the following command:
+2. Check if the question relates to the current project by looking for code/project-related keywords
+3. Run Gemini CLI:
 
+For general questions:
 ```bash
 gemini -p "<user_question>"
 ```
 
-3. Display the result to the user
+For project-related questions (when the question references files, code, or architecture), include project context:
+```bash
+gemini -p "Context: I am working in a project at $(pwd). Here is relevant context:
+$(git log --oneline -5 2>/dev/null)
 
-## Options
+Question: <user_question>
 
-- Mode: Headless (`-p` flag for prompt)
-- Working directory: Current directory
+Provide a practical, actionable answer."
+```
+
+4. Display the result to the user
 
 ## Usage Examples
 

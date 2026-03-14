@@ -11,31 +11,26 @@ Generate release notes from git commits using Google Gemini CLI.
 ## Instructions
 
 1. Get the tag from arguments
-2. If no tag specified, try to use the most recent tag:
+2. Determine the commit range:
 
+If a tag is provided as argument:
 ```bash
-git describe --tags --abbrev=0
+git log --oneline <tag>..HEAD | gemini -p "Generate professional release notes from these commits. Group changes by category (Features, Bug Fixes, Improvements, Breaking Changes). Use markdown format with bullet points. Include a brief summary at the top. If commits follow conventional commit format, use the type prefixes to categorize accurately."
 ```
 
-3. Get commits since the specified tag:
-
+If no tag specified, try to find the most recent tag:
 ```bash
-git log --oneline <tag>..HEAD | gemini -p "Generate professional release notes from these commits. Group changes by category (Features, Bug Fixes, Improvements, Breaking Changes). Use markdown format with bullet points. Include a brief summary at the top."
+git describe --tags --abbrev=0 2>/dev/null
 ```
 
-4. If no tag exists, use last 20 commits:
+If a tag was found, use commits since that tag (same command as above with the discovered tag).
 
+If no tags exist at all, use the full commit history (not just last 20) to generate comprehensive release notes:
 ```bash
-git log --oneline -20 | gemini -p "Generate professional release notes from these commits. Group changes by category (Features, Bug Fixes, Improvements, Breaking Changes). Use markdown format with bullet points. Include a brief summary at the top."
+git log --oneline | gemini -p "Generate professional release notes from these commits. Group changes by version milestones where version patterns are visible in commit messages. For each version group, categorize by: Features, Bug Fixes, Improvements, Breaking Changes. Use markdown format with bullet points. Include a brief summary at the top."
 ```
 
-5. Display the release notes to the user
-
-## Options
-
-- Mode: Headless (`-p` flag for prompt)
-- Input: Git commit log piped to Gemini
-- Output: Markdown formatted release notes
+3. Display the release notes to the user
 
 ## Usage Examples
 
@@ -45,20 +40,8 @@ git log --oneline -20 | gemini -p "Generate professional release notes from thes
 /gemini:release
 ```
 
-## Output Format
-
-The generated release notes will include:
-
-- **Summary**: Brief overview of the release
-- **Features**: New functionality added
-- **Bug Fixes**: Issues resolved
-- **Improvements**: Enhancements to existing features
-- **Breaking Changes**: Changes that may affect existing users
-
 ## Notes
 
 - Provide a git tag as the starting point for the release notes
-- If no tag is specified, uses the most recent tag or last 20 commits
+- If no tag is specified, uses the most recent tag or full commit history
 - This command requires a git repository with commit history
-- For code review, use `/gemini:review`
-- For commit messages, use `/gemini:commit`

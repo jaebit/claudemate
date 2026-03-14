@@ -12,19 +12,25 @@ Generate comprehensive documentation for code using Google Gemini CLI.
 
 1. Get the file path from arguments
 2. If no file specified, inform the user and exit
-3. Run Gemini CLI to generate documentation:
+3. Detect file type from extension to tailor the documentation prompt
+4. Run Gemini CLI to generate documentation:
 
+For Python files (.py):
 ```bash
-cat <file> | gemini -p "Generate comprehensive documentation for this code. Include: 1) Overview and purpose, 2) Function/class descriptions with parameters and return values, 3) Usage examples, 4) Important notes or caveats. Use markdown format."
+cat <file> | gemini -p "Generate comprehensive documentation for this Python code. Include: 1) Module overview and purpose, 2) Each class with its methods, parameters, return types, and behavior, 3) Each standalone function with parameters, return values, and edge cases, 4) Usage examples with expected output, 5) Dependencies and important notes. Use markdown format with proper code blocks."
 ```
 
-4. Display the generated documentation to the user
+For JavaScript/TypeScript files (.js, .ts, .tsx):
+```bash
+cat <file> | gemini -p "Generate comprehensive documentation for this JavaScript/TypeScript code. Include: 1) Module overview and exports, 2) Each function/component with props/parameters, return values, and types, 3) Usage examples, 4) Dependencies and important notes. Use markdown format with proper code blocks."
+```
 
-## Options
+For config/markdown/other files:
+```bash
+cat <file> | gemini -p "Generate comprehensive documentation for this file. Include: 1) Overview and purpose, 2) Structure description with each section explained, 3) Configuration options or parameters if applicable, 4) Usage examples, 5) Important notes or caveats. Use markdown format."
+```
 
-- Mode: Headless (`-p` flag for prompt)
-- Input: File contents piped to Gemini
-- Output: Markdown formatted documentation
+5. Display the generated documentation to the user
 
 ## Usage Examples
 
@@ -34,18 +40,7 @@ cat <file> | gemini -p "Generate comprehensive documentation for this code. Incl
 /gemini:docs lib/auth.ts
 ```
 
-## Output Format
-
-The generated documentation will include:
-
-- **Overview**: Brief description of the file's purpose
-- **Functions/Classes**: Detailed descriptions with parameters and return values
-- **Usage Examples**: Practical code examples
-- **Notes**: Important caveats or considerations
-
 ## Notes
 
 - Provide a valid file path as argument
 - The output is in markdown format for easy integration
-- For code review, use `/gemini:review`
-- For commit messages, use `/gemini:commit`

@@ -12,19 +12,23 @@ Generate a commit message from staged changes using Google Gemini CLI.
 
 1. Check for staged changes using `git diff --cached`
 2. If no staged changes, inform the user and exit
-3. Run Gemini CLI to generate commit message:
+3. Get the list of changed files to detect scope:
+```bash
+git diff --cached --name-only
+```
+4. Run Gemini CLI to generate commit message:
 
 ```bash
-git diff --cached | gemini -p "Write a concise commit message for these changes. Follow conventional commit format (type: description). Types include: feat, fix, docs, style, refactor, test, chore. Keep the first line under 72 characters."
+git diff --cached | gemini -p "Write a concise commit message for these changes. Rules:
+1. Use conventional commit format: type(scope): description
+2. Types: feat, fix, docs, style, refactor, test, chore
+3. Infer scope from the changed file paths (e.g., auth, api, ui, config)
+4. Keep the first line under 72 characters - this is mandatory
+5. Add bullet points for details only if there are multiple distinct changes
+6. Output ONLY the commit message, no explanations"
 ```
 
-4. Display the suggested commit message to the user
-
-## Options
-
-- Mode: Headless (`-p` flag for prompt)
-- Input: Git staged diff piped to Gemini
-- Format: Conventional commits
+5. Display the suggested commit message to the user
 
 ## Usage Examples
 
@@ -32,20 +36,7 @@ git diff --cached | gemini -p "Write a concise commit message for these changes.
 /gemini:commit
 ```
 
-## Output Format
-
-The generated commit message will follow conventional commit format:
-
-```
-type(scope): brief description
-
-- Detailed change 1
-- Detailed change 2
-```
-
 ## Notes
 
 - Stage your changes with `git add` before running this command
 - Review the suggested message before committing
-- For code review, use `/gemini:review`
-- For documentation, use `/gemini:docs`
