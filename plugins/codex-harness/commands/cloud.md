@@ -20,7 +20,15 @@ Create a task on Codex Cloud for remote execution.
 codex cloud --env <env_id> "<task>"
 ```
 
-3. Display the task ID and status to the user
+3. Display the result to the user in this format:
+
+| Field   | Value           |
+|---------|-----------------|
+| Task ID | `<task_id>`     |
+| Status  | `<status>`      |
+| Env     | `<env_id>`      |
+
+4. Remind the user they can apply results with `/codex:apply <task_id>` once complete
 
 ## Options
 

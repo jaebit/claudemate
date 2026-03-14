@@ -1,0 +1,9 @@
+{
+  "eval_id": 1,
+  "eval_name": "eval-ask",
+  "configuration": "with_command",
+  "expectations": [
+    {"text": "Output is non-empty (>100 chars)", "passed": true, "evidence": "Output is ~1200 chars, comprehensive Korean explanation of GIL"},
+    {"text": "Contains GIL-related keywords (GIL, thread, lock)", "passed": true, "evidence": "Contains 'GIL', '스레드', 'Mutex', 'thread', 'lock' throughout"}
+  ]
+}

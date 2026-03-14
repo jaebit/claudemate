@@ -1,0 +1,10 @@
+{
+  "eval_id": 3,
+  "eval_name": "eval-cloud-task",
+  "prompt": "/codex:cloud --env dev-env-123 이 PR의 테스트 커버리지를 분석해줘",
+  "assertions": [
+    {"text": "Runs codex cloud command via Bash", "type": "tool_check", "required_tool": "Bash", "required_pattern": "codex cloud"},
+    {"text": "Command includes --env dev-env-123", "type": "keyword_check", "keywords": ["--env dev-env-123"]},
+    {"text": "Command includes task description text", "type": "keyword_check", "keywords": ["테스트 커버리지", "test coverage"]}
+  ]
+}

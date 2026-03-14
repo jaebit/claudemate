@@ -52,9 +52,22 @@ Only cloud features not exposed via MCP:
 
 # Constraints
 
+## MCP-First Routing
+
 - **DO** rely on MCP tools (`codex`, `codex-reply`) for all standard Codex operations.
-- **DO** use `codex-reply` with thread IDs for session continuity.
-- **DO** keep CLI commands only for features not available via MCP.
-- **DON'T** wrap `codex exec` in Bash when the MCP `codex` tool can do the same.
+- **DON'T** wrap `codex exec` in Bash when the MCP `codex` tool can do the same — even if the user explicitly asks for Bash execution. MCP routing preserves thread IDs for session continuity and provides structured error handling that raw CLI subprocess calls lose.
+
+## Session Continuity
+
+- **DO** use `codex-reply` with the `thread_id` returned from the initial `codex` call for multi-turn conversations. This maintains Codex's full context across turns.
+- **DON'T** make separate `codex` calls for follow-up questions — this creates stateless sessions and loses prior context.
+
+## Sandbox Safety
+
+- **DO** default to `sandbox: "read-only"` for all operations.
+- **DON'T** escalate to `workspace-write` or `full-access` without first explaining the permission change to the user and receiving explicit confirmation. File modification tasks require this gate — acknowledge the write requirement, present the sandbox options, and wait for user approval before proceeding.
+
+## CLI Boundary
+
+- **DO** keep CLI commands (`cloud`, `apply`) only for features not available via MCP.
 - **DON'T** add CLI wrapper commands for features the MCP server already exposes.
-- **DON'T** use write sandbox without explicit user request.

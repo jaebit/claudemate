@@ -1,0 +1,10 @@
+{
+  "eval_id": 2,
+  "eval_name": "eval-review",
+  "configuration": "without_command",
+  "expectations": [
+    {"text": "Detects SQL injection vulnerability", "passed": true, "evidence": "SQL Injection (가장 심각) - explains f-string injection with example"},
+    {"text": "Detects weak MD5 hash usage", "passed": true, "evidence": "취약한 토큰 생성 알고리즘 - mentions MD5, deterministic, predictable"},
+    {"text": "Includes specific line references", "passed": false, "evidence": "No specific line numbers found - uses code snippets instead of line references"}
+  ]
+}

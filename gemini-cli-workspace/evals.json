@@ -1,0 +1,47 @@
+{
+  "skill_name": "gemini-cli",
+  "evals": [
+    {
+      "id": 1,
+      "name": "eval-ask",
+      "prompt": "Python의 GIL이 멀티스레딩 성능에 미치는 영향을 설명해줘",
+      "expected_output": "Gemini CLI를 통해 GIL 관련 기술 설명이 출력됨",
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "eval-review",
+      "prompt": "staged changes에 대해 코드 리뷰를 실행해줘",
+      "expected_output": "버그, 보안, 코드 품질에 대한 구체적 피드백",
+      "files": []
+    },
+    {
+      "id": 3,
+      "name": "eval-commit",
+      "prompt": "staged changes에 대한 커밋 메시지를 생성해줘",
+      "expected_output": "conventional commit 형식의 커밋 메시지",
+      "files": []
+    },
+    {
+      "id": 4,
+      "name": "eval-docs",
+      "prompt": "plugins/gemini-cli/commands/search.md 파일의 문서를 생성해줘",
+      "expected_output": "마크다운 형식의 문서 (개요, 함수 설명, 사용 예시)",
+      "files": ["plugins/gemini-cli/commands/search.md"]
+    },
+    {
+      "id": 5,
+      "name": "eval-search",
+      "prompt": "Claude Code 2026 latest features를 웹 검색해줘",
+      "expected_output": "검색 결과 요약 + 소스 URL 포함",
+      "files": []
+    },
+    {
+      "id": 6,
+      "name": "eval-release",
+      "prompt": "현재 repo의 릴리즈 노트를 생성해줘",
+      "expected_output": "카테고리별로 그룹핑된 마크다운 릴리즈 노트",
+      "files": []
+    }
+  ]
+}

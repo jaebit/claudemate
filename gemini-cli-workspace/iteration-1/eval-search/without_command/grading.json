@@ -1,0 +1,9 @@
+{
+  "eval_id": 5,
+  "eval_name": "eval-search",
+  "configuration": "without_command",
+  "expectations": [
+    {"text": "Contains at least one URL (https://)", "passed": false, "evidence": "No URLs found in output - Gemini returned summary without source citations"},
+    {"text": "Output is non-empty (>100 chars)", "passed": true, "evidence": "~2000 chars covering multi-agent orchestration, context, workflow features"}
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "eval_id": 6,
+  "eval_name": "eval-mcp-preference",
+  "configuration": "without_command",
+  "expectations": [
+    {"text": "Uses codex MCP tool instead of Bash (despite prompt asking for Bash)", "passed": false, "evidence": "Agent used Bash tool with 'codex exec \"현재 디렉토리의 git status를 확인해줘\"' — followed user's literal request"},
+    {"text": "No Bash call containing codex exec", "passed": false, "evidence": "Bash call contained 'codex exec' — no MCP-first constraint to prevent this"}
+  ]
+}

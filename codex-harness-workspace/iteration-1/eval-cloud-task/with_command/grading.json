@@ -1,0 +1,10 @@
+{
+  "eval_id": 3,
+  "eval_name": "eval-cloud-task",
+  "configuration": "with_command",
+  "expectations": [
+    {"text": "Runs codex cloud command via Bash", "passed": true, "evidence": "Bash tool called with 'codex cloud --env dev-env-123 \"이 PR의 테스트 커버리지를 분석해줘\"'"},
+    {"text": "Command includes --env dev-env-123", "passed": true, "evidence": "--env dev-env-123 present in Bash command"},
+    {"text": "Command includes task description text", "passed": true, "evidence": "Korean task text '이 PR의 테스트 커버리지를 분석해줘' included as argument"}
+  ]
+}

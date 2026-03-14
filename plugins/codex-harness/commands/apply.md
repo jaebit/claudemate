@@ -17,7 +17,8 @@ Apply changes from a Codex Cloud task to your local workspace.
 codex apply <task_id>
 ```
 
-3. Display the applied changes to the user
+3. Show applied changes with `git diff --stat` followed by `git diff` for the full diff
+4. Summarize which files were modified/added and the nature of changes
 
 ## Options
 

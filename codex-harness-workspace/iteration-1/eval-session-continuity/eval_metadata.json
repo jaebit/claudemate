@@ -1,0 +1,11 @@
+{
+  "eval_id": 2,
+  "eval_name": "eval-session-continuity",
+  "prompt": "Codex에게 Python으로 fibonacci 함수를 작성해달라고 해줘. 그 다음에 같은 세션에서 memoization 버전으로 개선해달라고 이어서 요청해줘",
+  "assertions": [
+    {"text": "Initial request uses codex tool", "type": "tool_check", "required_tool": "codex"},
+    {"text": "Follow-up uses codex-reply tool", "type": "tool_check", "required_tool": "codex-reply"},
+    {"text": "codex-reply includes thread_id parameter", "type": "parameter_check", "tool": "codex-reply", "required_param": "thread_id"},
+    {"text": "Follow-up message references memoization", "type": "keyword_check", "keywords": ["memoization", "memo", "cache"]}
+  ]
+}

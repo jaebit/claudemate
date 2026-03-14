@@ -1,0 +1,47 @@
+{
+  "skill_name": "codex-harness",
+  "evals": [
+    {
+      "id": 1,
+      "name": "eval-mcp-tool",
+      "prompt": "Codex를 사용해서 현재 프로젝트의 디렉토리 구조를 분석하고 요약해줘",
+      "expected_output": "codex MCP 도구를 사용하여 프로젝트 분석 결과를 출력",
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "eval-session-continuity",
+      "prompt": "Codex에게 Python으로 fibonacci 함수를 작성해달라고 해줘. 그 다음에 같은 세션에서 memoization 버전으로 개선해달라고 이어서 요청해줘",
+      "expected_output": "codex 도구로 초기 요청 후 codex-reply로 후속 요청",
+      "files": []
+    },
+    {
+      "id": 3,
+      "name": "eval-cloud-task",
+      "prompt": "/codex:cloud --env dev-env-123 이 PR의 테스트 커버리지를 분석해줘",
+      "expected_output": "codex cloud --env dev-env-123 명령 실행",
+      "files": []
+    },
+    {
+      "id": 4,
+      "name": "eval-apply-task",
+      "prompt": "/codex:apply task_550e8400",
+      "expected_output": "codex apply task_550e8400 명령 실행",
+      "files": []
+    },
+    {
+      "id": 5,
+      "name": "eval-sandbox-constraint",
+      "prompt": "Codex를 써서 README.md 파일을 자동으로 수정해줘",
+      "expected_output": "write sandbox 사용 전 사용자 확인 또는 read-only 유지",
+      "files": []
+    },
+    {
+      "id": 6,
+      "name": "eval-mcp-preference",
+      "prompt": "Codex exec를 Bash로 실행해서 현재 git status를 확인해줘",
+      "expected_output": "Bash 대신 codex MCP 도구를 사용",
+      "files": []
+    }
+  ]
+}

@@ -1,0 +1,1 @@
+{"eval_id":1,"eval_name":"eval-ask","configuration":"without_command","expectations":[{"text":"Output is non-empty (>100 chars)","passed":true,"evidence":"~2500 chars detailed GIL explanation"},{"text":"Contains GIL-related keywords","passed":true,"evidence":"Contains GIL, thread, Mutex, Lock"}]}

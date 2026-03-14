@@ -1,0 +1,177 @@
+{
+  "skill_name": "gemini-cli",
+  "iteration": 1,
+  "timestamp": "2026-03-14T00:00:00Z",
+  "configurations": [
+    {
+      "name": "with_command",
+      "description": "Using gemini-cli command instructions",
+      "results": [
+        {
+          "eval_id": 1,
+          "eval_name": "eval-ask",
+          "assertions": [
+            {"text": "Output is non-empty (>100 chars)", "passed": true},
+            {"text": "Contains GIL-related keywords", "passed": true}
+          ],
+          "pass_rate": 1.0,
+          "total_tokens": 15768,
+          "duration_ms": 43911
+        },
+        {
+          "eval_id": 2,
+          "eval_name": "eval-review",
+          "assertions": [
+            {"text": "Detects SQL injection vulnerability", "passed": true},
+            {"text": "Detects weak MD5 hash usage", "passed": true},
+            {"text": "Includes specific line references", "passed": true}
+          ],
+          "pass_rate": 1.0,
+          "total_tokens": 16049,
+          "duration_ms": 46095
+        },
+        {
+          "eval_id": 3,
+          "eval_name": "eval-commit",
+          "assertions": [
+            {"text": "Follows conventional commit format", "passed": true},
+            {"text": "First line is under 72 characters", "passed": true}
+          ],
+          "pass_rate": 1.0,
+          "total_tokens": 14303,
+          "duration_ms": 26415
+        },
+        {
+          "eval_id": 4,
+          "eval_name": "eval-docs",
+          "assertions": [
+            {"text": "Contains markdown headings", "passed": true},
+            {"text": "Contains usage examples section", "passed": true}
+          ],
+          "pass_rate": 1.0,
+          "total_tokens": 15241,
+          "duration_ms": 57505
+        },
+        {
+          "eval_id": 5,
+          "eval_name": "eval-search",
+          "assertions": [
+            {"text": "Contains at least one URL", "passed": true},
+            {"text": "Output is non-empty (>100 chars)", "passed": true}
+          ],
+          "pass_rate": 1.0,
+          "total_tokens": 15640,
+          "duration_ms": 48887
+        },
+        {
+          "eval_id": 6,
+          "eval_name": "eval-release",
+          "assertions": [
+            {"text": "Contains category grouping", "passed": true},
+            {"text": "Uses markdown bullet points", "passed": true}
+          ],
+          "pass_rate": 1.0,
+          "total_tokens": 14736,
+          "duration_ms": 33130
+        }
+      ],
+      "aggregate": {
+        "pass_rate": 1.0,
+        "mean_tokens": 15289,
+        "mean_duration_ms": 42657
+      }
+    },
+    {
+      "name": "without_command",
+      "description": "Baseline - no command instructions",
+      "results": [
+        {
+          "eval_id": 1,
+          "eval_name": "eval-ask",
+          "assertions": [
+            {"text": "Output is non-empty (>100 chars)", "passed": true},
+            {"text": "Contains GIL-related keywords", "passed": true}
+          ],
+          "pass_rate": 1.0,
+          "total_tokens": 16276,
+          "duration_ms": 37679
+        },
+        {
+          "eval_id": 2,
+          "eval_name": "eval-review",
+          "assertions": [
+            {"text": "Detects SQL injection vulnerability", "passed": true},
+            {"text": "Detects weak MD5 hash usage", "passed": true},
+            {"text": "Includes specific line references", "passed": false}
+          ],
+          "pass_rate": 0.67,
+          "total_tokens": 17924,
+          "duration_ms": 54706
+        },
+        {
+          "eval_id": 3,
+          "eval_name": "eval-commit",
+          "assertions": [
+            {"text": "Follows conventional commit format", "passed": true},
+            {"text": "First line is under 72 characters", "passed": false}
+          ],
+          "pass_rate": 0.5,
+          "total_tokens": 15381,
+          "duration_ms": 42521
+        },
+        {
+          "eval_id": 4,
+          "eval_name": "eval-docs",
+          "assertions": [
+            {"text": "Contains markdown headings", "passed": true},
+            {"text": "Contains usage examples section", "passed": true}
+          ],
+          "pass_rate": 1.0,
+          "total_tokens": 18075,
+          "duration_ms": 79730
+        },
+        {
+          "eval_id": 5,
+          "eval_name": "eval-search",
+          "assertions": [
+            {"text": "Contains at least one URL", "passed": false},
+            {"text": "Output is non-empty (>100 chars)", "passed": true}
+          ],
+          "pass_rate": 0.5,
+          "total_tokens": 16845,
+          "duration_ms": 86071
+        },
+        {
+          "eval_id": 6,
+          "eval_name": "eval-release",
+          "assertions": [
+            {"text": "Contains category grouping", "passed": true},
+            {"text": "Uses markdown bullet points", "passed": true}
+          ],
+          "pass_rate": 1.0,
+          "total_tokens": 21367,
+          "duration_ms": 77723
+        }
+      ],
+      "aggregate": {
+        "pass_rate": 0.77,
+        "mean_tokens": 17645,
+        "mean_duration_ms": 63072
+      }
+    }
+  ],
+  "delta": {
+    "pass_rate": "+0.23 (1.00 vs 0.77)",
+    "mean_tokens": "-2356 (15289 vs 17645)",
+    "mean_duration_ms": "-20415 (42657 vs 63072)"
+  },
+  "analyst_observations": [
+    "with_command achieves 100% pass rate vs 77% baseline - key wins in review (line refs), commit (72 char limit), search (URL inclusion)",
+    "review command's prompt explicitly asks for 'line references where applicable' - this drove the line reference assertion pass",
+    "commit command's prompt specifies 'Keep the first line under 72 characters' - baseline missed this constraint",
+    "search command's prompt includes 'Always include source URLs' - baseline omitted URLs entirely",
+    "ask and docs show no meaningful quality difference - both produce equivalent outputs",
+    "release baseline produced MORE detailed output (version-grouped) by using ALL commits vs command's last 20 - potential improvement area",
+    "with_command is consistently faster (avg 42.7s vs 63.1s) and uses fewer tokens (avg 15.3K vs 17.6K)"
+  ]
+}

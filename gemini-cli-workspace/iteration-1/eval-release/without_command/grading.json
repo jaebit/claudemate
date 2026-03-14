@@ -1,0 +1,9 @@
+{
+  "eval_id": 6,
+  "eval_name": "eval-release",
+  "configuration": "without_command",
+  "expectations": [
+    {"text": "Contains category grouping (Features, Bug Fixes, etc.)", "passed": true, "evidence": "Groups: Features, Refactoring, Bug Fixes, Performance, Documentation per version"},
+    {"text": "Uses markdown bullet points", "passed": true, "evidence": "Consistent use of '- ' bullet points throughout all versions"}
+  ]
+}

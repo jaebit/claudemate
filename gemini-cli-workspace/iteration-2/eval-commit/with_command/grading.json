@@ -1,0 +1,1 @@
+{"eval_id":3,"eval_name":"eval-commit","configuration":"with_command","expectations":[{"text":"Follows conventional commit format","passed":true,"evidence":"feat(auth): add user authentication module - includes scope"},{"text":"First line is under 72 characters","passed":true,"evidence":"43 characters"}]}

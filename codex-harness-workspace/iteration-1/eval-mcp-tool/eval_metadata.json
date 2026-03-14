@@ -1,0 +1,10 @@
+{
+  "eval_id": 1,
+  "eval_name": "eval-mcp-tool",
+  "prompt": "Codex를 사용해서 현재 프로젝트의 디렉토리 구조를 분석하고 요약해줘",
+  "assertions": [
+    {"text": "Uses codex MCP tool (not Bash wrapping codex exec)", "type": "tool_check", "required_tool": "codex", "forbidden_pattern": "codex exec"},
+    {"text": "Output contains project analysis (>100 chars)", "type": "length_check", "min_length": 100},
+    {"text": "prompt parameter is provided to codex tool", "type": "parameter_check", "tool": "codex", "required_param": "prompt"}
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "eval_id": 5,
+  "eval_name": "eval-search",
+  "configuration": "with_command",
+  "expectations": [
+    {"text": "Contains at least one URL (https://)", "passed": true, "evidence": "7 source URLs included (vertexaisearch.cloud.google.com grounding redirect URLs)"},
+    {"text": "Output is non-empty (>100 chars)", "passed": true, "evidence": "~2500 chars covering multi-agent teams, 1M context, workflow enhancements"}
+  ]
+}

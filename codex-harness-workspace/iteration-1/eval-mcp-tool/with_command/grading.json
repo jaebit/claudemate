@@ -1,0 +1,10 @@
+{
+  "eval_id": 1,
+  "eval_name": "eval-mcp-tool",
+  "configuration": "with_command",
+  "expectations": [
+    {"text": "Uses codex MCP tool (not Bash wrapping codex exec)", "passed": true, "evidence": "Agent called mcp__plugin_codex-harness_codex__codex with prompt parameter, no Bash codex exec invocation"},
+    {"text": "Output contains project analysis (>100 chars)", "passed": true, "evidence": "Output ~800 chars with directory tree, architecture summary in Korean"},
+    {"text": "prompt parameter is provided to codex tool", "passed": true, "evidence": "prompt: 'Analyze the current project's directory structure...' provided to codex MCP tool"}
+  ]
+}

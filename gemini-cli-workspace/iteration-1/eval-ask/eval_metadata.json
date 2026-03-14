@@ -1,0 +1,9 @@
+{
+  "eval_id": 1,
+  "eval_name": "eval-ask",
+  "prompt": "Python의 GIL이 멀티스레딩 성능에 미치는 영향을 설명해줘",
+  "assertions": [
+    {"text": "Output is non-empty (>100 chars)", "type": "length_check", "min_length": 100},
+    {"text": "Contains GIL-related keywords (GIL, thread, lock)", "type": "keyword_check", "keywords": ["GIL", "thread"]}
+  ]
+}
