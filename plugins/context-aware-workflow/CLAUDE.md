@@ -1,7 +1,7 @@
 # Module Context
 
 **Module:** Context-Aware Workflow (cw)
-**Version:** 3.1.0
+**Version:** 3.2.0
 **Role:** Automation-first workflow orchestration with complexity-adaptive agents.
 
 ---
@@ -30,7 +30,7 @@ python tests/test_plugin_structure.py
 /cw:parallel   # Swarm (default) or Agent Teams (--team)
 
 # Discovery & planning
-/cw:explore    # Brainstorm (--arch, --ui, --research)
+/cw:explore    # Brainstorm (--arch, --ui, --research, --debate)
 
 # Utilities
 /cw:manage     # context, sync, merge, worktree, tidy, init, evolve, reflect
