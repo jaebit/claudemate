@@ -1,9 +1,0 @@
-{
-  "eval_id": 3,
-  "eval_name": "eval-commit",
-  "prompt": "staged changes에 대한 커밋 메시지를 생성해줘",
-  "assertions": [
-    {"text": "Follows conventional commit format (feat|fix|docs|chore|refactor)", "type": "pattern_check", "pattern": "^(feat|fix|docs|chore|refactor|style|test)"},
-    {"text": "First line is under 72 characters", "type": "line_length_check", "max_length": 72}
-  ]
-}

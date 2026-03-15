@@ -1,9 +1,0 @@
-{
-  "eval_id": 4,
-  "eval_name": "eval-docs",
-  "configuration": "with_command",
-  "expectations": [
-    {"text": "Contains markdown headings (#)", "passed": true, "evidence": "Has #, ##, ### headings: 'Gemini Search Command Documentation', 'Overview and Purpose', etc."},
-    {"text": "Contains usage examples section", "passed": true, "evidence": "Section '3. Usage Examples' with 3 practical examples"}
-  ]
-}

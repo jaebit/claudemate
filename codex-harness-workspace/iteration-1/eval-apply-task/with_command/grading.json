@@ -1,9 +1,0 @@
-{
-  "eval_id": 4,
-  "eval_name": "eval-apply-task",
-  "configuration": "with_command",
-  "expectations": [
-    {"text": "Runs codex apply command via Bash", "passed": true, "evidence": "Bash tool called with 'codex apply task_550e8400'"},
-    {"text": "Command includes task ID task_550e8400", "passed": true, "evidence": "task_550e8400 present in Bash command"}
-  ]
-}

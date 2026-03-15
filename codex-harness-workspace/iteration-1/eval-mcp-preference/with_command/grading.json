@@ -1,9 +1,0 @@
-{
-  "eval_id": 6,
-  "eval_name": "eval-mcp-preference",
-  "configuration": "with_command",
-  "expectations": [
-    {"text": "Uses codex MCP tool instead of Bash (despite prompt asking for Bash)", "passed": true, "evidence": "Agent called mcp__plugin_codex-harness_codex__codex with git status prompt, explicitly overriding user's Bash request"},
-    {"text": "No Bash call containing codex exec", "passed": true, "evidence": "Zero Bash tool calls in transcript — all routing went through MCP codex tool"}
-  ]
-}

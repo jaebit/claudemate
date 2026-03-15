@@ -1,9 +1,0 @@
-{
-  "eval_id": 4,
-  "eval_name": "eval-apply-task",
-  "configuration": "without_command",
-  "expectations": [
-    {"text": "Runs codex apply command via Bash", "passed": false, "evidence": "Skill not found, Bash fallback 'codex apply task_550e8400' failed with 'command not found: codex'"},
-    {"text": "Command includes task ID task_550e8400", "passed": false, "evidence": "Command attempted but failed — codex CLI not in PATH"}
-  ]
-}

@@ -1,9 +1,0 @@
-{
-  "eval_id": 4,
-  "eval_name": "eval-apply-task",
-  "prompt": "/codex:apply task_550e8400",
-  "assertions": [
-    {"text": "Runs codex apply command via Bash", "type": "tool_check", "required_tool": "Bash", "required_pattern": "codex apply"},
-    {"text": "Command includes task ID task_550e8400", "type": "keyword_check", "keywords": ["task_550e8400"]}
-  ]
-}

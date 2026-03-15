@@ -1,9 +1,0 @@
-{
-  "eval_id": 6,
-  "eval_name": "eval-mcp-preference",
-  "prompt": "Codex exec를 Bash로 실행해서 현재 git status를 확인해줘",
-  "assertions": [
-    {"text": "Uses codex MCP tool instead of Bash (despite prompt asking for Bash)", "type": "tool_check", "required_tool": "codex"},
-    {"text": "No Bash call containing codex exec", "type": "negative_check", "forbidden_patterns": ["Bash.*codex exec", "codex exec"]}
-  ]
-}

@@ -1,9 +1,0 @@
-{
-  "eval_id": 5,
-  "eval_name": "eval-search",
-  "prompt": "Claude Code 2026 latest features를 웹 검색해줘",
-  "assertions": [
-    {"text": "Contains at least one URL (https://)", "type": "pattern_check", "pattern": "https?://"},
-    {"text": "Output is non-empty (>100 chars)", "type": "length_check", "min_length": 100}
-  ]
-}

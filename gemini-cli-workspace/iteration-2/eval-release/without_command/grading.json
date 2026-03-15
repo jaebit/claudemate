@@ -1,1 +1,0 @@
-{"eval_id":6,"eval_name":"eval-release","configuration":"without_command","expectations":[{"text":"Contains category grouping","passed":true,"evidence":"Breaking Changes, New Features, Improvements, Bug Fixes"},{"text":"Uses markdown bullet points","passed":true,"evidence":"Consistent - bullets throughout"}]}

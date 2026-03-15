@@ -1,1 +1,0 @@
-{"eval_id":4,"eval_name":"eval-docs","configuration":"with_command","expectations":[{"text":"Contains markdown headings","passed":true,"evidence":"## headings: Overview, Structure, Configuration, Usage, Notes"},{"text":"Contains usage examples section","passed":true,"evidence":"Section '4. Usage Examples' with 3 examples"}]}

@@ -1,9 +1,0 @@
-{
-  "eval_id": 6,
-  "eval_name": "eval-release",
-  "prompt": "현재 repo의 릴리즈 노트를 생성해줘",
-  "assertions": [
-    {"text": "Contains category grouping (Features, Bug Fixes, etc.)", "type": "keyword_check", "keywords": ["Features", "Bug Fixes", "Improvements", "Breaking Changes"]},
-    {"text": "Uses markdown bullet points (- or *)", "type": "pattern_check", "pattern": "^[\\s]*[-*] "}
-  ]
-}

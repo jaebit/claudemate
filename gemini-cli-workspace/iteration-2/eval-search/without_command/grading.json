@@ -1,1 +1,0 @@
-{"eval_id":5,"eval_name":"eval-search","configuration":"without_command","expectations":[{"text":"Contains at least one URL","passed":true,"evidence":"7 URLs present (medium.com, anthropic.com, youtube.com etc - likely fabricated but URLs exist)"},{"text":"Output is non-empty (>100 chars)","passed":true,"evidence":"~2600 chars covering multi-agent, security, ecosystem"}]}

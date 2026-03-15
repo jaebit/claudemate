@@ -1,9 +1,0 @@
-{
-  "eval_id": 3,
-  "eval_name": "eval-commit",
-  "configuration": "without_command",
-  "expectations": [
-    {"text": "Follows conventional commit format", "passed": true, "evidence": "'feat: add user authentication module with password hashing and login functionality'"},
-    {"text": "First line is under 72 characters", "passed": false, "evidence": "82 characters - exceeds 72 char limit"}
-  ]
-}
