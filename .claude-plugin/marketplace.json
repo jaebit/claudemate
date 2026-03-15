@@ -36,6 +36,12 @@
         "task-management"
       ],
       "category": "productivity"
+    },
+    {
+      "name": "multi-model-debate",
+      "description": "Orchestrate structured multi-agent debates using Claude, Codex, and Gemini for software engineering decision-making",
+      "source": "./plugins/multi-model-debate",
+      "version": "1.0.0"
     }
   ]
 }
