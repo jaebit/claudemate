@@ -101,7 +101,6 @@ docs/
 - Skill design principles
 - 16 skills detailed specifications (6 new included)
   - `commit-discipline` - Tidy First commit separation
-  - `context-manager` - Context window optimization
   - `dependency-analyzer` - Dependency analysis and parallel execution
   - `quick-fix` - Auto-fix
   - `serena-sync` - Serena MCP synchronization

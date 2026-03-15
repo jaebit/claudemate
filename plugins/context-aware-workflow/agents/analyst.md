@@ -18,7 +18,7 @@ mcp_servers:
   - serena
   - sequential
   - context7
-skills: insight-collector, knowledge-base
+skills: insight-collector, knowledge-engine
 ---
 
 # Analyst Agent

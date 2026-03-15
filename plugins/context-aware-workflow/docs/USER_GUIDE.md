@@ -1219,7 +1219,6 @@ CAW는 20개의 전문 스킬을 포함합니다:
 |------|------|----------|
 | **serena-sync** | Serena 메모리 동기화 | `/cw:sync` |
 | **plan-detector** | Plan Mode 계획 감지 | 자동 |
-| **context-manager** | 컨텍스트 파일 관리 | `/cw:context` |
 | **context-helper** | 에이전트 컨텍스트 지원 | 에이전트 내부 |
 | **quick-fix** | 간단한 이슈 자동 수정 | `/cw:fix` |
 | **quality-gate** | 품질 기준 검증 (Tidy First 포함) | Builder 완료 시 |
@@ -1230,7 +1229,7 @@ CAW는 20개의 전문 스킬을 포함합니다:
 
 | 스킬 | 설명 | 사용 시점 |
 |------|------|----------|
-| **knowledge-base** | 프로젝트 지식 저장소 | 에이전트 내부 |
+| **knowledge-engine** | 프로젝트 지식 저장소 | 에이전트 내부 |
 | **pattern-learner** | 코드베이스 패턴 학습 | `/cw:start`, Builder |
 | **insight-collector** | 인사이트 수집 및 저장 | 자동 |
 | **decision-logger** | 아키텍처 결정 기록 | 자동 |

@@ -355,23 +355,23 @@ class TestSkillFiles(unittest.TestCase):
             )
 
     def test_skill_count(self):
-        """v3.0 should have exactly 11 skills."""
+        """v3.1 should have exactly 9 skills."""
         skills = self.get_skill_dirs()
-        self.assertEqual(len(skills), 11, f"Expected 11 skills, found {len(skills)}: {[s.name for s in skills]}")
+        self.assertEqual(len(skills), 9, f"Expected 9 skills, found {len(skills)}: {[s.name for s in skills]}")
 
 
 class TestRequiredSkills(unittest.TestCase):
     """Test that required v3.0 skills are present."""
 
     REQUIRED_SKILLS = [
-        "context-manager", "progress-tracker", "plan-detector",
+        "progress-tracker", "plan-detector",
         "quality-gate", "commit-discipline", "insight-collector",
-        "pattern-learner", "plugin-authoring",
+        "pattern-learner",
         "knowledge-engine", "session-manager", "learning-loop",
     ]
 
     def test_required_skills_exist(self):
-        """All 11 required skills must exist."""
+        """All 9 required skills must exist."""
         for skill_name in self.REQUIRED_SKILLS:
             skill = PLUGIN_ROOT / "skills" / skill_name / "SKILL.md"
             self.assertTrue(skill.exists(), f"{skill_name}/SKILL.md not found")

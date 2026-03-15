@@ -24,7 +24,7 @@ Design document for automation skills that enhance Agents.
 | 9 | knowledge-base | Project knowledge accumulation and search | ✅ Implemented |
 | 10 | review-assistant | Code review checklist auto-generation | ✅ Implemented |
 | 11 | **commit-discipline** | Tidy First commit separation rules enforcement | ✅ Implemented |
-| 12 | **context-manager** | Context window optimization management | ✅ Implemented |
+| 12 | ~~context-manager~~ | ~~Context window optimization~~ | Removed (1M context) |
 | 13 | **dependency-analyzer** | Dependency graph analysis and parallel execution | ✅ Implemented |
 | 14 | **quick-fix** | Simple review issue auto-fix | ✅ Implemented |
 | 15 | **reflect** | Ralph Loop continuous improvement cycle | ✅ Implemented |
@@ -524,46 +524,9 @@ skills/commit-discipline/
 
 ---
 
-### 12. context-manager (NEW)
-**Context window optimization management**
+### 12. ~~context-manager~~ (REMOVED)
 
-| Property | Value |
-|----------|-------|
-| **Trigger** | When context insufficient, /cw:context command |
-| **Output** | Optimized context, packing/pruning results |
-| **Integration** | All Agents, /cw:context |
-
-**Features:**
-```
-1. Plan Detection - Plan document analysis
-2. Context Packing - Interface/signature extraction
-3. Context Pruning - Unnecessary file cleanup
-```
-
-**Usage Example:**
-```
-📦 Context Manager: Packing
-
-Current context: 45,000 tokens
-Target: 30,000 tokens
-
-Actions:
-  📄 src/auth/jwt.ts → Packed (interface only)
-  📄 src/utils/helpers.ts → Pruned (not in current phase)
-  ✅ src/auth/middleware.ts → Keep (active)
-
-Result: 28,500 tokens (-36%)
-```
-
-**Directory:**
-```
-skills/context-manager/
-├── SKILL.md
-└── scripts/
-    ├── detect_plan.py
-    ├── pack_context.py
-    └── prune_context.py
-```
+Removed in v3.1.0 — 1M context window makes packing/pruning unnecessary.
 
 ---
 
@@ -817,8 +780,6 @@ context-aware-workflow/
 │   │   └── SKILL.md
 │   ├── commit-discipline/      # NEW
 │   │   └── SKILL.md
-│   ├── context-manager/        # NEW
-│   │   └── SKILL.md
 │   ├── dependency-analyzer/    # NEW
 │   │   └── SKILL.md
 │   ├── quick-fix/              # NEW
@@ -841,7 +802,6 @@ context-aware-workflow/
 - **All 16 skills implemented**
 - 6 new skills added:
   - `commit-discipline` - Tidy First commit separation
-  - `context-manager` - Context window optimization
   - `dependency-analyzer` - Dependency analysis and parallel execution
   - `quick-fix` - Auto-fix
   - `reflect` - Ralph Loop continuous improvement

@@ -19,7 +19,6 @@
 |------|------|
 | **commit-discipline** | Kent Beck의 Tidy First 규칙 강제. structural/behavioral 커밋 분리는 사용자 고유 방법론 |
 | **plan-detector** | Plan Mode 완료 → CAW 워크플로우 전환이라는 특정 handoff 규칙 |
-| **plugin-authoring** | 에이전트/스킬 파일의 frontmatter 형식, 네이밍 컨벤션, 티어 구조 |
 | **quality-gate** | 어떤 체크를 required/warning으로 분류하고, coverage 80%, Tidy First 강제 등 사용자 정의 품질 기준 |
 
 ## Capability (7개)
@@ -28,7 +27,6 @@ AI의 구조적 한계를 보완한다. 모델이 해당 한계를 극복하면 
 
 | 스킬 | 보완하는 한계 | 불필요해지는 시점 |
 |------|-------------|-----------------|
-| **context-manager** | 컨텍스트 윈도우 크기 제한 | 무한/충분한 컨텍스트 |
 | **session-manager** | 세션간 상태 소실 | 네이티브 세션 영속성 |
 | **progress-tracker** | 다단계 작업 상태 추적 불가 | 네이티브 상태 관리 |
 | **insight-collector** | 세션간 학습/패턴 기억 불가 | 네이티브 크로스-세션 학습 |

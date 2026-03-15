@@ -12,7 +12,7 @@ tools:
   - Read
   - Glob
   - Grep
-skills: quality-gate, knowledge-base
+skills: quality-gate, knowledge-engine
 ---
 
 # ComplianceChecker Agent

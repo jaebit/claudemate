@@ -1,6 +1,6 @@
 ---
 name: commit-discipline
-description: Enforces Kent Beck's Tidy First commit separation rules
+description: Analyzes staged git changes to classify them as structural (tidy) or behavioral (build) and detects when both are mixed in a single commit. Use this skill whenever the user is about to commit and wants to check if their changes follow tidy-first principles, asks whether to split a commit, mentions mixing renames/refactors with new features or logic changes, references structural vs behavioral separation, or asks about commit hygiene and clean commit history. Also use when reviewing staged diffs for commit readiness.
 allowed-tools: Bash, Read, Grep
 context: fork
 ---

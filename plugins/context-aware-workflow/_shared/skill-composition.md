@@ -47,7 +47,6 @@ Skills that improve quality but don't block execution.
 | `insight-collector` | Capture learnings | Yes |
 | `pattern-learner` | Learn from usage | Yes |
 | `dependency-analyzer` | Analyze cross-module dependencies | Yes |
-| `context-manager` | Optimize context loading | Yes |
 | `hud` | Real-time metrics display | Yes |
 
 **Characteristics:**
@@ -79,9 +78,9 @@ Skills that perform the primary workflow action.
 Skills execute in order, each building on previous results:
 
 ```
-plan-detector → context-manager → insight-collector → reflect
-     ↓                ↓                  ↓              ↓
-  Validate         Load ctx         Capture          Execute
+plan-detector → insight-collector → reflect
+     ↓                  ↓              ↓
+  Validate         Capture          Execute
 ```
 
 ### Parallel Composition
@@ -130,8 +129,7 @@ eco-mode-skip: false
 name: insight-collector
 layer: enhancement
 description: Capture learnings from workflow execution
-dependencies:
-  - context-manager  # Needs context loaded
+dependencies: []
 blocks-on-failure: false
 eco-mode-skip: true  # Skip in eco mode
 ---
@@ -144,7 +142,6 @@ layer: execution
 description: Ralph Loop continuous improvement reflection
 dependencies:
   - plan-detector
-  - context-manager
 blocks-on-failure: true
 eco-mode-skip: false
 ---

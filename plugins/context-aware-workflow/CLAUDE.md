@@ -41,9 +41,9 @@ python tests/test_plugin_structure.py
 # Agents & Skills
 
 8 agents (complexity-adaptive, no tier variants). See `_shared/agent-registry.md` for inventory.
-Complexity signals: `_shared/complexity-hints.md`. Authoring patterns: `skills/plugin-authoring/SKILL.md`.
+Complexity signals: `_shared/complexity-hints.md`.
 
-11 skills: context-manager, progress-tracker, plan-detector, quality-gate, commit-discipline, insight-collector, pattern-learner, plugin-authoring, knowledge-engine, session-manager, learning-loop.
+9 skills: progress-tracker, plan-detector, quality-gate, commit-discipline, insight-collector, pattern-learner, knowledge-engine, session-manager, learning-loop.
 
 ---
 
