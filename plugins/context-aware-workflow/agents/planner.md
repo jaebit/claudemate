@@ -188,35 +188,46 @@ Save discovered knowledge when meaningful:
 
 ## Brainstorm Mode
 
-Activated by `/cw:brainstorm`. Transforms vague ideas into concrete requirements through Socratic questioning.
+Activated by `/cw:explore`. Transforms vague ideas into concrete design specs through Socratic questioning.
+
+### Interaction Rules
+
+1. **One question at a time.** Never ask multiple questions in a single message. Prefer multiple-choice when possible.
+2. **Section-by-section approval.** Present each major section, wait for user approval before proceeding.
+3. **2-3 alternatives required.** Before recommending a direction, present 2-3 approaches with trade-off comparison.
 
 ### Brainstorm Workflow
 
 ```
 [1] Initial Understanding
-    Read: User's idea/request
+    Read: User's idea/request, project context
     Identify: Ambiguous terms, assumptions
-    Formulate: 5 clarifying questions max
-    Use: AskUserQuestion for discovery
+    Ask: ONE clarifying question (AskUserQuestion)
+    Repeat: Until problem space is understood (typically 3-5 rounds)
 
-[2] Systematic Exploration
-    Problem space:
-    - Who are users/stakeholders?
-    - What problem does this solve?
-    - What are success criteria?
+[2] Approach Exploration
+    Propose: 2-3 different approaches
+    Present: Trade-off table for each
+    Ask: User preference or hybrid
 
-    Solution space:
-    - Possible approaches?
-    - Constraints (time, tech, resources)?
-    - Similar solutions?
+[3] Incremental Design
+    For each section (Problem → Users → Requirements → Constraints → Risks):
+      Present: Section content
+      Ask: "Approve this section, or suggest changes?"
+      Wait: User approval before next section
 
-    Edge cases:
-    - What could go wrong?
-    - Dependencies?
+[4] Documentation
+    Write: .caw/brainstorm.md
 
-[3] Synthesis & Documentation
-    Create: .caw/brainstorm.md
-    Suggest: /cw:design or /cw:start
+[5] Spec Review Loop
+    Follow: _shared/spec-review.md protocol
+    Dispatch: Spec reviewer subagent
+    Fix: Issues if found (max 3 iterations)
+
+[6] User Review Gate
+    Ask: "Review the spec at .caw/brainstorm.md. Approve, or request changes?"
+    If approved → Suggest: /cw:explore --arch, /cw:explore --ui, or /cw:go
+    If changes → Apply changes, return to [5]
 ```
 
 ### Brainstorm Output: `.caw/brainstorm.md`
@@ -250,21 +261,33 @@ Activated by `/cw:brainstorm`. Transforms vague ideas into concrete requirements
 | Risk | Probability | Impact | Mitigation |
 |------|-------------|--------|------------|
 
-## Ideas Explored
+## Approaches Considered
 
-### Approach A
-**Pros**: ...  **Cons**: ...
+### Approach A: [Name]
+[Description]
+| Pros | Cons |
+|------|------|
+| ... | ... |
 
-### Approach B
-**Pros**: ...  **Cons**: ...
+### Approach B: [Name]
+[Description]
+| Pros | Cons |
+|------|------|
+| ... | ... |
 
 ## Recommended Direction
-[Summary with rationale]
+[Summary with rationale for chosen approach]
+
+## Review
+| Check | Status |
+|-------|--------|
+| Spec Review | ✅ Approved / ❌ Issues |
+| User Approval | ✅ Approved |
 
 ## Next Steps
-- [ ] /cw:design --ui
-- [ ] /cw:design --arch
-- [ ] /cw:start
+- [ ] /cw:explore --arch
+- [ ] /cw:explore --ui
+- [ ] /cw:go
 ```
 
 ### Question Patterns
