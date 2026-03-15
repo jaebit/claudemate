@@ -1,6 +1,6 @@
 # Agent Registry
 
-Comprehensive catalog of all available agents for CAW v3.0 workflows.
+Comprehensive catalog of all available agents for CAW v3.1.0 workflows.
 
 ## Overview
 
