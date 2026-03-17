@@ -58,7 +58,7 @@ See `_shared/agent-registry.md` for full details.
 
 ## Skills
 
-9 skills that augment agent capabilities:
+10 skills that augment agent capabilities:
 
 | Skill | Purpose |
 |-------|---------|
@@ -71,6 +71,7 @@ See `_shared/agent-registry.md` for full details.
 | knowledge-engine | ADR logging and project knowledge management |
 | session-manager | Session state, context prioritization, HUD metrics |
 | learning-loop | Continuous improvement via reflection and memory sync |
+| structured-research | 4-stage deep research: decompose → investigate → cross-validate → synthesize |
 
 ## Hooks
 

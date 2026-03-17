@@ -148,6 +148,21 @@ Validates adherence to project rules and conventions.
 | `/cw:init` | `cw:bootstrapper` |
 | `/cw:check` | `cw:compliance-checker` |
 
+## Skills Inventory
+
+| Skill | Purpose |
+|-------|---------|
+| progress-tracker | Workflow progress metrics |
+| plan-detector | Plan Mode completion detection |
+| quality-gate | Automated quality checks |
+| commit-discipline | Tidy First commit classification |
+| insight-collector | Hybrid learning and pattern capture |
+| pattern-learner | Codebase pattern analysis |
+| knowledge-engine | ADR logging, knowledge management |
+| session-manager | Session state, context, analytics |
+| learning-loop | Ralph Loop reflection and improvement |
+| structured-research | 4-stage deep research (decompose → investigate → cross-validate → synthesize) |
+
 ## Related Documentation
 
 - [Complexity-Adaptive Behavior](./complexity-hints.md) - How agents adapt to task complexity

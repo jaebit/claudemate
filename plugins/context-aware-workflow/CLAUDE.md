@@ -1,7 +1,7 @@
 # Module Context
 
 **Module:** Context-Aware Workflow (cw)
-**Version:** 3.2.0
+**Version:** 3.3.0
 **Role:** Automation-first workflow orchestration with complexity-adaptive agents.
 
 ---
@@ -43,7 +43,7 @@ python tests/test_plugin_structure.py
 8 agents (complexity-adaptive, no tier variants). See `_shared/agent-registry.md` for inventory.
 Complexity signals: `_shared/complexity-hints.md`.
 
-9 skills: progress-tracker, plan-detector, quality-gate, commit-discipline, insight-collector, pattern-learner, knowledge-engine, session-manager, learning-loop.
+10 skills: progress-tracker, plan-detector, quality-gate, commit-discipline, insight-collector, pattern-learner, knowledge-engine, session-manager, learning-loop, structured-research.
 
 ---
 

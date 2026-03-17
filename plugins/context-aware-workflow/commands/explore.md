@@ -1,6 +1,6 @@
 ---
 description: "Pre-planning discovery - brainstorm, design, or research"
-argument-hint: "<topic> [--arch|--ui|--research|--debate]"
+argument-hint: "<topic> [--arch|--ui|--research|--research-deep|--debate]"
 ---
 
 # /cw:explore - Discovery & Design
@@ -29,6 +29,10 @@ Pre-planning discovery combining brainstorming, architecture design, and researc
 /cw:explore --research "how is auth handled" --internal
 /cw:explore --research "database pooling" --depth deep
 /cw:explore --research "GraphQL" --gemini
+
+# Deep research (structured 4-stage)
+/cw:explore --research-deep "TypeScript vs Rust type systems"
+/cw:explore --research-deep "REST vs GraphQL" --debate
 ```
 
 ## Modes
@@ -39,6 +43,7 @@ Pre-planning discovery combining brainstorming, architecture design, and researc
 | **Architecture** | `--arch` | Architect | `.caw/design/architecture.md` |
 | **UX/UI Design** | `--ui` | Architect (UI focus) | `.caw/design/ux-ui.md` |
 | **Research** | `--research` | Planner / Explore | `.caw/research/<topic>.md` |
+| **Deep Research** | `--research-deep` | Planner + Task swarm | `.caw/research/<topic>/RESEARCH-REPORT.md` |
 
 ## Flags
 
@@ -53,6 +58,7 @@ Pre-planning discovery combining brainstorming, architecture design, and researc
 | `--gemini` | Research: use Gemini for search grounding |
 | `--save <name>` | Save research for later reference |
 | `--load <name>` | Load previous research |
+| `--research-deep` | Structured 4-stage deep research (decompose → investigate → cross-validate → synthesize) |
 | `--debate` | Use multi-model debate for approach evaluation (requires `multi-model-debate` plugin) |
 | `--reset` | Start fresh, archive existing |
 
@@ -145,6 +151,26 @@ Query Analysis → Internal Research (symbols, context, patterns)
 /cw:explore --research "GraphQL" --load graphql-schema
 ```
 
+## Deep Research Mode (`--research-deep`)
+
+Activates the `structured-research` skill for a 4-stage research process. Combinable with `--debate`.
+
+```bash
+/cw:explore --research-deep "TypeScript vs Rust type systems"
+/cw:explore --research-deep "REST vs GraphQL" --debate
+```
+
+| Stage | Description | Output |
+|-------|-------------|--------|
+| 1. Decompose | Analyze topic → ~5 subtopic questions with tool assignments | `plan.json` |
+| 2. Investigate | Parallel agents (1 per subtopic, max 5) using assigned tools | `subtopic-N-<name>.md` |
+| 3. Cross-Validate | Agreement/contradiction/gap analysis across subtopics | `cross-validation.md` |
+| 4. Synthesize | Final report with cross-references and confidence assessment | `RESEARCH-REPORT.md` |
+
+**Output**: `.caw/research/<topic-slug>/RESEARCH-REPORT.md`
+
+With `--debate`: Top 2 contradictions from cross-validation are auto-invoked via `/debate:start`.
+
 ## Debate Integration (`--debate`)
 
 Requires the `multi-model-debate` plugin. If not installed, warns and falls back to single-agent evaluation.
@@ -195,12 +221,18 @@ Next: /cw:explore --arch | /cw:explore --ui | /cw:go
 │   ├── ux-ui.md
 │   └── architecture.md
 └── research/
-    └── <topic>.md
+    ├── <topic>.md
+    └── <topic-slug>/
+        ├── plan.json
+        ├── subtopic-1-<name>.md
+        ├── ...
+        ├── cross-validation.md
+        └── RESEARCH-REPORT.md
 ```
 
 ## Integration
 
-- **Creates**: `.caw/brainstorm.md`, `.caw/design/*.md`, `.caw/research/*.md`
+- **Creates**: `.caw/brainstorm.md`, `.caw/design/*.md`, `.caw/research/*.md`, `.caw/research/<slug>/RESEARCH-REPORT.md`
 - **Invokes**: Planner (brainstorm mode), Architect, Explore agents
 - **Optionally invokes**: `/debate:start` (when `--debate` flag, requires `multi-model-debate` plugin)
 - **Uses**: AskUserQuestion, Serena, WebSearch, Context7
