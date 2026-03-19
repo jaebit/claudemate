@@ -1,20 +1,27 @@
 ---
-description: "Resume an interrupted debate from the last completed round"
+name: debate-resume
+description: "Resume an interrupted multi-model debate from the last completed round. Use when the user invokes /debate:resume to continue a previously started debate."
 argument-hint: "[debate-dir]"
-allowed-tools: ["Read", "Write", "Bash", "Glob", "Agent"]
+disable-model-invocation: true
+allowed-tools: Read, Write, Bash, Glob, Agent
 ---
 
 # Debate Resume
 
 Resume an interrupted multi-model debate from its last completed checkpoint.
 
+## Current Debate State
+
+- Latest debate directory: !`ls -1dt .debate/*/ 2>/dev/null | head -1 || echo "No debates found"`
+- Latest state: !`cat $(ls -1t .debate/*/state.json 2>/dev/null | head -1) 2>/dev/null || echo "No active debate state"`
+
 ## Instructions
 
 1. **Locate debate state:**
    - If `debate-dir` argument provided, use that path directly
-   - Otherwise, find the most recent debate: `Glob pattern: .debate/*/state.json`, pick latest by timestamp prefix
+   - Otherwise, use the latest debate info injected above
 
-2. **Read and validate `state.json`:**
+2. **Validate state:**
    - Confirm status is not `"completed"` (if completed, inform user and stop)
    - Identify `lastCompletedPhase` and `currentRound`
 

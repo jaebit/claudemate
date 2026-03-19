@@ -4,6 +4,10 @@
 **Version:** 1.0.0
 **Role:** Research-backed CLAUDE.md/AGENTS.md optimization (arxiv 2602.11988v1).
 
+# Skills
+
+- `/docs-optimizer:optimize [path] [--dry-run] [--report-only]` — Optimize target files (`disable-model-invocation`: user-only, `context: fork`)
+
 # Constraints
 
 - **DO** preserve test/build commands and repo-specific constraints.

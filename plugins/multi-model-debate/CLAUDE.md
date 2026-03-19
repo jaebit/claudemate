@@ -7,10 +7,11 @@ Structured 3-model debate orchestration (Claude + Codex + Gemini) for software e
 - **codex-harness** plugin installed (provides `mcp__plugin_codex-harness_codex__codex`)
 - **gemini-cli** installed and authenticated (`which gemini` must succeed)
 
-## Slash Commands
+## Skills
 
-- `/debate:start <topic>` — Start a new multi-model debate
-- `/debate:resume [debate-dir]` — Resume an interrupted debate
+- `/debate:start <topic>` — Start a new multi-model debate (`disable-model-invocation`: user-only)
+- `/debate:resume [debate-dir]` — Resume an interrupted debate (`disable-model-invocation`: user-only)
+- `debate-orchestration` — Internal orchestration logic (`user-invocable: false`, `context: fork`)
 
 ## Constraints
 

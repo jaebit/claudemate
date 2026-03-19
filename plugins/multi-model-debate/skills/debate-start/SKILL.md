@@ -1,7 +1,9 @@
 ---
-description: "Start a multi-model debate on a software engineering topic"
+name: debate-start
+description: "Start a multi-model debate on a software engineering topic. Use when the user invokes /debate:start with a topic to evaluate using Claude, Codex, and Gemini in parallel."
 argument-hint: "<topic> [--context <files>] [--perspectives <p1,p2,p3>] [--rounds <N>]"
-allowed-tools: ["Read", "Write", "Bash", "Glob", "Grep", "Agent"]
+disable-model-invocation: true
+allowed-tools: Read, Write, Bash, Glob, Grep, Agent
 ---
 
 # Debate Start

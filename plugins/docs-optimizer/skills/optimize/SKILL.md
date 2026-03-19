@@ -1,6 +1,10 @@
 ---
 name: optimize
 description: "Optimize a CLAUDE.md/AGENTS.md file using research-backed classification rules (arxiv 2602.11988v1). Use this skill whenever the user wants to reduce token overhead, clean up agent instructions, shrink or audit CLAUDE.md/AGENTS.md bloat, compress documentation for AI agents, or improve instruction file efficiency — even if they don't say 'optimize' explicitly."
+argument-hint: "[path] [--dry-run] [--report-only]"
+disable-model-invocation: true
+context: fork
+agent: general-purpose
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 ---
 
@@ -8,37 +12,19 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 
 Apply classification rules from arxiv 2602.11988v1 to reduce token overhead while preserving agent-critical information.
 
-## Classification Rules
+For detailed classification rules, migration strategies, and table formats, see [reference.md](reference.md).
 
-### HIGH-VALUE (Keep)
-Content that measurably improves agent performance:
-- **Test/build commands** - exact CLI invocations the agent cannot infer
-- **Repo-specific constraints** - immutable rules, golden rules, project-specific Do's/Don'ts
-- **Unique tool references** - custom MCP servers, plugin-specific tools, CLI flags
-- **Operational commands** - deployment, CI/CD, environment setup
+## Target Files
 
-### HARMFUL (Remove)
-Content that degrades performance by consuming tokens without benefit:
-- **Directory structure trees** - agent discovers via Glob/LS; static trees go stale
-- **Detailed inventories** - file-by-file descriptions, component catalogs
-- **Schema tables** - full field listings already in source code
-- **General coding patterns** - things the LLM already knows (REST conventions, error handling basics)
+- Available CLAUDE.md files: !`find . -name "CLAUDE.md" -not -path "*/node_modules/*" -not -path "*/.git/*" 2>/dev/null | head -20 || echo "None found"`
+- Available AGENTS.md files: !`find . -name "AGENTS.md" -not -path "*/node_modules/*" -not -path "*/.git/*" 2>/dev/null | head -20 || echo "None found"`
 
-### NEUTRAL (Remove unless repo-unique)
-Content that neither helps nor hurts, but wastes tokens:
-- **README duplicates** - project context already in README.md
-- **Tech stack lists** - discoverable from package.json/pyproject.toml
-- **Aspirational guidelines** - vague quality goals without actionable rules
-- **Maintenance policies** - versioning/changelog instructions
+## Arguments
 
-## Migration Strategies
-
-| Strategy | When | How |
-|----------|------|-----|
-| **Pointer** | Content exists in another file | Replace with 1-line reference: `See path/to/file`. If multiple sections become single-line pointers, consolidate them into one `## References` section |
-| **Skill** | Needed only during specific tasks | Move to `skills/*/SKILL.md` for on-demand loading |
-| **Delete** | Pure duplicate or auto-discoverable | Remove (source of truth already exists) |
-| **Merge** | Scattered Do's/Don'ts lists | Consolidate into single Constraints section |
+- If a path argument is provided, use that file directly
+- If no argument, use the file list injected above
+- `--dry-run`: Run classification and show proposed changes without modifying files
+- `--report-only`: Output current state analysis (line counts, section breakdown) only
 
 ## 5-Step Process
 
@@ -48,28 +34,12 @@ Content that neither helps nor hurts, but wastes tokens:
 - List each `##` section with its line count
 
 ### Step 2: CLASSIFY
-For each section, apply classification rules. Output a table:
-
-```
-| Section | Lines | Classification | Reason |
-|---------|-------|----------------|--------|
-| Operational Commands | 12 | HIGH-VALUE | Exact CLI invocations |
-| Directory Structure | 45 | HARMFUL | Stale tree, auto-discoverable |
-| ...
-```
+For each section, apply classification rules from [reference.md](reference.md). Output a classification table.
 
 If `--report-only` flag: stop here and display the table.
 
 ### Step 3: PLAN
 For each non-HIGH-VALUE section, assign a migration strategy. Calculate expected final line count.
-
-```
-| Section | Strategy | Target | Expected Lines |
-|---------|----------|--------|----------------|
-| Directory Structure | Delete | - | 0 |
-| API Reference | Pointer | See docs/api.md | 1 |
-| ...
-```
 
 If `--dry-run` flag: stop here and display the plan.
 

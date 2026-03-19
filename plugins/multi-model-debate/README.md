@@ -45,6 +45,23 @@ With options:
 4. **Round 2+** — Cross-examination on contested points only (skips agreed items)
 5. **Final Consensus** — Generates report with verdicts, recommendations, and action items
 
+The orchestration skill runs in a forked sub-agent context (`context: fork`) to keep the main conversation clean.
+
+## Plugin Structure
+
+```
+multi-model-debate/
+├── .claude-plugin/plugin.json
+├── skills/
+│   ├── debate-start/SKILL.md        # /debate:start slash command
+│   ├── debate-resume/SKILL.md       # /debate:resume slash command
+│   └── debate-orchestration/
+│       ├── SKILL.md                  # Core orchestration logic (internal)
+│       └── reference.md             # Prompt templates and report structure
+├── CLAUDE.md
+└── README.md
+```
+
 ## Output
 
 All artifacts are saved to `.debate/<debate-id>/`:
