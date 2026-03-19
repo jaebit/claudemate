@@ -43,6 +43,7 @@ cd plugins/context-aware-workflow && python -m pytest tests/
 - **DO** update `marketplace.json` and root `README.md` when adding/removing plugins.
 - **DO** validate YAML frontmatter syntax before committing.
 - **DO** use strict semantic versioning in `plugin.json`.
+- Skill test workspace: `.skills-workspace/` (스킬 테스트 시 이 디렉토리 사용)
 
 ## Git Strategy
 

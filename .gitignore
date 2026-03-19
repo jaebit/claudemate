@@ -30,6 +30,7 @@ __pycache__/
 # Windows
 nul
 
+.skills-workspace/
 plans/
 research-output/
 research-output-edge-ai/

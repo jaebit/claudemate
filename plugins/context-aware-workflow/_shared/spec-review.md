@@ -83,4 +83,4 @@ Agent tool (general-purpose):
 
 - **Complements**: `quality-gate` skill (which validates code, not design documents)
 - **Used by**: Planner (brainstorm mode), Architect (--arch, --ui)
-- **Referenced from**: `commands/explore.md`
+- **Referenced from**: `skills/explore/SKILL.md`

@@ -1,13 +1,20 @@
 ---
 name: commit-discipline
-description: Analyzes staged git changes to classify them as structural (tidy) or behavioral (build) and detects when both are mixed in a single commit. Use this skill whenever the user is about to commit and wants to check if their changes follow tidy-first principles, asks whether to split a commit, mentions mixing renames/refactors with new features or logic changes, references structural vs behavioral separation, or asks about commit hygiene and clean commit history. Also use when reviewing staged diffs for commit readiness.
-allowed-tools: Bash, Read, Grep
+description: "Classifies staged git changes as structural (tidy) or behavioral (build) per Kent Beck's Tidy First principles, and detects when both are mixed in a single commit. Invoke before committing to check: should I split this commit? Are my renames/refactors mixed with new features? Is this a valid [tidy] or [feat] commit? Also handles commit prefix selection, hotfix exceptions, and staged diff readiness review."
 context: fork
+agent: general-purpose
+disable-model-invocation: true
+allowed-tools: Bash, Read, Grep
 ---
 
 # Commit Discipline
 
 Enforces Tidy First: separate structural and behavioral changes.
+
+## Staged Changes
+
+- **Staged files**: !`git diff --cached --stat 2>/dev/null || echo "(no staged changes)"`
+- **Changed file list**: !`git diff --cached --name-only 2>/dev/null || echo "(none)"`
 
 ## Forked Context Returns
 

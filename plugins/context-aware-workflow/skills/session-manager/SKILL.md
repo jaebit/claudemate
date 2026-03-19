@@ -1,12 +1,17 @@
 ---
 name: session-manager
 description: Unified session state management, context prioritization, HUD metrics, and analytics dashboard
+user-invocable: false
 allowed-tools: Read, Write, Glob, Grep, Bash
 ---
 
 # Session Manager
 
 Combines session persistence, intelligent context management, real-time HUD metrics, and analytics dashboard.
+
+## Current Session
+
+- **Session state**: !`cat .caw/session.json 2>/dev/null | head -15 || echo "(no active session)"`
 
 ## Components
 

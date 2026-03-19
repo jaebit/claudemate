@@ -113,7 +113,7 @@ class TestPluginStructure(unittest.TestCase):
 
     def test_required_directories_exist(self):
         """Required plugin directories must exist."""
-        required_dirs = ["agents", "hooks", "commands", "_shared", "skills"]
+        required_dirs = ["agents", "hooks", "_shared", "skills"]
 
         for dir_name in required_dirs:
             dir_path = PLUGIN_ROOT / dir_name
@@ -195,44 +195,6 @@ class TestAgentFiles(unittest.TestCase):
         self.assertEqual(len(agents), 8, f"Expected 8 agents, found {len(agents)}: {[a.name for a in agents]}")
 
 
-class TestCommandFiles(unittest.TestCase):
-    """Test command file structure and frontmatter."""
-
-    def get_command_files(self):
-        """Get all command .md files."""
-        commands_dir = PLUGIN_ROOT / "commands"
-        return list(commands_dir.glob("*.md"))
-
-    def test_commands_exist(self):
-        """At least one command file must exist."""
-        commands = self.get_command_files()
-        self.assertGreater(len(commands), 0, "No command files found")
-
-    def test_command_frontmatter(self):
-        """Each command must have valid YAML frontmatter with description."""
-        for cmd_file in self.get_command_files():
-            with open(cmd_file, "r", encoding="utf-8") as f:
-                content = f.read()
-
-            # Must start with ---
-            self.assertTrue(
-                content.startswith("---"),
-                f"{cmd_file.name} must start with YAML frontmatter",
-            )
-
-            # Must have closing ---
-            parts = content.split("---", 2)
-            self.assertGreaterEqual(
-                len(parts), 3, f"{cmd_file.name} must have closing ---"
-            )
-
-            # Frontmatter must contain description
-            frontmatter = parts[1]
-            self.assertIn(
-                "description:",
-                frontmatter,
-                f"{cmd_file.name} missing 'description' in frontmatter",
-            )
 
 
 class TestRequiredAgents(unittest.TestCase):
@@ -261,35 +223,6 @@ class TestRequiredAgents(unittest.TestCase):
             )
 
 
-class TestRequiredCommands(unittest.TestCase):
-    """Test that required v3.0 commands are present."""
-
-    ACTIVE_COMMANDS = ["go", "status", "review", "parallel", "explore", "manage"]
-
-    def test_active_commands_exist(self):
-        """All 6 active v3.0 commands must exist."""
-        for cmd_name in self.ACTIVE_COMMANDS:
-            cmd = PLUGIN_ROOT / "commands" / f"{cmd_name}.md"
-            self.assertTrue(cmd.exists(), f"commands/{cmd_name}.md not found")
-
-    def test_deprecated_commands_removed(self):
-        """Deprecated v2 commands should be fully removed in v3.1."""
-        removed = [
-            "auto", "pipeline", "loop", "start", "next",
-            "analytics", "qaloop", "ultraqa", "check", "fix",
-            "swarm", "team", "brainstorm", "design", "research",
-            "context", "sync", "merge", "worktree", "tidy",
-            "init", "evolve", "reflect",
-        ]
-        for cmd_name in removed:
-            cmd = PLUGIN_ROOT / "commands" / f"{cmd_name}.md"
-            self.assertFalse(cmd.exists(), f"Deprecated {cmd_name}.md should be removed in v3.1")
-
-    def test_command_count(self):
-        """v3.1 should have exactly 6 commands."""
-        commands_dir = PLUGIN_ROOT / "commands"
-        cmds = list(commands_dir.glob("*.md"))
-        self.assertEqual(len(cmds), 6, f"Expected 6 commands, found {len(cmds)}: {[c.name for c in cmds]}")
 
 
 class TestSkillFiles(unittest.TestCase):
@@ -355,9 +288,9 @@ class TestSkillFiles(unittest.TestCase):
             )
 
     def test_skill_count(self):
-        """v3.2 should have exactly 10 skills."""
+        """v4.0 should have exactly 16 skills."""
         skills = self.get_skill_dirs()
-        self.assertEqual(len(skills), 10, f"Expected 10 skills, found {len(skills)}: {[s.name for s in skills]}")
+        self.assertEqual(len(skills), 16, f"Expected 16 skills, found {len(skills)}: {[s.name for s in skills]}")
 
 
 class TestRequiredSkills(unittest.TestCase):
@@ -369,6 +302,7 @@ class TestRequiredSkills(unittest.TestCase):
         "pattern-learner",
         "knowledge-engine", "session-manager", "learning-loop",
         "structured-research",
+        "go", "status", "review", "parallel", "explore", "manage",
     ]
 
     def test_required_skills_exist(self):
@@ -517,7 +451,7 @@ class TestCrossPlatformCompatibility(unittest.TestCase):
 class TestSkillFrontmatterFields(unittest.TestCase):
     """Test that SKILL.md frontmatter only uses recognized fields."""
 
-    RECOGNIZED_FIELDS = {"name", "description", "allowed-tools", "context"}
+    RECOGNIZED_FIELDS = {"name", "description", "allowed-tools", "context", "disable-model-invocation", "user-invocable", "agent", "argument-hint"}
 
     def get_skill_frontmatters(self):
         """Parse frontmatter from all SKILL.md files."""

@@ -28,10 +28,10 @@ cp -r context-aware-workflow /your/project/.claude-plugin/
 /cw:status
 ```
 
-## Commands Reference
+## Skills Reference
 
-| Command | Description |
-|---------|-------------|
+| Skill | Description |
+|-------|-------------|
 | `/cw:go` | Run full 9-stage pipeline (plan → build → review → fix) |
 | `/cw:status` | Display workflow progress, metrics, and cost analytics |
 | `/cw:review` | Unified code review, QA, compliance checking, and auto-fix |
@@ -58,10 +58,16 @@ See `_shared/agent-registry.md` for full details.
 
 ## Skills
 
-10 skills that augment agent capabilities:
+16 skills (6 user-invocable + 10 auto-triggered):
 
 | Skill | Purpose |
 |-------|---------|
+| go | Full 9-stage automated workflow pipeline |
+| status | Workflow progress, metrics, and cost analytics |
+| review | Unified code review, QA, compliance, and auto-fix |
+| parallel | Parallel execution via swarm or Agent Teams |
+| explore | Pre-planning discovery — brainstorm, design, research |
+| manage | Workflow utilities — context, sync, worktree, tidy |
 | progress-tracker | Tracks completion percentage and step status |
 | plan-detector | Detects Plan Mode completion, suggests CAW workflow |
 | quality-gate | Validates quality criteria before step completion |

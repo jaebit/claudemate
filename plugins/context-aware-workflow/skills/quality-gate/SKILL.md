@@ -1,13 +1,19 @@
 ---
 name: quality-gate
 description: Runs automated quality checks (compilation, linting, tests, Tidy First commit discipline) before marking a workflow step as complete. Use this skill whenever a builder finishes a step and needs validation, during phase transitions, or when the user asks to validate, verify, or check their completed work before proceeding. Also triggers on "quality gate", "run checks before I move on", "is this step ready", or "validate step N".
-allowed-tools: Read, Bash, Glob, Grep
 context: fork
+agent: general-purpose
+allowed-tools: Read, Bash, Glob, Grep
 ---
 
 # Quality Gate
 
 Automated quality validation before step completion.
+
+## Current Context
+
+- **Changed files**: !`git diff --cached --name-only 2>/dev/null || git diff --name-only 2>/dev/null || echo "(no changes)"`
+- **Task context**: !`cat .caw/task_plan.md 2>/dev/null | head -20 || echo "(no task plan)"`
 
 ## Forked Context Returns
 

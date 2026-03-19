@@ -1,11 +1,23 @@
 ---
+name: review
 description: "Unified code review, QA, compliance checking, and auto-fix"
 argument-hint: "[path] [flags]"
+disable-model-invocation: true
+allowed-tools: Read, Write, Bash, Agent
 ---
 
 # /cw:review - Code Review & QA
 
 Unified code review, QA loop, compliance checking, and auto-fix.
+
+## Arguments
+
+**Invoked as**: $ARGUMENTS
+
+## Current State
+
+- **Last review**: !`cat .caw/last_review.json 2>/dev/null | head -8 || echo "(no previous review)"`
+- **Task plan**: !`cat .caw/task_plan.md 2>/dev/null | head -10 || echo "(no task plan)"`
 
 ## Usage
 
@@ -197,9 +209,13 @@ Next: /cw:review --fix or /cw:go --continue
 - QA loop: `.caw/qaloop_state.json`
 - Build verification: `.caw/ultraqa_state.json`
 
-## Integration
+## Boundaries
 
-- **Reads**: `.caw/task_plan.md`, source files, config files
-- **Invokes**: Reviewer, Fixer, ComplianceChecker, Builder agents
-- **Updates**: `.caw/task_plan.md` with review notes
-- **Suggests**: `/cw:review --fix`, `/cw:go --continue`
+**Will:**
+- Read `.caw/task_plan.md`, source files, config files
+- Invoke Reviewer, Fixer, ComplianceChecker, Builder agents
+- Update `.caw/task_plan.md` with review notes
+
+**Won't:**
+- Modify source code without `--fix` flag
+- Skip user confirmation for destructive fixes

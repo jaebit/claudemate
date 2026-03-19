@@ -1,11 +1,23 @@
 ---
+name: explore
 description: "Pre-planning discovery - brainstorm, design, or research"
 argument-hint: "<topic> [--arch|--ui|--research|--research-deep|--debate]"
+disable-model-invocation: true
+allowed-tools: Read, Write, Bash, Agent, AskUserQuestion, WebSearch, WebFetch
 ---
 
 # /cw:explore - Discovery & Design
 
 Pre-planning discovery combining brainstorming, architecture design, and research.
+
+## Arguments
+
+**Invoked as**: $ARGUMENTS
+
+## Current State
+
+- **Brainstorm**: !`cat .caw/brainstorm.md 2>/dev/null | head -5 || echo "(no brainstorm yet)"`
+- **Research**: !`ls .caw/research/ 2>/dev/null || echo "(no research yet)"`
 
 ## Usage
 
@@ -84,7 +96,7 @@ Interactive Socratic dialogue via Planner agent (brainstorm mode).
 [6] User Review Gate (approve or request changes)
 ```
 
-See `_shared/spec-review.md` for review loop protocol.
+See `../../_shared/spec-review.md` for review loop protocol.
 
 **Output** (`.caw/brainstorm.md`):
 - Problem Statement, Target Users
@@ -200,8 +212,8 @@ Explore Complete
 Mode: Brainstorm
 Created: .caw/brainstorm.md
 Debate: .debate/20260315-143022-notification-system/report.md
-Spec Review: ✅ Approved (2 iterations)
-User Approval: ✅ Approved
+Spec Review: Approved (2 iterations)
+User Approval: Approved
 
 Summary:
 - Problem: Real-time notification delivery
@@ -230,11 +242,16 @@ Next: /cw:explore --arch | /cw:explore --ui | /cw:go
         └── RESEARCH-REPORT.md
 ```
 
-## Integration
+## Boundaries
 
-- **Creates**: `.caw/brainstorm.md`, `.caw/design/*.md`, `.caw/research/*.md`, `.caw/research/<slug>/RESEARCH-REPORT.md`
-- **Invokes**: Planner (brainstorm mode), Architect, Explore agents
-- **Optionally invokes**: `/debate:start` (when `--debate` flag, requires `multi-model-debate` plugin)
-- **Uses**: AskUserQuestion, Serena, WebSearch, Context7
-- **References**: `_shared/spec-review.md` (review loop protocol)
-- **Successor**: `/cw:go`
+**Will:**
+- Create `.caw/brainstorm.md`, `.caw/design/*.md`, `.caw/research/*.md`, `.caw/research/<slug>/RESEARCH-REPORT.md`
+- Invoke Planner (brainstorm mode), Architect, Explore agents
+- Optionally invoke `/debate:start` (when `--debate` flag, requires `multi-model-debate` plugin)
+- Use AskUserQuestion, Serena, WebSearch, Context7
+- Reference `../../_shared/spec-review.md` (review loop protocol)
+
+**Won't:**
+- Execute code or modify source files
+- Skip user approval gates
+- Proceed to planning without user sign-off

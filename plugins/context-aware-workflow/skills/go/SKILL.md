@@ -1,11 +1,23 @@
 ---
+name: go
 description: "Run the full CW workflow automatically - plan, build, review, and reflect in one command"
 argument-hint: "<task description> [flags]"
+disable-model-invocation: true
+allowed-tools: Read, Write, Bash, Agent, AskUserQuestion
 ---
 
 # /cw:go - Automated Workflow
 
 Execute the complete CW workflow in a single command with a 9-stage pipeline.
+
+## Arguments
+
+**Invoked as**: $ARGUMENTS
+
+## Current State
+
+- **Auto state**: !`cat .caw/auto-state.json 2>/dev/null | head -10 || echo "(no saved state)"`
+- **Task plan**: !`cat .caw/task_plan.md 2>/dev/null | head -5 || echo "(no task plan)"`
 
 ## Usage
 
@@ -44,7 +56,7 @@ Execute the complete CW workflow in a single command with a 9-stage pipeline.
 
 ## Signal-Based Phase Transitions
 
-Each phase outputs a completion signal. See [Signal Detection](../_shared/signal-detection.md).
+Each phase outputs a completion signal. See [Signal Detection](../../_shared/signal-detection.md).
 
 | Phase | Signal |
 |-------|--------|
@@ -152,15 +164,21 @@ On error, state is saved to `.caw/auto-state.json`.
 
 **Parallel Validation failure:** Auto-proceeds to Fix stage, retries up to 3 rounds.
 
-## Integration
+## Boundaries
 
-- **Reads**: Task description, .caw/spec.md, .caw/task_plan.md
-- **Invokes**: Analyst, Bootstrapper, Planner, Builder, Reviewer (x3), Fixer, ComplianceChecker, Ralph Loop
-- **Updates**: .caw/auto-state.json, .caw/task_plan.md, .caw/learnings.md
-- **Creates**: .caw/spec.md, .caw/validation-results.json
+**Will:**
+- Read task description, .caw/spec.md, .caw/task_plan.md
+- Invoke Analyst, Bootstrapper, Planner, Builder, Reviewer (x3), Fixer, ComplianceChecker, Ralph Loop
+- Update .caw/auto-state.json, .caw/task_plan.md, .caw/learnings.md
+- Create .caw/spec.md, .caw/validation-results.json
+
+**Won't:**
+- Skip stages without explicit `--skip-*` flags
+- Continue past 3 consecutive failures without user input
+- Push to remote or create PRs automatically
 
 ## References
 
-- [Signal Detection](../_shared/signal-detection.md)
-- [Parallel Validation](../_shared/parallel-validation.md)
-- [Auto State Schema](../_shared/schemas/auto-state.schema.json)
+- [Signal Detection](../../_shared/signal-detection.md)
+- [Parallel Validation](../../_shared/parallel-validation.md)
+- [Auto State Schema](../../_shared/schemas/auto-state.schema.json)

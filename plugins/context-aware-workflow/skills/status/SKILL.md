@@ -1,11 +1,24 @@
 ---
+name: status
 description: "Display workflow progress, metrics, and cost analytics"
 argument-hint: "[--verbose] [--cost] [--tokens] [--all]"
+disable-model-invocation: true
+allowed-tools: Read, Bash
 ---
 
 # /cw:status - Workflow Status & Analytics
 
 Display current workflow state, progress, and cost/token analytics.
+
+## Arguments
+
+**Invoked as**: $ARGUMENTS
+
+## Current State
+
+- **Task plan**: !`cat .caw/task_plan.md 2>/dev/null | head -20 || echo "(no task plan)"`
+- **Metrics**: !`cat .caw/metrics.json 2>/dev/null | head -10 || echo "(no metrics yet)"`
+- **Mode**: !`cat .caw/mode.json 2>/dev/null || echo "(default mode)"`
 
 ## Usage
 
@@ -110,8 +123,13 @@ Shows background agents with task ID, step, status, duration.
 - **All Complete**: Shows success message with suggested actions
 - **All Blocked**: Lists blocked steps with resolution hints
 
-## Integration
+## Boundaries
 
-- **Reads**: `.caw/task_plan.md`, `.caw/metrics.json`, `.caw/sessions/*.json`, `.caw/mode.json`
-- **Writes**: `.caw/analytics_export_*.json` (with --export)
-- **Uses**: `dependency-analyzer` for parallel opportunities
+**Will:**
+- Read `.caw/task_plan.md`, `.caw/metrics.json`, `.caw/sessions/*.json`, `.caw/mode.json`
+- Write `.caw/analytics_export_*.json` (with --export)
+- Use `dependency-analyzer` for parallel opportunities
+
+**Won't:**
+- Modify task plan or workflow state
+- Invoke other commands or agents

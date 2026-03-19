@@ -1,12 +1,17 @@
 ---
 name: plan-detector
 description: Detects Plan Mode completion and suggests starting CAW workflow. Use when ExitPlanMode is called or when a plan file is created/updated in the configured plansDirectory (resolves from settings).
+user-invocable: false
 allowed-tools: Read, Glob, AskUserQuestion
 ---
 
 # Plan Detector
 
 Automatically detect Plan Mode completion and offer to start a structured CAW workflow.
+
+## Plan Files
+
+- **Plans directory**: !`ls .claude/plans/ 2>/dev/null || echo "(no plans directory)"`
 
 ## Event Hook
 

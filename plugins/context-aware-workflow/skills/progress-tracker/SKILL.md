@@ -1,13 +1,20 @@
 ---
 name: progress-tracker
 description: Tracks workflow progress metrics including completion percentage, time spent, and step status
-allowed-tools: Read, Write, Bash
 context: fork
+agent: general-purpose
+user-invocable: false
+allowed-tools: Read, Write, Bash
 ---
 
 # Progress Tracker
 
 Track and visualize workflow progress with detailed metrics.
+
+## Current Plan State
+
+- **Task plan**: !`cat .caw/task_plan.md 2>/dev/null | head -20 || echo "(no task plan)"`
+- **Metrics**: !`cat .caw/metrics.json 2>/dev/null | head -10 || echo "(no metrics yet)"`
 
 ## Forked Context Returns
 

@@ -1,11 +1,23 @@
 ---
+name: parallel
 description: "Execute tasks in parallel using swarm or Agent Teams"
 argument-hint: "<tasks...> [flags]"
+disable-model-invocation: true
+allowed-tools: Read, Write, Bash, Agent, AskUserQuestion, SendMessage
 ---
 
 # /cw:parallel - Parallel Execution
 
 Execute multiple independent tasks concurrently using swarm mode or Agent Teams.
+
+## Arguments
+
+**Invoked as**: $ARGUMENTS
+
+## Current State
+
+- **Swarm state**: !`cat .caw/swarm_state.json 2>/dev/null | head -5 || echo "(no active swarm)"`
+- **Task plan**: !`cat .caw/task_plan.md 2>/dev/null | head -10 || echo "(no task plan)"`
 
 ## Usage
 
@@ -163,9 +175,14 @@ Saved in `.caw/swarm_state.json` (swarm) or `.caw/team_state.json` (team).
 | `TaskCompleted` | Task marked done | Enforce quality gate review |
 | `WorktreeCreate` | Worktree created | Copy `.caw/` files to worktree |
 
-## Integration
+## Boundaries
 
-- **Reads**: Task descriptions, `.caw/task_plan.md`
-- **Invokes**: Builder, Reviewer agents
-- **Creates**: `.caw/swarm_state.json`, `.caw/team_state.json`
-- **Works with**: `/cw:go --team`, `/cw:manage worktree`, `/cw:manage merge`
+**Will:**
+- Read task descriptions, `.caw/task_plan.md`
+- Invoke Builder, Reviewer agents
+- Create `.caw/swarm_state.json`, `.caw/team_state.json`
+
+**Won't:**
+- Modify files outside assigned task scope
+- Override `--on-error stop` behavior
+- Start team mode without `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS`

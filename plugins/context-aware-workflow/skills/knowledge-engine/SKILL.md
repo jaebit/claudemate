@@ -1,6 +1,7 @@
 ---
 name: knowledge-engine
 description: Centralized knowledge repository with ADR logging, review checklist generation, and project knowledge management
+user-invocable: false
 allowed-tools: Read, Write, Glob, Grep
 ---
 

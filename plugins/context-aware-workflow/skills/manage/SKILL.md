@@ -1,11 +1,23 @@
 ---
+name: manage
 description: "Workflow utilities - context, sync, worktree, tidy, and more"
 argument-hint: "<subcommand> [options]"
+disable-model-invocation: true
+allowed-tools: Read, Write, Bash, Agent, AskUserQuestion, Glob, Grep
 ---
 
 # /cw:manage - Workflow Utilities
 
 Manage workflow context, worktrees, synchronization, and improvement tools.
+
+## Arguments
+
+**Invoked as**: $ARGUMENTS
+
+## Current State
+
+- **Context manifest**: !`cat .caw/context_manifest.json 2>/dev/null | head -10 || echo "(no manifest)"`
+- **Learnings**: !`cat .caw/learnings.md 2>/dev/null | head -5 || echo "(no learnings yet)"`
 
 ## Usage
 
@@ -225,9 +237,14 @@ Run Ralph Loop continuous improvement cycle after task completion.
 
 ---
 
-## Integration
+## Boundaries
 
-- **Reads**: `.caw/context_manifest.json`, `.caw/task_plan.md`, `.caw/learnings.md`
-- **Invokes**: Bootstrapper, Architect agents; Serena MCP tools
-- **Updates**: `.caw/context_manifest.json`, `.caw/task_plan.md`, `.caw/learnings.md`
-- **Works with**: `/cw:go`, `/cw:parallel`, `/cw:status`
+**Will:**
+- Read `.caw/context_manifest.json`, `.caw/task_plan.md`, `.caw/learnings.md`
+- Invoke Bootstrapper, Architect agents; Serena MCP tools
+- Update `.caw/context_manifest.json`, `.caw/task_plan.md`, `.caw/learnings.md`
+
+**Won't:**
+- Delete files outside `.caw/` without confirmation
+- Force-push or modify remote branches
+- Overwrite Serena memories without `--force`
