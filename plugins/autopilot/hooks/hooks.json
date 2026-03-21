@@ -1,13 +1,14 @@
 {
-  "hooks": [
-    {
-      "type": "SessionStart",
-      "hooks": [
-        {
-          "type": "command",
-          "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/session-init.mjs\""
-        }
-      ]
-    }
-  ]
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/session-init.mjs\""
+          }
+        ]
+      }
+    ]
+  }
 }

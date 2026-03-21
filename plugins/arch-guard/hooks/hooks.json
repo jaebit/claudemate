@@ -1,36 +1,39 @@
 {
-  "hooks": [
-    {
-      "type": "SessionStart",
-      "hooks": [
-        {
-          "type": "command",
-          "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/session-init.mjs\""
-        }
-      ]
-    },
-    {
-      "type": "PreToolUse",
-      "matcher": "Write|Edit",
-      "hooks": [
-        {
-          "type": "command",
-          "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/layer-check.mjs\""
-        },
-        {
-          "type": "command",
-          "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/contract-guard.mjs\""
-        }
-      ]
-    },
-    {
-      "type": "Stop",
-      "hooks": [
-        {
-          "type": "prompt",
-          "prompt": "If you modified source files (.cs, .csproj, .java, .ts, etc.) in this response, add a one-line reminder at the end: 'Architecture verification may be needed: /arch-check or /contract-first'. Skip if no source files were modified."
-        }
-      ]
-    }
-  ]
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/session-init.mjs\""
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/layer-check.mjs\""
+          },
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/contract-guard.mjs\""
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "If you modified source files (.cs, .csproj, .java, .ts, etc.) in this response, add a one-line reminder at the end: 'Architecture verification may be needed: /arch-check or /contract-first'. Skip if no source files were modified."
+          }
+        ]
+      }
+    ]
+  }
 }
