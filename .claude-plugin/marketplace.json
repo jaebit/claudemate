@@ -17,19 +17,11 @@
       "source": "./plugins/gemini-cli",
       "version": "1.0.0"
     },
-{
-      "name": "cw",
-      "description": "Context-aware workflow orchestration plugin with Plan Mode integration, intelligent context management, and structured task planning",
-      "source": "./plugins/context-aware-workflow",
-      "version": "3.1.0",
-      "keywords": [
-        "workflow",
-        "context",
-        "planning",
-        "orchestration",
-        "task-management"
-      ],
-      "category": "productivity"
+    {
+      "name": "crew",
+      "description": "Agent-orchestrated development pipeline — 9-stage automation with 8 adaptive agents, parallel execution, research, and review",
+      "source": "./plugins/crew",
+      "version": "4.0.0"
     },
     {
       "name": "multi-model-debate",

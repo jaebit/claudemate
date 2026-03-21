@@ -2,7 +2,7 @@
 
 End-to-end autonomous coding pipeline for Claude Code.
 
-Takes a topic or idea and produces working code through a 5-phase pipeline: research → design → build → review → report. Orchestrates existing plugins (`cw`, `multi-model-debate`, `codex-harness`, `arch-guard`) rather than reimplementing their logic.
+Takes a topic or idea and produces working code through a 5-phase pipeline: research → design → build → review → report. Orchestrates existing plugins (`crew`, `multi-model-debate`, `codex-harness`, `arch-guard`) rather than reimplementing their logic.
 
 ## Install
 
@@ -30,7 +30,7 @@ claude plugins install autopilot
 
 ## Requirements
 
-- `cw` plugin (required)
+- `crew` plugin (required)
 - `multi-model-debate` plugin (optional — for design debates)
 - `codex-harness` plugin (optional — for cross-model review)
 - `arch-guard` plugin (optional — auto-detected via `arch-guard.json`)

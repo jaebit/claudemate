@@ -14,8 +14,8 @@ claude plugins install <plugin-name>
 # Clear plugin cache
 rm -rf ~/.claude/plugins/cache/<marketplace>/<plugin>/
 
-# Run tests (context-aware-workflow)
-cd plugins/context-aware-workflow && python -m pytest tests/
+# Run tests (crew)
+cd plugins/crew && python -m pytest tests/
 ```
 
 ---
@@ -55,6 +55,6 @@ cd plugins/context-aware-workflow && python -m pytest tests/
 
 # Active Plugins
 
-- **[Context-Aware Workflow](./plugins/context-aware-workflow/CLAUDE.md)**
+- **[Crew](./plugins/crew/CLAUDE.md)**
 - **[Codex Harness](./plugins/codex-harness/CLAUDE.md)**
 - **[Gemini CLI](./plugins/gemini-cli/CLAUDE.md)**

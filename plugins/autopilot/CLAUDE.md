@@ -4,7 +4,7 @@ End-to-end autonomous coding pipeline. Single `/autopilot <topic>` command that 
 
 ## Prerequisites
 
-- **Required**: `cw` plugin (context-aware-workflow)
+- **Required**: `crew` plugin
 - **Optional**: `multi-model-debate` plugin (for design debates)
 - **Optional**: `codex-harness` plugin (for cross-model review)
 - **Optional**: `arch-guard` plugin (auto-detected via `arch-guard.json`)
@@ -28,17 +28,17 @@ End-to-end autonomous coding pipeline. Single `/autopilot <topic>` command that 
 ├── review-results.md       # aggregated review findings (Phase 4 output)
 └── REPORT.md               # final report (Phase 5 output)
 
-.caw/                       # delegated to cw plugin
+.caw/                       # delegated to crew plugin
 .debate/                    # delegated to multi-model-debate plugin
 ```
 
 ## Pipeline
 
 ```
-[1/5] RESEARCH    cw:explore --research-deep    autonomous
-[2/5] DESIGN      cw:explore --arch + debate    autonomous → USER GATE
-[3/5] BUILD       arch-guard scaffold + cw:go   autonomous
-[4/5] REVIEW      codex + arch-check + cw:review autonomous (parallel)
+[1/5] RESEARCH    crew:explore --research-deep    autonomous
+[2/5] DESIGN      crew:explore --arch + debate    autonomous → USER GATE
+[3/5] BUILD       arch-guard scaffold + crew:go   autonomous
+[4/5] REVIEW      codex + arch-check + crew:review autonomous (parallel)
 [5/5] REPORT      synthesis                     autonomous
 ```
 

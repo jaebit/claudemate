@@ -4,7 +4,7 @@ description: >
   End-to-end autonomous coding pipeline. Use when the user says "autopilot",
   "build this from scratch", "go from idea to code", "autonomous build",
   or wants to go from a topic/idea to working code with a single command.
-  Orchestrates cw, multi-model-debate, codex-harness, and arch-guard.
+  Orchestrates crew, multi-model-debate, codex-harness, and arch-guard.
 argument-hint: "<topic> [flags]"
 user_invocable: true
 disable-model-invocation: true
@@ -49,10 +49,10 @@ End-to-end pipeline: idea → research → design → build → review → repor
 ## Pipeline Overview
 
 ```
-[1/5] RESEARCH    cw:explore --research-deep           autonomous
-[2/5] DESIGN      cw:explore --arch + debate + arch    autonomous → USER GATE
-[3/5] BUILD       arch-guard scaffold + cw:go           autonomous
-[4/5] REVIEW      codex + arch-check + cw:review        autonomous (parallel)
+[1/5] RESEARCH    crew:explore --research-deep           autonomous
+[2/5] DESIGN      crew:explore --arch + debate + arch    autonomous → USER GATE
+[3/5] BUILD       arch-guard scaffold + crew:go           autonomous
+[4/5] REVIEW      codex + arch-check + crew:review        autonomous (parallel)
 [5/5] REPORT      synthesis                              autonomous
 ```
 
@@ -117,7 +117,7 @@ On 3 consecutive failures in the same phase: stop and suggest manual skill invoc
 
 1. Print `[1/5] Researching...`
 2. Update state: `research.status = "running"`, `phase = "research"`
-3. Invoke: `Skill("cw:explore")` with args `"--research-deep <topic>"`
+3. Invoke: `Skill("crew:explore")` with args `"--research-deep <topic>"`
 4. On success:
    - Locate output at `.caw/research/<slug>/RESEARCH-REPORT.md`
    - Save path to `research.report_path` in state
@@ -141,7 +141,7 @@ On 3 consecutive failures in the same phase: stop and suggest manual skill invoc
 ### 2a — Architecture Design
 
 - Read the research report (from `research.report_path` or locate in `.caw/research/`)
-- Invoke: `Skill("cw:explore")` with args `"--arch <topic>"`, providing research report context
+- Invoke: `Skill("crew:explore")` with args `"--arch <topic>"`, providing research report context
 - Output: `.caw/design/architecture.md`
 - Collect any design questions → append to `.autopilot/deferred-questions.md`
 
@@ -225,16 +225,16 @@ Options:
 
 ### 3b — CW Go Execution
 
-- Transform `.autopilot/design-brief.md` content into a task description suitable for cw:go
-- Invoke: `Skill("cw:go")` with args `"<design-brief summary> --from-plan --skip-expansion --no-questions"`
-  - If `.caw/task_plan.md` doesn't exist yet, let cw:go create it from the design brief
-  - cw:go handles its own 9-stage pipeline (planning, execution, QA, review, fix, check)
+- Transform `.autopilot/design-brief.md` content into a task description suitable for crew:go
+- Invoke: `Skill("crew:go")` with args `"<design-brief summary> --from-plan --skip-expansion --no-questions"`
+  - If `.caw/task_plan.md` doesn't exist yet, let crew:go create it from the design brief
+  - crew:go handles its own 9-stage pipeline (planning, execution, QA, review, fix, check)
 - On success:
   - Set `build.status = "complete"`, `build.cw_state_path = ".caw/auto-state.json"`
   - Print `[3/5] Build complete`
 - On failure:
   - Set `build.status = "failed"`, record error
-  - Print `[3/5] Build failed. Use /autopilot --continue to retry (delegates to cw:go --continue).`
+  - Print `[3/5] Build failed. Use /autopilot --continue to retry (delegates to crew:go --continue).`
   - Stop.
 
 ---
@@ -258,13 +258,13 @@ Use the Agent tool — send a single message with up to 3 Agent calls:
 - If not active: skip, note in results
 
 **Stream C — CW Review**:
-- Invoke `Skill("cw:review")` with `"--all"` for functional, security, and quality review
+- Invoke `Skill("crew:review")` with `"--all"` for functional, security, and quality review
 
 ### Cross-Model Validation
 
 When reviews complete, compare findings:
 - Findings unique to Codex (if ran)
-- Findings unique to Claude (cw:review)
+- Findings unique to Claude (crew:review)
 - Findings both found → high-confidence issues
 - Disagreements → flag for deeper investigation
 
@@ -272,7 +272,7 @@ When reviews complete, compare findings:
 
 - Aggregate all results into `.autopilot/review-results.md`
 - If issues with severity >= major exist:
-  - Invoke `Skill("cw:review")` with `"--fix"` to auto-fix
+  - Invoke `Skill("crew:review")` with `"--fix"` to auto-fix
   - Re-run review streams (increment `review.rounds`)
   - Max 3 rounds total
 - After max rounds with remaining issues: mark as DONE_WITH_CONCERNS (don't block)
@@ -345,7 +345,7 @@ SIGNAL: AUTOPILOT_COMPLETE
 |-------|-----------|----------|
 | Research | Log error, mark failed, stop | `--continue` retries, or `--skip-research` |
 | Design | Preserve partial artifacts, stop | `--continue` retries with existing research |
-| Build | cw:go has 5-level error recovery | `--continue` delegates to `cw:go --continue` |
+| Build | crew:go has 5-level error recovery | `--continue` delegates to `crew:go --continue` |
 | Review | Individual stream failure = skip that stream | Report notes which reviews ran |
 | Report | Should not fail (read-only synthesis) | `--continue` retries |
 
@@ -377,7 +377,7 @@ SIGNAL: AUTOPILOT_COMPLETE
 
 **Will:**
 - Create `.autopilot/` directory and all artifacts within it
-- Invoke cw:explore, cw:go, cw:review via Skill tool
+- Invoke crew:explore, crew:go, crew:review via Skill tool
 - Invoke multi-model-debate:debate-orchestration via Skill tool (if available)
 - Invoke arch-guard skills via Skill tool (if arch-guard.json exists)
 - Invoke codex MCP tool via Agent (if codex-harness available)
@@ -386,7 +386,7 @@ SIGNAL: AUTOPILOT_COMPLETE
 - Run `git diff --stat` for reporting
 
 **Won't:**
-- Reimplement logic from cw, debate, codex, or arch-guard plugins
+- Reimplement logic from crew, debate, codex, or arch-guard plugins
 - Push to remote or create PRs automatically
 - Skip the user gate (Phase 2e) unless `--from-plan` is used
 - Continue past 3 consecutive failures without stopping

@@ -6,7 +6,7 @@ Claude Code plugin marketplace — automate, orchestrate, and extend AI-powered 
 
 | Plugin | Version | Description |
 |--------|---------|-------------|
-| [cw](./plugins/context-aware-workflow) | 3.1.0 | Workflow orchestration — 9-stage pipeline, task planning, QA loops, parallel execution |
+| [crew](./plugins/crew) | 4.0.0 | Agent-orchestrated development — 9-stage pipeline, 8 adaptive agents, parallel execution, research, review |
 | [autopilot](./plugins/autopilot) | 0.1.0 | End-to-end autonomous pipeline — research → design → build → review → report |
 | [multi-model-debate](./plugins/multi-model-debate) | 1.0.0 | Multi-agent debates using Claude, Codex, and Gemini for decision-making |
 | [arch-guard](./plugins/arch-guard) | 0.2.0 | Architecture compliance — layer boundary checks, contract-first development, ADRs |
@@ -20,7 +20,7 @@ Claude Code plugin marketplace — automate, orchestrate, and extend AI-powered 
 claude plugins add github:jaebit/claudemate
 
 # Install plugins
-claude plugins install cw
+claude plugins install crew
 claude plugins install autopilot
 claude plugins install arch-guard
 ```
@@ -35,16 +35,16 @@ Single command from idea to working code:
 /autopilot "build a notification system"
 ```
 
-Chains cw, multi-model-debate, codex-harness, and arch-guard into a 5-phase autonomous pipeline with one user confirmation gate after design.
+Chains crew, multi-model-debate, codex-harness, and arch-guard into a 5-phase autonomous pipeline with one user confirmation gate after design.
 
-### cw (Context-Aware Workflow)
+### crew
 
-Structured development workflow:
+Agent-orchestrated development:
 
 ```bash
-/cw:go "Add JWT authentication"     # Full 9-stage pipeline
-/cw:explore --arch "microservice"   # Architecture design
-/cw:review --all                    # Unified code review
+/crew:go "Add JWT authentication"     # Full 9-stage pipeline
+/crew:explore --arch "microservice"   # Architecture design
+/crew:review --all                    # Unified code review
 ```
 
 ### multi-model-debate

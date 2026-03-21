@@ -1,0 +1,257 @@
+---
+name: explore
+description: "Pre-planning discovery - brainstorm, design, or research"
+argument-hint: "<topic> [--arch|--ui|--research|--research-deep|--debate]"
+disable-model-invocation: true
+allowed-tools: Read, Write, Bash, Agent, AskUserQuestion, WebSearch, WebFetch
+---
+
+# /crew:explore - Discovery & Design
+
+Pre-planning discovery combining brainstorming, architecture design, and research.
+
+## Arguments
+
+**Invoked as**: $ARGUMENTS
+
+## Current State
+
+- **Brainstorm**: !`cat .caw/brainstorm.md 2>/dev/null | head -5 || echo "(no brainstorm yet)"`
+- **Research**: !`ls .caw/research/ 2>/dev/null || echo "(no research yet)"`
+
+## Usage
+
+```bash
+# Brainstorm mode (default) - Socratic dialogue, ideation
+/crew:explore "notification system"
+/crew:explore "notification system" --reset
+
+# Architecture design
+/crew:explore --arch "microservice auth"
+/crew:explore --ui "dashboard redesign"
+/crew:explore --arch --ui "full-stack feature"
+
+# Multi-model debate (requires multi-model-debate plugin)
+/crew:explore --debate "REST vs GraphQL for our API"
+/crew:explore --arch --debate "microservice auth"
+
+# Research mode
+/crew:explore --research "JWT authentication best practices"
+/crew:explore --research "React Server Components" --external
+/crew:explore --research "how is auth handled" --internal
+/crew:explore --research "database pooling" --depth deep
+/crew:explore --research "GraphQL" --gemini
+
+# Deep research (structured 4-stage)
+/crew:explore --research-deep "TypeScript vs Rust type systems"
+/crew:explore --research-deep "REST vs GraphQL" --debate
+```
+
+## Modes
+
+| Mode | Flag | Agent | Output |
+|------|------|-------|--------|
+| **Brainstorm** | (default) | Planner (brainstorm) | `.caw/brainstorm.md` |
+| **Architecture** | `--arch` | Architect | `.caw/design/architecture.md` |
+| **UX/UI Design** | `--ui` | Architect (UI focus) | `.caw/design/ux-ui.md` |
+| **Research** | `--research` | Planner / Explore | `.caw/research/<topic>.md` |
+| **Deep Research** | `--research-deep` | Planner + Task swarm | `.caw/research/<topic>/RESEARCH-REPORT.md` |
+
+## Flags
+
+| Flag | Description |
+|------|-------------|
+| `--arch` | Architecture design mode |
+| `--ui` | UX/UI design mode |
+| `--research` | Research mode (internal + external) |
+| `--internal` | Research: codebase analysis only |
+| `--external` | Research: documentation only |
+| `--depth` | Research depth: `shallow`, `normal`, `deep` |
+| `--gemini` | Research: use Gemini for search grounding |
+| `--save <name>` | Save research for later reference |
+| `--load <name>` | Load previous research |
+| `--research-deep` | Structured 4-stage deep research (decompose → investigate → cross-validate → synthesize) |
+| `--debate` | Use multi-model debate for approach evaluation (requires `multi-model-debate` plugin) |
+| `--reset` | Start fresh, archive existing |
+
+## Brainstorm Mode (Default)
+
+Interactive Socratic dialogue via Planner agent (brainstorm mode).
+
+**Interaction Rules:**
+- One question at a time (prefer multiple-choice)
+- 2-3 approach alternatives before recommending
+- Section-by-section user approval
+
+**Process:**
+
+```
+[1] Clarifying Questions (one at a time, 3-5 rounds)
+[2] Approach Exploration:
+    - Default: Planner proposes 2-3 alternatives with trade-offs
+    - --debate: Invoke /debate:start with topic, feed report into design
+[3] Incremental Design (section-by-section approval)
+[4] Write .caw/brainstorm.md
+[5] Spec Review Loop (subagent, max 3 iterations)
+[6] User Review Gate (approve or request changes)
+```
+
+See `../../_shared/spec-review.md` for review loop protocol.
+
+**Output** (`.caw/brainstorm.md`):
+- Problem Statement, Target Users
+- Requirements (P0/P1/P2)
+- Constraints, Risks & Mitigations
+- Approaches Considered (2-3 with trade-offs)
+- Recommended Direction, Review Status
+
+## Architecture Design (`--arch`)
+
+Creates `.caw/design/architecture.md` via Architect agent with section-by-section approval:
+- System component diagrams
+- Data models (ERD)
+- API specifications
+- Technical decision records (2-3 alternatives each)
+- Security considerations
+- Spec review loop + user approval gate
+
+With `--debate`: Technology and architecture decisions are evaluated via `/debate:start` before the Architect commits to a direction. Debate report is saved to `.debate/` and referenced in the architecture document's Technical Decisions section.
+
+## UX/UI Design (`--ui`)
+
+Creates `.caw/design/ux-ui.md` via Architect agent with section-by-section approval:
+- User flow diagrams
+- ASCII wireframes
+- Component specifications
+- Interaction states
+- Accessibility requirements
+- Spec review loop + user approval gate
+
+With `--debate`: UX approach decisions (e.g. SPA vs MPA, component library choice) are evaluated via `/debate:start` before the Architect commits.
+
+## Research Mode (`--research`)
+
+Combines internal codebase analysis (Serena, Grep/Glob) with external documentation (WebSearch, Context7).
+
+### Research Depth
+
+| Level | Internal | External | Output |
+|-------|----------|----------|--------|
+| **shallow** | Keyword matches, file list | Top 3-5 results | Brief summary |
+| **normal** | Symbol search, 1-level refs | Top 10 results, examples | Detailed report |
+| **deep** | Full symbol graph, architecture mapping | Exhaustive search, cross-reference | Comprehensive document |
+
+### Execution Flow
+
+```
+Query Analysis → Internal Research (symbols, context, patterns)
+             → External Research (search, docs, Context7)
+             → Synthesis (organize, compare, recommend)
+```
+
+### Agent Selection
+
+| Mode | Standard | Deep (--depth deep) |
+|------|----------|---------------------|
+| Internal | Task(Explore) Haiku | crew:planner-opus |
+| Synthesis | crew:Planner Sonnet | crew:planner-opus |
+
+### Persistence
+
+```bash
+/crew:explore --research "GraphQL" --save graphql-schema
+/crew:explore --research "GraphQL" --load graphql-schema
+```
+
+## Deep Research Mode (`--research-deep`)
+
+Activates the `structured-research` skill for a 4-stage research process. Combinable with `--debate`.
+
+```bash
+/crew:explore --research-deep "TypeScript vs Rust type systems"
+/crew:explore --research-deep "REST vs GraphQL" --debate
+```
+
+| Stage | Description | Output |
+|-------|-------------|--------|
+| 1. Decompose | Analyze topic → ~5 subtopic questions with tool assignments | `plan.json` |
+| 2. Investigate | Parallel agents (1 per subtopic, max 5) using assigned tools | `subtopic-N-<name>.md` |
+| 3. Cross-Validate | Agreement/contradiction/gap analysis across subtopics | `cross-validation.md` |
+| 4. Synthesize | Final report with cross-references and confidence assessment | `RESEARCH-REPORT.md` |
+
+**Output**: `.caw/research/<topic-slug>/RESEARCH-REPORT.md`
+
+With `--debate`: Top 2 contradictions from cross-validation are auto-invoked via `/debate:start`.
+
+## Debate Integration (`--debate`)
+
+Requires the `multi-model-debate` plugin. If not installed, warns and falls back to single-agent evaluation.
+
+**Prerequisite check:**
+1. Verify `/debate:start` command is available
+2. If missing: warn "multi-model-debate plugin not found, falling back to single-agent evaluation"
+
+**When `--debate` is active:**
+- Step [2] of brainstorm invokes `/debate:start "<topic>"` instead of single-agent comparison
+- Step [4] of `--arch`/`--ui` invokes `/debate:start` for contested technical decisions
+- Debate report (`.debate/<id>/report.md`) is referenced in the output document's "Approaches Considered" or "Technical Decisions" section
+
+**Combinable with all modes:**
+
+```bash
+/crew:explore --debate "notification system"          # brainstorm + debate
+/crew:explore --arch --debate "microservice auth"     # architecture + debate
+/crew:explore --arch --ui --debate "full-stack app"   # both + debate
+```
+
+## Output
+
+```
+Explore Complete
+
+Mode: Brainstorm
+Created: .caw/brainstorm.md
+Debate: .debate/20260315-143022-notification-system/report.md
+Spec Review: Approved (2 iterations)
+User Approval: Approved
+
+Summary:
+- Problem: Real-time notification delivery
+- Users: End users, admins
+- Must Have: 5 requirements
+- Approaches: 3 debated (Claude/Codex/Gemini), WebSocket consensus
+
+Next: /crew:explore --arch | /crew:explore --ui | /crew:go
+```
+
+## Directory Structure
+
+```
+.caw/
+├── brainstorm.md
+├── design/
+│   ├── ux-ui.md
+│   └── architecture.md
+└── research/
+    ├── <topic>.md
+    └── <topic-slug>/
+        ├── plan.json
+        ├── subtopic-1-<name>.md
+        ├── ...
+        ├── cross-validation.md
+        └── RESEARCH-REPORT.md
+```
+
+## Boundaries
+
+**Will:**
+- Create `.caw/brainstorm.md`, `.caw/design/*.md`, `.caw/research/*.md`, `.caw/research/<slug>/RESEARCH-REPORT.md`
+- Invoke Planner (brainstorm mode), Architect, Explore agents
+- Optionally invoke `/debate:start` (when `--debate` flag, requires `multi-model-debate` plugin)
+- Use AskUserQuestion, Serena, WebSearch, Context7
+- Reference `../../_shared/spec-review.md` (review loop protocol)
+
+**Won't:**
+- Execute code or modify source files
+- Skip user approval gates
+- Proceed to planning without user sign-off
