@@ -298,6 +298,17 @@ If `config.arch_guard_detected` is false AND the built project appears to have l
 
 This ensures Phase 4 Stream B (Architecture Review) runs even when the project was scaffolded from scratch by autopilot.
 
+### 3b.3 — Auto-Generate Architecture Tests (conditional)
+
+If `config.arch_guard_detected` is true (either pre-existing or just created in 3b.2):
+
+1. Invoke `Skill("arch-guard:test-gen")` to generate architecture guard-rail tests (layer dependency, reference direction, etc.)
+2. Run the generated tests (e.g., `dotnet test`, `npm test`, etc.) to verify they pass against the current build
+3. If tests pass: print `[3/5] Architecture tests generated and passing`
+4. If tests fail: log failures but do not block — they will be surfaced in Phase 4 review
+
+This catches layer violations and missing integrations immediately after build, rather than leaving them as manual "Next Steps".
+
 - On failure:
   - Set `build.status = "failed"`, record error
   - Print `[3/5] Build failed. Use /autopilot --continue to retry (delegates to crew:go --continue).`
