@@ -286,6 +286,18 @@ Compute and write to `state.json`:
   - `"minimal"` if built < 50% of total
 
 **Note**: `build.status` remains `"complete"` regardless — the build itself didn't fail, it scoped down. The gap information flows to review and report.
+
+### 3b.2 — Auto-Setup Arch-Guard (conditional)
+
+If `config.arch_guard_detected` is false AND the built project appears to have layered architecture (multiple projects/modules with clear layer boundaries — e.g., Contracts/Domain/Infrastructure/Api/Hosts pattern, or src/ with 3+ subprojects):
+
+1. Invoke `Skill("arch-guard:setup")` to generate `arch-guard.json` from the project structure
+2. If setup succeeds: set `config.arch_guard_detected = true`, update `state.json`
+3. Print `[3/5] arch-guard.json auto-generated — architecture checks enabled for review`
+4. If setup fails or no layered pattern detected: skip silently
+
+This ensures Phase 4 Stream B (Architecture Review) runs even when the project was scaffolded from scratch by autopilot.
+
 - On failure:
   - Set `build.status = "failed"`, record error
   - Print `[3/5] Build failed. Use /autopilot --continue to retry (delegates to crew:go --continue).`
@@ -307,7 +319,7 @@ Use the Agent tool — send a single message with up to 3 Agent calls:
 - If unavailable: skip, note in results
 
 **Stream B — Architecture Review** (conditional):
-- If `config.arch_guard_detected` is true: spawn an Agent that runs `Skill("arch-guard:arch-check")` and `Skill("arch-guard:impl-review")` on the changed files
+- If `config.arch_guard_detected` is true (either pre-existing or auto-generated in 3b.2): spawn an Agent that runs `Skill("arch-guard:arch-check")` and `Skill("arch-guard:impl-review")` on the changed files
 - Produces architecture fitness score
 - If not active: skip, note in results
 
