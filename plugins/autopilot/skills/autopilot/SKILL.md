@@ -96,6 +96,7 @@ End-to-end pipeline: idea → research → design → build → review → repor
     "missing": 0,
     "verdict": "pending"
   },
+  "gap_fill_round": 0,
   "last_error": null
 }
 ```
@@ -400,8 +401,23 @@ Set `review.status` based on overall result. Print `[4/5] Review complete`.
 {conventional commit message based on what was built}
 ```
 
-5. If `completion.missing > 0`: also write `.autopilot/remaining-work.md` as a standalone file containing the Remaining Work section. This file is structured for use as input to `/autopilot --continue` or `crew:go`.
+5. If `completion.missing > 0`: also write `.autopilot/remaining-work.md` as a standalone file containing the Remaining Work section. This file is structured for use as input to gap-filling.
 6. Set `report.status = "complete"`, `report.report_path = ".autopilot/REPORT.md"`
+
+### 5a — Auto Gap-Fill Loop (max 1 round)
+
+If `completion.missing > 0` AND this is NOT already a gap-fill round (check `state.gap_fill_round` — default 0):
+
+1. Print: `[5/5] Gaps detected ({completion.missing} items) — auto gap-filling...`
+2. Set `state.gap_fill_round = 1`
+3. Loop back to **Phase 3b** (crew:go with `.autopilot/remaining-work.md` as task input, `--from-plan --skip-expansion --no-questions`)
+4. Then re-run **Phase 4** (review) and **Phase 5** (report) as normal
+5. If gaps remain after 1 gap-fill round → proceed to completion with COMPLETE_WITH_GAPS (don't loop indefinitely)
+
+If `completion.missing == 0` OR `state.gap_fill_round >= 1` → proceed to step 7.
+
+### 5b — Final Completion
+
 7. Set `phase = "complete"`
 8. Print the report content, then the completion signal:
 
