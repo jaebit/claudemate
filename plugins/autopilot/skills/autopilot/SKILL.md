@@ -66,7 +66,8 @@ End-to-end pipeline: idea → research → design → build → review → repor
    - Otherwise: find first phase with status != `complete` and != `skipped`, resume from there. Skip to that phase section below.
 3. If `--from-plan <path>`: read the file at `<path>`, copy its content to `.autopilot/design-brief.md`, skip to Phase 3.
 4. Create `.autopilot/` directory.
-5. Write initial `.autopilot/state.json`:
+5. **Ensure git repository**: run `git rev-parse --git-dir 2>/dev/null`. If not a git repo, run `git init` and create an initial commit (`git add -A && git commit -m "chore: initial commit (pre-autopilot)"`). This is required because crew agents use git worktrees for isolation.
+6. Write initial `.autopilot/state.json`:
 
 ```json
 {
@@ -101,8 +102,8 @@ End-to-end pipeline: idea → research → design → build → review → repor
 }
 ```
 
-6. Detect arch-guard: if `arch-guard.json` exists and `--no-arch` not set, set `config.arch_guard_detected = true`.
-7. Apply flag overrides to `config`.
+7. Detect arch-guard: if `arch-guard.json` exists and `--no-arch` not set, set `config.arch_guard_detected = true`.
+8. Apply flag overrides to `config`.
 
 Print: `AUTOPILOT started: "<topic>"`
 
