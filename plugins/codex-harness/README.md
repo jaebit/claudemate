@@ -71,21 +71,10 @@ Codex MCP 서버를 통해 Claude Code에서 Codex를 네이티브 도구로 사
 
 ## Installation
 
-### From Marketplace
-
 ```bash
-claude plugins add github:jaebit/context-aware-workflow
+claude plugins add github:jaebit/claudemate
 claude plugins install codex-harness
 ```
-
-### Manual Installation
-
-이 플러그인 폴더를 다음 위치에 복사합니다:
-```
-~/.claude/plugins/codex-harness/
-```
-
-Claude Code 재시작 후 자동으로 로드됩니다.
 
 ## Notes
 

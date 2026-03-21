@@ -150,16 +150,9 @@ gemini config show
 
 ## Installation
 
-Install this plugin in Claude Code:
-
 ```bash
-claude plugins add github:jaebit/context-aware-workflow --subpath plugins/gemini-cli
-```
-
-Or if you have the full marketplace:
-
-```bash
-claude plugins add github:jaebit/context-aware-workflow
+claude plugins add github:jaebit/claudemate
+claude plugins install gemini-cli
 ```
 
 ## Troubleshooting

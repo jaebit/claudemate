@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```bash
 # Install marketplace
-claude plugins add github:jaebit/context-aware-workflow
+claude plugins add github:jaebit/claudemate
 
 # Install specific plugin
 claude plugins install <plugin-name>
@@ -58,4 +58,3 @@ cd plugins/context-aware-workflow && python -m pytest tests/
 - **[Context-Aware Workflow](./plugins/context-aware-workflow/CLAUDE.md)**
 - **[Codex Harness](./plugins/codex-harness/CLAUDE.md)**
 - **[Gemini CLI](./plugins/gemini-cli/CLAUDE.md)**
-- **[Docs Optimizer](./plugins/docs-optimizer/CLAUDE.md)**

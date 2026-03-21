@@ -1,79 +1,76 @@
-# Claude Marketplace
+# claudemate
 
-A plugin marketplace for Claude Code. Provides plugins to extend and automate AI-powered development workflows.
-
-## Highlights
-
-- **Workflow Automation** - Structured development process from task planning to review
-- **AI Tool Integration** - Seamless integration with various AI CLI tools like Gemini and Codex
-- **Productivity Boost** - Automate repetitive tasks and apply quality gates
+Claude Code plugin marketplace — automate, orchestrate, and extend AI-powered development workflows.
 
 ## Available Plugins
 
 | Plugin | Version | Description |
 |--------|---------|-------------|
-| [cw](./plugins/context-aware-workflow) | 2.2.0 | Context-aware workflow orchestration - Plan Mode integration, automatic task planning, QA loops, model routing, pipeline execution |
-| [codex-harness](./plugins/codex-harness) | 1.0.0 | Codex MCP integration - native codex/codex-reply tools + cloud operations |
-| [gemini-cli](./plugins/gemini-cli) | 1.0.0 | Gemini CLI integration - code review, commit message generation, documentation, release notes |
-| [docs-optimizer](./plugins/docs-optimizer) | 1.0.0 | Research-backed CLAUDE.md/AGENTS.md optimization using arxiv 2602.11988v1 classification rules |
+| [cw](./plugins/context-aware-workflow) | 3.1.0 | Workflow orchestration — 9-stage pipeline, task planning, QA loops, parallel execution |
+| [autopilot](./plugins/autopilot) | 0.1.0 | End-to-end autonomous pipeline — research → design → build → review → report |
+| [multi-model-debate](./plugins/multi-model-debate) | 1.0.0 | Multi-agent debates using Claude, Codex, and Gemini for decision-making |
+| [arch-guard](./plugins/arch-guard) | 0.2.0 | Architecture compliance — layer boundary checks, contract-first development, ADRs |
+| [codex-harness](./plugins/codex-harness) | 1.0.0 | Codex MCP integration — native codex/codex-reply tools + cloud operations |
+| [gemini-cli](./plugins/gemini-cli) | 1.0.0 | Gemini CLI integration — code review, commit messages, documentation |
 
 ## Quick Start
 
 ```bash
 # Add marketplace
-claude plugins add github:jyyang/claude-marketplace
+claude plugins add github:jaebit/claudemate
 
 # Install plugins
 claude plugins install cw
-claude plugins install codex-harness
-claude plugins install gemini-cli
+claude plugins install autopilot
+claude plugins install arch-guard
 ```
 
-## Plugin Highlights
+## Highlights
 
-### Context-Aware Workflow (cw)
+### autopilot
 
-Structured development workflow orchestration:
+Single command from idea to working code:
 
 ```bash
-/cw:start "Implement JWT auth"    # Generate task plan
-/cw:auto "Add logout button"      # Run full workflow automatically
+/autopilot "build a notification system"
 ```
 
-### Codex Harness
+Chains cw, multi-model-debate, codex-harness, and arch-guard into a 5-phase autonomous pipeline with one user confirmation gate after design.
 
-MCP-native Codex integration (auto-started `codex mcp-server`):
+### cw (Context-Aware Workflow)
+
+Structured development workflow:
 
 ```bash
-# MCP tools: codex, codex-reply (available automatically)
-# CLI commands for cloud features:
-/codex:cloud --env env123 Review this PR
-/codex:apply task_abc123
+/cw:go "Add JWT authentication"     # Full 9-stage pipeline
+/cw:explore --arch "microservice"   # Architecture design
+/cw:review --all                    # Unified code review
 ```
 
-### Gemini CLI
+### multi-model-debate
 
-Google Gemini CLI integration:
+Cross-model evaluation for design decisions:
 
 ```bash
-/gemini:review              # Review staged changes
-/gemini:commit              # Generate commit message
-/gemini:docs src/utils.py   # Generate documentation
+/multi-model-debate:debate-orchestration "REST vs GraphQL"
 ```
 
-## Manual Installation
+### arch-guard
+
+Architecture compliance for layered projects:
 
 ```bash
-git clone https://github.com/jyyang/claude-marketplace.git
-cp -r claude-marketplace/plugins/<plugin-name> ~/.claude/plugins/
+/arch-guard:arch-check       # Verify layer boundaries
+/arch-guard:contract-first   # Define interfaces first
+/arch-guard:scaffold         # Generate module structure
 ```
 
 ## Contributing
 
 1. Create a new folder under `plugins/`
-2. Add `.claude-plugin/plugin.json` metadata
-3. Configure commands, skills, agents, and hooks
-4. Update `marketplace.json`
+2. Add `.claude-plugin/plugin.json` (only `name`, `version`, `description`)
+3. Add skills (`skills/*/SKILL.md`), hooks (`hooks/hooks.json`), agents, or commands
+4. Register in `.claude-plugin/marketplace.json`
 5. Submit a pull request
 
 ## License

@@ -9,10 +9,9 @@ Structured 3-model debate plugin for Claude Code. Orchestrates Claude, Codex, an
 
 ## Installation
 
-Add to your `marketplace.json` or install directly:
-
 ```bash
-claude plugin add /path/to/multi-model-debate
+claude plugins add github:jaebit/claudemate
+claude plugins install multi-model-debate
 ```
 
 ## Usage
@@ -20,21 +19,21 @@ claude plugin add /path/to/multi-model-debate
 ### Start a debate
 
 ```
-/debate:start "Should we use REST or GraphQL for our API?"
+/multi-model-debate:debate-start "Should we use REST or GraphQL for our API?"
 ```
 
 With options:
 
 ```
-/debate:start "Monorepo vs polyrepo" --context src/package.json,docs/architecture.md
-/debate:start "Next.js vs Remix vs Astro" --perspectives "Performance,DX,Ecosystem" --rounds 3
+/multi-model-debate:debate-start "Monorepo vs polyrepo" --context src/package.json,docs/architecture.md
+/multi-model-debate:debate-start "Next.js vs Remix vs Astro" --perspectives "Performance,DX,Ecosystem" --rounds 3
 ```
 
 ### Resume an interrupted debate
 
 ```
-/debate:resume
-/debate:resume .debate/20260315-143022-rest-vs-graphql
+/multi-model-debate:debate-resume
+/multi-model-debate:debate-resume .debate/20260315-143022-rest-vs-graphql
 ```
 
 ## How It Works

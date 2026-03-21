@@ -1,5 +1,5 @@
 {
-  "name": "context-aware-workflow",
+  "name": "claudemate",
   "owner": {
     "name": "jaebit",
     "email": "duskfalls0@gmail.com"
@@ -17,13 +17,7 @@
       "source": "./plugins/gemini-cli",
       "version": "1.0.0"
     },
-    {
-      "name": "docs-optimizer",
-      "description": "Research-backed CLAUDE.md optimization using arxiv 2602.11988v1 classification rules",
-      "source": "./plugins/docs-optimizer",
-      "version": "1.0.0"
-    },
-    {
+{
       "name": "cw",
       "description": "Context-aware workflow orchestration plugin with Plan Mode integration, intelligent context management, and structured task planning",
       "source": "./plugins/context-aware-workflow",
@@ -43,10 +37,16 @@
       "source": "./plugins/multi-model-debate",
       "version": "1.0.0"
     },
+{
+      "name": "arch-guard",
+      "description": "Architecture compliance enforcement for layered projects — config-driven layer boundary checks, contract-first development, and design decision records",
+      "source": "./plugins/arch-guard",
+      "version": "0.2.0"
+    },
     {
-      "name": "arix-dev",
-      "description": "설계 문서 기반 엔터프라이즈 시스템 개발 도구 — 아키텍처 적합성 검증, 레이어 경계 강제, 계약 우선 개발",
-      "source": "./plugins/arix-dev",
+      "name": "autopilot",
+      "description": "End-to-end autonomous coding pipeline — orchestrates cw, multi-model-debate, codex-harness, and arch-guard into a single /autopilot command",
+      "source": "./plugins/autopilot",
       "version": "0.1.0"
     }
   ]
