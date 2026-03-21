@@ -127,7 +127,7 @@ On 3 consecutive failures in the same phase: stop and suggest manual skill invoc
 
 1. Print `[1/5] Researching...`
 2. Update state: `research.status = "running"`, `phase = "research"`
-3. Invoke: `Skill("crew:explore")` with args `"--research-deep <topic>"`
+3. Invoke via Agent tool: spawn an agent with prompt `"/crew:explore --research-deep <topic>"`
 4. On success:
    - Locate output at `.caw/research/<slug>/RESEARCH-REPORT.md`
    - Save path to `research.report_path` in state
@@ -151,7 +151,7 @@ On 3 consecutive failures in the same phase: stop and suggest manual skill invoc
 ### 2a — Architecture Design
 
 - Read the research report (from `research.report_path` or locate in `.caw/research/`)
-- Invoke: `Skill("crew:explore")` with args `"--arch <topic>"`, providing research report context
+- Invoke via Agent tool: spawn an agent with prompt `"/crew:explore --arch <topic>"`, providing research report context
 - Output: `.caw/design/architecture.md`
 - Collect any design questions → append to `.autopilot/deferred-questions.md`
 
@@ -255,7 +255,7 @@ Options:
 ### 3b — CW Go Execution
 
 - Transform `.autopilot/design-brief.md` content into a task description suitable for crew:go
-- Invoke: `Skill("crew:go")` with args `"<design-brief summary> --from-plan --skip-expansion --no-questions"`
+- Invoke via Agent tool: spawn an agent with prompt `"/crew:go <design-brief summary> --from-plan --skip-expansion --no-questions"`
   - If `.caw/task_plan.md` doesn't exist yet, let crew:go create it from the design brief
   - crew:go handles its own 9-stage pipeline (planning, execution, QA, review, fix, check)
 - On success:
@@ -335,7 +335,7 @@ Use the Agent tool — send a single message with up to 3 Agent calls:
 - If not active: skip, note in results
 
 **Stream C — CW Review**:
-- Invoke `Skill("crew:review")` with `"--all"` for functional, security, and quality review
+- Invoke via Agent tool: spawn an agent with prompt `"/crew:review --all"` for functional, security, and quality review
 
 **Stream D — Completeness Review** (conditional):
 - If `state.json.completion.verdict != "complete"`:
@@ -359,7 +359,7 @@ When reviews complete, compare findings:
 
 - Aggregate all results into `.autopilot/review-results.md`
 - If issues with severity >= major exist:
-  - Invoke `Skill("crew:review")` with `"--fix"` to auto-fix
+  - Invoke via Agent tool: spawn an agent with prompt `"/crew:review --fix"` to auto-fix
   - Re-run review streams (increment `review.rounds`)
   - Max 3 rounds total
 - After max rounds with remaining issues: mark as DONE_WITH_CONCERNS (don't block)
@@ -500,7 +500,7 @@ SIGNAL: AUTOPILOT_COMPLETE
 
 **Will:**
 - Create `.autopilot/` directory and all artifacts within it
-- Invoke crew:explore, crew:go, crew:review via Skill tool
+- Invoke crew:explore, crew:go, crew:review via Agent tool (spawning agents that run the slash commands, since these skills have disable-model-invocation)
 - Invoke multi-model-debate:debate-orchestration via Skill tool (if available)
 - Invoke arch-guard skills via Skill tool (if arch-guard.json exists)
 - Invoke codex MCP tool via Agent (if codex-harness available)
