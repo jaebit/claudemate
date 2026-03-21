@@ -15,6 +15,7 @@ What each phase produces and consumes. All paths relative to project root.
 - **Produces**: `.debate/<id>/report.md` (if debate ran)
 - **Produces**: `.autopilot/design-brief.md` (consolidated)
 - **Produces**: `.autopilot/deferred-questions.md` (append)
+- **Produces**: `state.json.deliverables` (structured deliverable list with expected paths)
 
 ## Phase 3: BUILD
 
@@ -23,6 +24,7 @@ What each phase produces and consumes. All paths relative to project root.
 - **Produces**: source code (project files)
 - **Produces**: `.caw/auto-state.json`
 - **Produces**: `.caw/task_plan.md`
+- **Produces**: `state.json.completion` (deliverable verification results)
 
 ## Phase 4: REVIEW
 
@@ -35,6 +37,7 @@ What each phase produces and consumes. All paths relative to project root.
 
 - **Consumes**: all above artifacts
 - **Produces**: `.autopilot/REPORT.md`
+- **Produces**: `.autopilot/remaining-work.md` (if deliverable gaps exist)
 
 ## State
 

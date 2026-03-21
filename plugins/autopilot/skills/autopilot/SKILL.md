@@ -61,14 +61,16 @@ End-to-end pipeline: idea → research → design → build → review → repor
 ## Initialization
 
 1. Parse flags from `$ARGUMENTS`. Extract `<topic>` (everything that isn't a flag).
-2. If `--continue`: read `.autopilot/state.json`, find first phase with status != `complete` and != `skipped`, resume from there. Skip to that phase section below.
+2. If `--continue`: read `.autopilot/state.json`.
+   - If `phase == "complete"` AND `completion.missing > 0`: **gap-filling mode** — read `.autopilot/remaining-work.md`, set `phase = "build"`, `build.status = "pending"`, and resume from Phase 3 using remaining-work.md as the task description for crew:go.
+   - Otherwise: find first phase with status != `complete` and != `skipped`, resume from there. Skip to that phase section below.
 3. If `--from-plan <path>`: read the file at `<path>`, copy its content to `.autopilot/design-brief.md`, skip to Phase 3.
 4. Create `.autopilot/` directory.
 5. Write initial `.autopilot/state.json`:
 
 ```json
 {
-  "schema_version": "1.0",
+  "schema_version": "1.1",
   "topic": "<topic>",
   "phase": "research",
   "started_at": "<ISO timestamp>",
@@ -86,6 +88,13 @@ End-to-end pipeline: idea → research → design → build → review → repor
     "build": { "status": "pending" },
     "review": { "status": "pending", "rounds": 0 },
     "report": { "status": "pending" }
+  },
+  "deliverables": [],
+  "completion": {
+    "total": 0,
+    "built": 0,
+    "missing": 0,
+    "verdict": "pending"
   },
   "last_error": null
 }
@@ -175,6 +184,22 @@ On 3 consecutive failures in the same phase: stop and suggest manual skill invoc
   - **Architecture Constraints**: from arch-guard (if active)
   - **Open Questions**: from `.autopilot/deferred-questions.md`
 
+### 2d.1 — Extract Deliverables
+
+After writing `.autopilot/design-brief.md`, parse it and extract every **concrete deliverable**: files to create, classes/interfaces to implement, configuration files, test files, app manifests, migration scripts.
+
+For each deliverable, record in `state.json` under `"deliverables"` array:
+- `id`: sequential identifier (d1, d2, ...)
+- `name`: short name (e.g., "AgentStepExecutor")
+- `type`: one of `file`, `class`, `interface`, `function`, `config`, `directory`, `test`
+- `expected_path`: best-guess file path where this should exist after build
+- `source_section`: which design-brief section it came from (e.g., "Components", "Data Model")
+- `status`: `"pending"`
+
+Set `completion.total` to the deliverable count. Leave `completion.verdict` as `"pending"`.
+
+**Extraction heuristic**: scan design-brief sections (Components, Data Model, Build Sequence, Tests) for nouns that map to code artifacts. Include both interfaces AND their expected implementations. Include test projects. Include infrastructure configs (Docker, migrations).
+
 ### 2e — USER GATE
 
 Present to the user via `AskUserQuestion`:
@@ -191,6 +216,9 @@ Present to the user via `AskUserQuestion`:
 ### Tech decisions
 <decisions with debate results if any>
 
+### Planned Deliverables ({completion.total} items)
+<table: name | type | expected_path — from state.json deliverables>
+
 ### Architecture constraints
 <from arch-guard, or "none active">
 
@@ -199,7 +227,7 @@ Present to the user via `AskUserQuestion`:
 
 ---
 Options:
-1. **Approve** — proceed to build
+1. **Approve** — proceed to build ({completion.total} deliverables)
 2. **Revise** — provide feedback (I'll re-design, max 3 rounds)
 3. **Abort** — cancel pipeline
 ```
@@ -230,8 +258,33 @@ Options:
   - If `.caw/task_plan.md` doesn't exist yet, let crew:go create it from the design brief
   - crew:go handles its own 9-stage pipeline (planning, execution, QA, review, fix, check)
 - On success:
+  - Run **3b.1 — Verify Deliverables** (see below)
   - Set `build.status = "complete"`, `build.cw_state_path = ".caw/auto-state.json"`
-  - Print `[3/5] Build complete`
+  - Print `[3/5] Build complete ({completion.built}/{completion.total} deliverables)`
+
+### 3b.1 — Verify Deliverables
+
+After crew:go completes, iterate through every entry in `state.json.deliverables`:
+
+- **type `file` / `config` / `directory`**: check if `expected_path` exists (use Bash: `test -f` or `test -d`)
+- **type `class` / `interface` / `function`**: Grep `expected_path` (or project-wide if path is approximate) for the declaration keyword (`class <name>`, `interface <name>`, `function <name>`, `def <name>`)
+- **type `test`**: check file exists AND contains at least one test attribute/decorator (`[Fact]`, `[Test]`, `@Test`, `def test_`, etc.)
+
+Update each deliverable:
+- Found → `status = "built"`
+- Not found → `status = "missing"`
+- File exists but declaration missing → `status = "partial"`
+
+Compute and write to `state.json`:
+- `completion.built` = count of status == "built"
+- `completion.missing` = count of status == "missing" or "partial"
+- `completion.total` = deliverables.length
+- `completion.verdict`:
+  - `"complete"` if missing == 0
+  - `"partial"` if missing > 0 AND built >= 50% of total
+  - `"minimal"` if built < 50% of total
+
+**Note**: `build.status` remains `"complete"` regardless — the build itself didn't fail, it scoped down. The gap information flows to review and report.
 - On failure:
   - Set `build.status = "failed"`, record error
   - Print `[3/5] Build failed. Use /autopilot --continue to retry (delegates to crew:go --continue).`
@@ -260,6 +313,16 @@ Use the Agent tool — send a single message with up to 3 Agent calls:
 **Stream C — CW Review**:
 - Invoke `Skill("crew:review")` with `"--all"` for functional, security, and quality review
 
+**Stream D — Completeness Review** (conditional):
+- If `state.json.completion.verdict != "complete"`:
+  - Read `state.json.deliverables` where status == `missing` or `partial`
+  - For each missing deliverable, search the codebase for evidence of intentional deferral: TODO/FIXME comments mentioning the deliverable name, stub files, "Phase 2"/"next sprint" references
+  - Classify each gap as:
+    - `intentional_deferral` — stub or TODO exists, explicitly deferred
+    - `oversight` — nothing exists, not mentioned anywhere
+    - `partial` — file exists but implementation is incomplete
+  - Append gap classification to `.autopilot/review-results.md` under a "## Completeness Gaps" section
+
 ### Cross-Model Validation
 
 When reviews complete, compare findings:
@@ -282,12 +345,13 @@ When reviews complete, compare findings:
 Write to `.autopilot/review-results.md` and print:
 
 ```
-| Review Stream     | Status             | Score       |
-|-------------------|--------------------|-------------|
-| Codex Review      | DONE / SKIPPED     | —           |
-| Architecture      | DONE / SKIPPED     | B (82)      |
-| CW Review         | DONE_WITH_CONCERNS | 2 minor     |
-| Cross-Model Check | DONE               | 1 divergence|
+| Review Stream     | Status             | Score              |
+|-------------------|--------------------|---------------------|
+| Codex Review      | DONE / SKIPPED     | —                   |
+| Architecture      | DONE / SKIPPED     | B (82)              |
+| CW Review         | DONE_WITH_CONCERNS | 2 minor             |
+| Completeness      | DONE / SKIPPED     | 8/12 (4 missing)    |
+| Cross-Model Check | DONE               | 1 divergence        |
 ```
 
 Set `review.status` based on overall result. Print `[4/5] Review complete`.
@@ -320,6 +384,15 @@ Set `review.status` based on overall result. Print `[4/5] Review complete`.
 ## Review Results
 {from review-results.md — issues found, fixed, remaining}
 
+## Completeness
+{table from state.json.deliverables: name | type | status (BUILT/MISSING/PARTIAL) | expected_path}
+
+**Verdict**: {completion.verdict} ({completion.built}/{completion.total} deliverables built, {completion.missing} missing)
+
+## Remaining Work
+{if completion.missing > 0: numbered list of missing deliverables with name, type, path, and brief description of what needs to be implemented}
+{if completion.missing == 0: "All designed deliverables were built."}
+
 ## Files Created/Modified
 {git diff --stat output}
 
@@ -327,13 +400,24 @@ Set `review.status` based on overall result. Print `[4/5] Review complete`.
 {conventional commit message based on what was built}
 ```
 
-5. Set `report.status = "complete"`, `report.report_path = ".autopilot/REPORT.md"`
-6. Set `phase = "complete"`
-7. Print the report content, then:
+5. If `completion.missing > 0`: also write `.autopilot/remaining-work.md` as a standalone file containing the Remaining Work section. This file is structured for use as input to `/autopilot --continue` or `crew:go`.
+6. Set `report.status = "complete"`, `report.report_path = ".autopilot/REPORT.md"`
+7. Set `phase = "complete"`
+8. Print the report content, then the completion signal:
 
+If `completion.verdict == "complete"` (or `deliverables` array is empty — backward compat):
 ```
 ---
 SIGNAL: AUTOPILOT_COMPLETE
+---
+```
+
+If `completion.verdict == "partial"` or `"minimal"`:
+```
+---
+SIGNAL: AUTOPILOT_COMPLETE_WITH_GAPS ({completion.built}/{completion.total} deliverables)
+Remaining: .autopilot/remaining-work.md
+Use /autopilot --continue to build remaining items.
 ---
 ```
 

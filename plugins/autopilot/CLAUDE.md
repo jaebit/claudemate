@@ -22,11 +22,12 @@ End-to-end autonomous coding pipeline. Single `/autopilot <topic>` command that 
 
 ```
 .autopilot/
-├── state.json              # pipeline state (resume support)
+├── state.json              # pipeline state + deliverable tracking (resume support)
 ├── design-brief.md         # consolidated design (Phase 2 output)
 ├── deferred-questions.md   # questions collected during autonomous phases
 ├── review-results.md       # aggregated review findings (Phase 4 output)
-└── REPORT.md               # final report (Phase 5 output)
+├── remaining-work.md       # unbuilt deliverables (Phase 5 output, if gaps exist)
+└── REPORT.md               # final report with completeness section (Phase 5 output)
 
 .caw/                       # delegated to crew plugin
 .debate/                    # delegated to multi-model-debate plugin
@@ -36,10 +37,15 @@ End-to-end autonomous coding pipeline. Single `/autopilot <topic>` command that 
 
 ```
 [1/5] RESEARCH    crew:explore --research-deep    autonomous
-[2/5] DESIGN      crew:explore --arch + debate    autonomous → USER GATE
-[3/5] BUILD       arch-guard scaffold + crew:go   autonomous
-[4/5] REVIEW      codex + arch-check + crew:review autonomous (parallel)
-[5/5] REPORT      synthesis                     autonomous
+[2/5] DESIGN      crew:explore --arch + debate    autonomous → USER GATE (shows deliverable list)
+[3/5] BUILD       arch-guard scaffold + crew:go   autonomous → deliverable verification
+[4/5] REVIEW      codex + arch-check + crew:review + completeness    autonomous (parallel)
+[5/5] REPORT      synthesis + gap analysis        autonomous
 ```
 
 One user confirmation point: after Phase 2 (design). Everything else runs autonomously.
+
+## Completion Signals
+
+- `AUTOPILOT_COMPLETE` — all designed deliverables were built
+- `AUTOPILOT_COMPLETE_WITH_GAPS` — pipeline finished but some deliverables are missing; see `.autopilot/remaining-work.md`. Use `/autopilot --continue` to attempt building remaining items.

@@ -20,8 +20,34 @@ async function main() {
     return;
   }
 
-  if (!state.phase || state.phase === "complete" || state.phase === "cancelled") {
+  if (!state.phase || state.phase === "cancelled") {
     console.log(JSON.stringify({ result: "continue" }));
+    return;
+  }
+
+  // Complete with gaps: show remaining work notice
+  if (state.phase === "complete") {
+    const missing = state.completion?.missing ?? 0;
+    if (missing > 0) {
+      const topic = state.topic || "(unknown)";
+      const built = state.completion?.built ?? 0;
+      const total = state.completion?.total ?? 0;
+      const lines = [
+        `# autopilot: Pipeline completed with gaps`,
+        "",
+        `- **Topic**: ${topic}`,
+        `- **Built**: ${built}/${total} deliverables`,
+        `- **Missing**: ${missing} (see .autopilot/remaining-work.md)`,
+        "",
+        `Resume gap-filling: \`/autopilot --continue\``,
+      ];
+      console.log(JSON.stringify({
+        result: "continue",
+        additionalContext: lines.join("\n"),
+      }));
+    } else {
+      console.log(JSON.stringify({ result: "continue" }));
+    }
     return;
   }
 
