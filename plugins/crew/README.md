@@ -15,7 +15,7 @@ claude plugins install crew
 /crew:go "Implement JWT authentication"   # Full 9-stage pipeline
 /crew:explore --arch "microservice auth"   # Architecture design
 /crew:review --all                         # Unified code review
-/crew:status                               # Progress + analytics
+/crew:dashboard                               # Progress + analytics
 ```
 
 ## Skills
@@ -23,7 +23,7 @@ claude plugins install crew
 | Skill | Description |
 |-------|-------------|
 | `/crew:go` | Full 9-stage pipeline (plan → build → review → fix) |
-| `/crew:status` | Workflow progress, metrics, and cost analytics |
+| `/crew:dashboard` | Workflow progress, metrics, and cost analytics |
 | `/crew:review` | Unified code review, QA, compliance, and auto-fix |
 | `/crew:parallel` | Parallel execution via swarm or Agent Teams |
 | `/crew:explore` | Discovery — brainstorm, architecture, research, debate |

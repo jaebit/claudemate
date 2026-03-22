@@ -44,7 +44,7 @@ Combines session persistence, intelligent context management, real-time HUD metr
 2. **Step/Phase completion**: Auto-save session, update metrics
 3. **Agent starts step**: Provide prioritized context
 4. **PostToolUse**: Update HUD metrics
-5. **Explicit request**: /crew:status, /crew:manage context
+5. **Explicit request**: /crew:dashboard, /crew:manage context
 
 ## State Files
 

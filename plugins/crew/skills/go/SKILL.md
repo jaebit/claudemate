@@ -200,7 +200,7 @@ On error, state is saved to `.caw/auto-state.json`.
 
 **Resume options:**
 - `/crew:go --continue` - Resume from saved state
-- `/crew:status` - Check current status
+- `/crew:dashboard` - Check current status
 
 **Parallel Validation failure:** Auto-proceeds to Fix stage, retries up to 3 rounds.
 

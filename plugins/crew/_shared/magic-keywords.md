@@ -119,7 +119,7 @@ When a keyword is detected, mode state is stored in `.caw/mode.json`:
 Magic Keywords work with:
 - `/crew:start` - Sets initial mode for workflow
 - `/crew:next` - Maintains mode through execution
-- `/crew:status` - Shows current active mode
+- `/crew:dashboard` - Shows current active mode
 - Model Routing - Influences tier selection
 - Background Heuristics - Override async behavior
 - Analytics - Track cost savings in eco mode

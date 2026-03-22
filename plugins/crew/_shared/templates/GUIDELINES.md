@@ -9,7 +9,7 @@
 
 - Always ensure `.caw/` environment exists before starting work
 - Use `/crew:init` to initialize, `/crew:init --reset` to reinitialize
-- Check `/crew:status` for current workflow state
+- Check `/crew:dashboard` for current workflow state
 
 ### 2. Tidy First Principle
 
@@ -90,7 +90,7 @@ Automatic model selection based on task complexity:
 /crew:init              # Initialize environment
 /crew:start "task"      # Start planning
 /crew:next              # Execute next step
-/crew:status            # Check progress
+/crew:dashboard            # Check progress
 /crew:review            # Review work
 ```
 

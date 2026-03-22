@@ -21,7 +21,7 @@ python tests/test_plugin_structure.py
 ```bash
 # Primary automation
 /crew:go         # Full 9-stage pipeline (plan → build → review → fix)
-/crew:status     # Progress + cost/token analytics
+/crew:dashboard     # Progress + cost/token analytics
 
 # Quality assurance
 /crew:review     # Unified QA (--loop, --build, --compliance, --fix, --gemini)

@@ -529,7 +529,7 @@ class TestSkillStaleReferences(unittest.TestCase):
         """SKILL.md files should not reference removed commands."""
         for skill_name, content in self.get_skill_contents():
             for cmd in self.REMOVED_COMMANDS:
-                # Match exact command (e.g., /crew:start but not /crew:status)
+                # Match exact command (e.g., /crew:start but not /crew:dashboard)
                 pattern = re.escape(cmd) + r'(?:\s|`|$|"|\))'
                 match = re.search(pattern, content)
                 self.assertIsNone(

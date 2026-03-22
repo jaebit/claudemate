@@ -280,7 +280,7 @@ skills/decision-logger/
 |----------|-------|
 | **Trigger** | Step completion, Phase transition |
 | **Output** | Update `.caw/metrics.json` |
-| **Integration** | PostToolUse Hook, /crew:status |
+| **Integration** | PostToolUse Hook, /crew:dashboard |
 
 **Tracked Metrics:**
 ```json

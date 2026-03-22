@@ -62,7 +62,7 @@ v2 commands remain as deprecation stubs through v3.0 and will be removed in v3.1
 /crew:init                 →  /crew:manage init
 /crew:evolve               →  /crew:manage evolve
 /crew:reflect              →  /crew:manage reflect
-/crew:analytics            →  /crew:status (analytics integrated)
+/crew:analytics            →  /crew:dashboard (analytics integrated)
 ```
 
 ---

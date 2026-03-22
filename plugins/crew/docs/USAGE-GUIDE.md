@@ -46,7 +46,7 @@ Plan이 없고 task description이 있으면 자동으로 계획을 생성합니
 | 명령어 | 설명 |
 |--------|------|
 | `/crew:go` | 전체 9단계 자동화 파이프라인 |
-| `/crew:status` | 진행 상태 + 비용/토큰 분석 |
+| `/crew:dashboard` | 진행 상태 + 비용/토큰 분석 |
 | `/crew:review` | 통합 QA (리뷰, 빌드 검증, 규칙 준수, 수정) |
 | `/crew:parallel` | 병렬 실행 (Swarm 기본, `--team` Agent Teams) |
 | `/crew:explore` | 탐색/발견 (브레인스토밍, 설계, 연구) |

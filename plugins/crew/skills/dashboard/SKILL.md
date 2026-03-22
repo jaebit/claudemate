@@ -1,12 +1,12 @@
 ---
-name: status
+name: dashboard
 description: "Display workflow progress, metrics, and cost analytics"
 argument-hint: "[--verbose] [--cost] [--tokens] [--all]"
 disable-model-invocation: true
 allowed-tools: Read, Bash
 ---
 
-# /crew:status - Workflow Status & Analytics
+# /crew:dashboard - Workflow Status & Analytics
 
 Display current workflow state, progress, and cost/token analytics.
 
@@ -23,15 +23,15 @@ Display current workflow state, progress, and cost/token analytics.
 ## Usage
 
 ```bash
-/crew:status             # Standard status
-/crew:status --verbose   # Detailed with file lists
-/crew:status --cost      # Cost breakdown by model tier
-/crew:status --tokens    # Token usage analysis
-/crew:status --sessions  # Multi-session comparison
-/crew:status --worktrees # Show active worktree status
-/crew:status --agents    # Show background agent status
-/crew:status --export    # Export metrics to JSON
-/crew:status --all       # Everything
+/crew:dashboard             # Standard status
+/crew:dashboard --verbose   # Detailed with file lists
+/crew:dashboard --cost      # Cost breakdown by model tier
+/crew:dashboard --tokens    # Token usage analysis
+/crew:dashboard --sessions  # Multi-session comparison
+/crew:dashboard --worktrees # Show active worktree status
+/crew:dashboard --agents    # Show background agent status
+/crew:dashboard --export    # Export metrics to JSON
+/crew:dashboard --all       # Everything
 ```
 
 ## Flags

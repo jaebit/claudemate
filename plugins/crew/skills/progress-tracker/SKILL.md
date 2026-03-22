@@ -35,7 +35,7 @@ visualization: Compact progress bar
 
 ## Triggers
 
-Activates on: step status changes, phase transitions, `/crew:status`, periodic updates (10 min)
+Activates on: step status changes, phase transitions, `/crew:dashboard`, periodic updates (10 min)
 
 ## Metrics Data (`.caw/metrics.json`)
 
@@ -102,7 +102,7 @@ Parallel Efficiency = (sequential_time / parallel_time) / max_concurrent
 
 ## Integration
 
-- **`/crew:status`**: Provides progress bar, phase/step breakdown, ETA
+- **`/crew:dashboard`**: Provides progress bar, phase/step breakdown, ETA
 - **Session Persister**: Exports current_progress, phase, step, elapsed_time
 - **Quality Gate**: Records pass/fail, updates retry stats
 
