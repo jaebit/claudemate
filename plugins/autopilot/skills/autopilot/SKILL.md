@@ -183,8 +183,26 @@ On 3 consecutive failures in the same phase: stop and suggest manual skill invoc
   - **Components**: key modules/services with responsibilities
   - **Tech Decisions**: chosen approaches (with debate consensus if available)
   - **Data Model**: entities and relationships
+  - **Architecture Governance**: see decision criteria below
   - **Architecture Constraints**: from arch-guard (if active)
   - **Open Questions**: from `.autopilot/deferred-questions.md`
+
+#### Architecture Governance Decision
+
+During design consolidation, evaluate whether arch-guard should be enabled. Write the decision in the "Architecture Governance" section of design-brief.md.
+
+**Enable arch-guard when ANY of these apply:**
+- Multi-project/multi-package structure (e.g., .NET solution, Java modules, monorepo packages)
+- Explicit layer boundaries in design (Domain/Application/Infrastructure/Presentation)
+- Module boundaries with directional dependency rules (e.g., "API must not reference DB directly")
+- 3+ distinct bounded contexts or services
+
+**Skip arch-guard when ALL of these apply:**
+- Single-project, flat structure (e.g., one Next.js app with `src/` only)
+- No explicit layer or module boundaries in design
+- < 10 source files expected
+
+If enabling: set `config.arch_guard_detected = true` in state.json, then invoke `Skill("arch-guard:setup")` to generate `arch-guard.json` from the design. This runs BEFORE the user gate so the user can review the rules.
 
 ### 2d.1 — Extract Deliverables
 
@@ -221,8 +239,11 @@ Present to the user via `AskUserQuestion`:
 ### Planned Deliverables ({completion.total} items)
 <table: name | type | expected_path — from state.json deliverables>
 
+### Architecture governance
+<"arch-guard enabled — {N} rules" or "arch-guard skipped — {reason}">
+
 ### Architecture constraints
-<from arch-guard, or "none active">
+<from arch-guard rules, or "N/A">
 
 ### Open questions
 <from deferred-questions.md, or "none">
@@ -315,16 +336,15 @@ After verification (file exists, class declaration found):
 
 **Note**: `build.status` remains `"complete"` regardless — the build itself didn't fail, it scoped down. The gap information flows to review and report.
 
-### 3b.2 — Auto-Setup Arch-Guard (conditional)
+### 3b.2 — Auto-Setup Arch-Guard Fallback (conditional)
 
-If `config.arch_guard_detected` is false AND the built project appears to have layered architecture (multiple projects/modules with clear layer boundaries — e.g., Contracts/Domain/Infrastructure/Api/Hosts pattern, or src/ with 3+ subprojects):
+**Skip if**: `config.arch_guard_detected` is already true (set in Phase 2d) OR `config.no_arch` is set.
 
-1. Invoke `Skill("arch-guard:setup")` to generate `arch-guard.json` from the project structure
-2. If setup succeeds: set `config.arch_guard_detected = true`, update `state.json`
-3. Print `[3/5] arch-guard.json auto-generated — architecture checks enabled for review`
-4. If setup fails or no layered pattern detected: skip silently
+Fallback for cases where Phase 2d didn't enable arch-guard but the built project grew into a multi-module structure:
 
-This ensures Phase 4 Stream B (Architecture Review) runs even when the project was scaffolded from scratch by autopilot.
+1. Check if the built project has 3+ subprojects/packages with clear boundaries
+2. If yes: invoke `Skill("arch-guard:setup")`, set `config.arch_guard_detected = true`
+3. If no: skip silently
 
 ### 3b.3 — Auto-Generate Architecture Tests (conditional)
 
