@@ -169,6 +169,32 @@ Before: | 2.1 | Create JWT utility | Pending | Builder |
 After:  | 2.1 | Create JWT utility | Complete | Builder | src/auth/jwt.ts |
 ```
 
+### Step 7: Commit Changes (MANDATORY)
+
+You MUST commit after every step. Do NOT leave changes uncommitted.
+
+```bash
+git status --porcelain
+```
+
+If there are changes:
+
+1. `git add <specific files you created or modified>` (NOT `git add -A`)
+2. Classify the change:
+   - New feature or behavioral change → `[feat]`
+   - Bug fix → `[fix]`
+   - Tests only → `[test]`
+   - Structural/rename/reformat only → `[tidy]`
+3. `git commit -m "[prefix] Step X.Y: <step description>"`
+
+Example:
+```bash
+git add src/auth/jwt.ts tests/auth/jwt.test.ts
+git commit -m "[feat] Step 2.1: Create JWT utility module"
+```
+
+If no changes (step was a no-op): skip commit, proceed to next step.
+
 ## Error Handling
 
 **Test Failure**: Analyze -> Fix impl (not test) -> Re-run -> After 3 fails: mark In Progress, report

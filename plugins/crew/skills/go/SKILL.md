@@ -101,32 +101,14 @@ On error: 5-level recovery: retry → Fixer-Haiku → Planner-Haiku alternative 
 
 **Codex mode** (`--codex`): Offload tasks to Codex harness for background execution.
 
-#### Post-Step Cycle (MANDATORY after each Builder step)
+#### Post-Step Cycle (after each Builder step)
 
-This cycle runs in the **orchestrator context** (crew:go), NOT inside the Builder agent. It executes after each Builder step returns and before proceeding to the next step.
+Builder commits its own changes (Step 7 in builder.md). The orchestrator runs simplify after each step:
 
-**Step A — Commit behavioral change:**
-```bash
-git status --porcelain
-```
-- If changes exist:
-  - `git add <specific changed files>` (NOT `git add -A`)
-  - Classify via commit-discipline: structural → `[tidy]`, behavioral → `[feat]`/`[fix]`/`[test]`
-  - `git commit -m "[prefix] <step description>"`
-- If no changes: skip to next step
-
-**Step B — Simplify:**
-- Spawn `Agent(subagent_type="code-simplifier:code-simplifier")` targeting the files modified by the Builder step
-- Agent reviews for clarity, consistency, maintainability while preserving all functionality
-
-**Step C — Commit tidy change:**
-```bash
-git status --porcelain
-```
-- If simplify made changes: `git add <modified files>` + `git commit -m "[tidy] Simplify <step description>"`
-- If no changes: skip
-
-**Step D**: Proceed to next pending step
+1. **Verify commit**: `git log --oneline -1` — confirm Builder committed. If not, run `git add` + `git commit` as fallback.
+2. **Simplify**: Spawn `Agent(subagent_type="code-simplifier:code-simplifier")` targeting the files modified by the Builder step.
+3. **Tidy commit**: If simplify made changes: `git add <modified files>` + `git commit -m "[tidy] Simplify <step description>"`
+4. Proceed to next pending step.
 
 ### Stage 5: QA Loop
 Invoke QA loop with max_cycles: 2, severity: major. Build → Review → Fix cycle until quality criteria met. Stall detection via issue hashing.
