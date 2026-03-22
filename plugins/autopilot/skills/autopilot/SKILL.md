@@ -238,6 +238,19 @@ Options:
 - On **Revise**: write feedback to `.autopilot/design-feedback.md`, increment `design.revision_count`, re-run 2a with feedback as additional context. Max 3 revision rounds; after 3, present final version and require approve or abort.
 - On **Abort**: set `phase = "cancelled"`, `design.status = "cancelled"`, print `AUTOPILOT_CANCELLED`, stop.
 
+### 2f — ADR Generation (conditional)
+
+- **Skip if**: `config.no_arch` is set OR design-brief has no "Tech Decisions" section
+- Read `.autopilot/design-brief.md`, extract each entry from the "Tech Decisions" section
+- For each key decision:
+  - Invoke `Skill("arch-guard:adr", "<decision title>")` with context:
+    - Decision rationale from design-brief
+    - Debate consensus (if Phase 2b ran)
+    - Alternatives considered
+  - arch-guard:adr will auto-create `docs/adr/` directory if missing
+- Record generated ADR paths in state: `design.adr_paths = [<paths>]`
+- Print: `[2/5] {N} ADR(s) generated`
+
 ---
 
 ## Phase 3: BUILD [3/5] (autonomous)
@@ -503,7 +516,7 @@ SIGNAL: AUTOPILOT_COMPLETE
 - Create `.autopilot/` directory and all artifacts within it
 - Invoke crew:explore, crew:go, crew:review via Agent tool (spawning agents that run the slash commands, since these skills have disable-model-invocation)
 - Invoke multi-model-debate:debate-orchestration via Skill tool (if available)
-- Invoke arch-guard skills via Skill tool (if arch-guard.json exists)
+- Invoke arch-guard skills via Skill tool (if arch-guard.json exists), including arch-guard:adr for ADR generation
 - Invoke codex MCP tool via Agent (if codex-harness available)
 - Present one user gate after design phase via AskUserQuestion
 - Read/write `.autopilot/state.json` for resume support

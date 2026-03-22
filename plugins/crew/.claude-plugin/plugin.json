@@ -1,5 +1,5 @@
 {
   "name": "crew",
-  "version": "4.0.0",
+  "version": "4.1.0",
   "description": "Agent-orchestrated development pipeline — 9-stage automation with 8 adaptive agents, parallel execution, research, and review"
 }

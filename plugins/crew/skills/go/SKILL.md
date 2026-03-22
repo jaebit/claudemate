@@ -91,6 +91,27 @@ Execute pending steps via Builder Agent. Track files created/modified. On error:
 
 **Loop behavior** (from `/crew:loop`): Repeatedly executes Builder agent until done, max iterations reached, or all steps complete. 5-level error recovery: retry → Fixer-Haiku → Planner-Haiku alternative → skip non-blocking → abort. Exit on completion promise, all steps complete, max iterations, 3+ consecutive failures, or critical error.
 
+### Stage 4.1: Post-Step Cycle (after each Builder step)
+
+After each Builder step returns, execute this cycle before proceeding to the next step:
+
+1. **Commit**: Check `git status` for uncommitted changes
+   - If changes exist:
+     - `git add` the changed files (specific files, not `-A`)
+     - Classify via commit-discipline: structural → `[tidy]`, behavioral → `[feat]`/`[fix]`/`[test]`
+     - Commit with appropriate prefix and step description
+   - If no changes: skip to next step
+
+2. **Simplify**: Spawn `Agent(subagent_type="code-simplifier:code-simplifier")` on the files modified by the Builder step
+   - Agent reviews for clarity, consistency, maintainability
+   - Preserves all functionality
+
+3. **Tidy Commit**: Check `git status` again after simplify
+   - If simplify made changes: `git add` modified files + commit `[tidy] Simplify <step description>`
+   - If no changes: skip
+
+4. Proceed to next pending step
+
 ### Stage 5: QA Loop
 Invoke QA loop with max_cycles: 2, severity: major. Build → Review → Fix cycle until quality criteria met. Stall detection via issue hashing.
 
