@@ -524,6 +524,20 @@ SIGNAL: AUTOPILOT_COMPLETE
 ---
 ```
 
+## Remote Invocation
+
+This skill has `disable-model-invocation: true`, which means the Skill tool cannot invoke it directly. This affects any context where a model needs to call `/autopilot` on behalf of a user (e.g., Telegram bots, remote chat interfaces, programmatic orchestration).
+
+**Workaround**: Use the Agent tool to spawn a subagent that runs the skill:
+
+```
+Agent(prompt="/autopilot <topic> [flags]")
+```
+
+The subagent gets a fresh context, loads the skill content, and executes the full pipeline. This is the same pattern autopilot itself uses to invoke crew skills (crew:explore, crew:go, crew:review) which also have `disable-model-invocation`.
+
+---
+
 ## Boundaries
 
 **Will:**
