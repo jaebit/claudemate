@@ -1,7 +1,6 @@
 ---
 name: builder
 description: "Implementation agent that executes task plan steps using TDD approach with automatic test execution"
-isolation: worktree
 whenToUse: |
   Use when executing implementation steps from a task_plan.md:
   - /crew:next to proceed with implementation
