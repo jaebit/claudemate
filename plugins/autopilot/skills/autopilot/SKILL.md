@@ -290,7 +290,7 @@ Options:
 ### 3b — CW Go Execution
 
 - Transform `.autopilot/design-brief.md` content into a task description suitable for crew:go
-- Invoke via Agent tool: spawn an agent with prompt `"/crew:go <design-brief summary> --from-plan --skip-expansion --no-questions"`
+- Invoke via Agent tool: spawn an agent with prompt `"/crew:go <design-brief summary> --from-plan --skip-expansion --no-questions --codex"`
   - If `.caw/task_plan.md` doesn't exist yet, let crew:go create it from the design brief
   - crew:go handles its own 9-stage pipeline (planning, execution, QA, review, fix, check)
 - On success:
@@ -481,7 +481,7 @@ If `completion.missing > 0` AND this is NOT already a gap-fill round (check `sta
 
 1. Print: `[5/5] Gaps detected ({completion.missing} items) — auto gap-filling...`
 2. Set `state.gap_fill_round = 1`
-3. Loop back to **Phase 3b** (crew:go with `.autopilot/remaining-work.md` as task input, `--from-plan --skip-expansion --no-questions`)
+3. Loop back to **Phase 3b** (crew:go with `.autopilot/remaining-work.md` as task input, `--from-plan --skip-expansion --no-questions --codex`)
 4. Then re-run **Phase 4** (review) and **Phase 5** (report) as normal
 5. If gaps remain after 1 gap-fill round → proceed to completion with COMPLETE_WITH_GAPS (don't loop indefinitely)
 

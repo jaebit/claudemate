@@ -84,28 +84,65 @@ Invoke Planner Agent with spec.md context. Output: `.caw/task_plan.md`
 
 ### Stage 4: Execution
 
-**CRITICAL**: Steps MUST be executed **one at a time** in a loop. Do NOT batch-dispatch all steps to a single Builder agent call. Each step runs individually so the Post-Step Cycle (commit + simplify) executes between steps.
+**CRITICAL**: Steps MUST be executed **one at a time** in a loop. Each step runs individually so the Post-Step Cycle (commit + simplify) executes between steps.
 
-**Execution loop (pseudocode):**
+**Execution loop:**
 ```
 for each pending step in task_plan:
-    1. Spawn Builder Agent for THIS step only
-    2. Wait for Builder to complete
-    3. Run Post-Step Cycle (see below)
-    4. Update state, proceed to next step
+    1. Execute step (Codex or Builder — see below)
+    2. Run Post-Step Cycle (MANDATORY — see below)
+    3. Update state, proceed to next step
 ```
 
 On error: 5-level recovery: retry → Fixer-Haiku → Planner-Haiku alternative → skip non-blocking → abort. Exit on completion promise, all steps complete, max iterations, 3+ consecutive failures, or critical error.
 
-**Team mode** (`--team`): Independent phases assigned to Builder teammates via Agent Teams. Each member works in an isolated worktree. `TeammateIdle` hook auto-assigns next tasks. Falls back to standard Task-based parallel if `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` is not set. Post-Step Cycle runs in the orchestrator after each teammate reports completion.
+#### Step Execution: Codex Mode (`--codex`)
 
-**Codex mode** (`--codex`): Offload tasks to Codex harness for background execution.
+When `codex_mode` is true, use the Codex MCP tool as the primary builder for each step.
+
+**1. Build the step prompt:**
+Read the step description, notes, and context files from task_plan.md. Construct a prompt:
+```
+Implement Step {N}: {step description}
+
+Project directory: {cwd}
+Context: {relevant file contents or summaries}
+
+Instructions:
+- Follow existing project patterns and code style
+- Create or modify only the files needed for this step
+- Run tests if a test framework is configured
+- Do NOT make git commits — the orchestrator handles commits after you complete
+```
+
+**2. Call the Codex MCP tool:**
+```
+mcp__plugin_codex-harness_codex__codex(
+  prompt: <constructed prompt>,
+  sandbox: "workspace-write",
+  approval-policy: "never",
+  reasoning-effort: "high"
+)
+```
+
+**3. On failure** (MCP tool error, timeout, plugin not loaded):
+- Log: `Codex unavailable for Step {N}, falling back to Builder`
+- Use Builder Agent (Sonnet) for THIS step only
+- Continue trying Codex for subsequent steps (per-step fallback, not per-pipeline)
+
+#### Step Execution: Default Mode (no `--codex`)
+
+Spawn Builder Agent for THIS step only (current behavior). Wait for Builder to complete.
+
+#### Team Mode (`--team`)
+
+Independent phases assigned to Builder teammates via Agent Teams. Each member works in an isolated worktree. `TeammateIdle` hook auto-assigns next tasks. Falls back to standard Task-based parallel if `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` is not set. Post-Step Cycle runs in the orchestrator after each teammate reports completion.
 
 #### Post-Step Cycle (MANDATORY — orchestrator executes directly)
 
-After each Builder step returns, YOU (the crew:go orchestrator) MUST run these Bash commands directly. Do NOT delegate. Do NOT skip.
+After each step completes (Codex or Builder), YOU (the crew:go orchestrator) MUST run these Bash commands directly. Do NOT delegate. Do NOT skip.
 
-**Step 1 — Commit the Builder's changes:**
+**Step 1 — Commit:**
 ```bash
 git status --porcelain
 ```
@@ -116,7 +153,7 @@ git commit -m "[feat] Step <N>: <step description from task_plan>"
 ```
 If output is empty: skip (no changes).
 
-**Step 2 — Simplify (optional, skip if time-constrained):**
+**Step 2 — Simplify:**
 Spawn `Agent(subagent_type="code-simplifier:code-simplifier")` on modified files.
 
 **Step 3 — Tidy commit (only if Step 2 ran):**
