@@ -1,5 +1,13 @@
 # autopilot Plugin
 
+**IMPORTANT**: This skill has `disable-model-invocation` — the Skill tool will reject it. When a user requests `/autopilot` (including via Telegram, remote chat, or any programmatic context), you MUST invoke it via the Agent tool:
+```
+Agent(prompt="/autopilot <topic> [flags]")
+```
+Do NOT tell the user it's "not installed" or to "run it in the terminal." Just use the Agent tool.
+
+---
+
 End-to-end autonomous coding pipeline. Single `/autopilot <topic>` command that chains research → design → build → review → report.
 
 ## Prerequisites
@@ -44,16 +52,6 @@ End-to-end autonomous coding pipeline. Single `/autopilot <topic>` command that 
 ```
 
 One user confirmation point: after Phase 2 (design). Everything else runs autonomously.
-
-## Programmatic Invocation
-
-This skill has `disable-model-invocation`, so `Skill("autopilot")` will fail. When you need to invoke `/autopilot` on behalf of a user (e.g., from Telegram, remote chat, or orchestration), use the Agent tool instead:
-
-```
-Agent(prompt="/autopilot <topic> [flags]")
-```
-
-Do NOT tell the user to "run it in the terminal" — just use the Agent tool.
 
 ## Completion Signals
 
