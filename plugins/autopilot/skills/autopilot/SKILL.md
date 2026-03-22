@@ -289,10 +289,17 @@ Options:
 
 ### 3b — CW Go Execution
 
-- Transform `.autopilot/design-brief.md` content into a task description suitable for crew:go
-- Invoke via Agent tool: spawn an agent with prompt `"/crew:go <design-brief summary> --from-plan --skip-expansion --no-questions --codex"`
-  - If `.caw/task_plan.md` doesn't exist yet, let crew:go create it from the design brief
-  - crew:go handles its own 9-stage pipeline (planning, execution, QA, review, fix, check)
+**CRITICAL**: You MUST delegate building to crew:go. Do NOT write code yourself. Do NOT spawn a general-purpose Agent to write code. The ONLY way to build is through crew:go.
+
+**How to invoke crew:go:**
+```
+Agent(prompt="/crew:go <task description from design-brief> --from-plan --skip-expansion --no-questions --codex")
+```
+
+- The Agent's prompt MUST start with `/crew:go` — this loads the crew:go skill
+- If `.caw/task_plan.md` doesn't exist yet, crew:go creates it from the design brief
+- crew:go handles its own 9-stage pipeline (planning, execution, QA, review, fix, check)
+- You (autopilot) wait for the agent to complete, then proceed to 3b.1
 - On success:
   - Run **3b.1 — Verify Deliverables** (see below)
   - Set `build.status = "complete"`, `build.cw_state_path = ".caw/auto-state.json"`
@@ -571,6 +578,7 @@ The subagent gets a fresh context, loads the skill content, and executes the ful
 - Run `git diff --stat` for reporting
 
 **Won't:**
+- **Write source code directly** — ALL code generation MUST go through crew:go (Phase 3b). Never use Write/Edit tools to create source files yourself. Never spawn a general-purpose Agent to write code. This is the single most important boundary.
 - Reimplement logic from crew, debate, codex, or arch-guard plugins
 - Push to remote or create PRs automatically
 - Skip the user gate (Phase 2e) unless `--from-plan` is used
