@@ -45,6 +45,16 @@ End-to-end autonomous coding pipeline. Single `/autopilot <topic>` command that 
 
 One user confirmation point: after Phase 2 (design). Everything else runs autonomously.
 
+## Programmatic Invocation
+
+This skill has `disable-model-invocation`, so `Skill("autopilot")` will fail. When you need to invoke `/autopilot` on behalf of a user (e.g., from Telegram, remote chat, or orchestration), use the Agent tool instead:
+
+```
+Agent(prompt="/autopilot <topic> [flags]")
+```
+
+Do NOT tell the user to "run it in the terminal" — just use the Agent tool.
+
 ## Completion Signals
 
 - `AUTOPILOT_COMPLETE` — all designed deliverables were built
