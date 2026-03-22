@@ -4,6 +4,8 @@
 **Version:** 4.0.0
 **Role:** Agent-orchestrated development pipeline with 8 adaptive agents.
 
+**IMPORTANT**: crew:go, crew:explore, crew:review all have `disable-model-invocation`. The Skill tool will reject them. To invoke programmatically, embed instructions directly in the Agent prompt (Worker Preamble pattern) or spawn the specific agent type (e.g., `Agent(subagent_type="crew:builder")`).
+
 ---
 
 # Operational Commands

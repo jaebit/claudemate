@@ -287,19 +287,60 @@ Options:
   - Then invoke `Skill("arch-guard:contract-first")` to define interfaces
   - Optionally invoke `Skill("arch-guard:implement")` for interface stubs
 
-### 3b — CW Go Execution
+### 3b — Build Execution (Worker Preamble Pattern)
 
-**CRITICAL**: You MUST delegate building to crew:go. Do NOT write code yourself. Do NOT spawn a general-purpose Agent to write code. The ONLY way to build is through crew:go.
+**CRITICAL**: You MUST NOT write source code yourself. You MUST NOT spawn a general-purpose Agent to write code. Spawn a dedicated build agent with the Worker Preamble below.
 
-**How to invoke crew:go:**
+**How to invoke:**
+
+Read `.autopilot/design-brief.md` and `.caw/task_plan.md` (if exists). Then spawn:
+
 ```
-Agent(prompt="/crew:go <task description from design-brief> --from-plan --skip-expansion --no-questions --codex")
+Agent(prompt="<insert WORKER PREAMBLE below, with TASK filled from design-brief>")
 ```
 
-- The Agent's prompt MUST start with `/crew:go` — this loads the crew:go skill
-- If `.caw/task_plan.md` doesn't exist yet, crew:go creates it from the design brief
-- crew:go handles its own 9-stage pipeline (planning, execution, QA, review, fix, check)
-- You (autopilot) wait for the agent to complete, then proceed to 3b.1
+**WORKER PREAMBLE** (copy this exactly, fill TASK section):
+
+```
+ROLE: You are a BUILD ORCHESTRATOR. You execute task plan steps using Codex MCP tool or Builder Agent.
+
+CONSTRAINTS:
+- Do NOT write source code directly using Write or Edit tools
+- Do NOT create source files yourself
+- You may ONLY write to .caw/ directory (state files)
+- All source code MUST be produced by Codex MCP or Builder Agent
+
+EXECUTION LOOP — for each pending step in .caw/task_plan.md:
+
+1. READ the step description and context files
+
+2. TRY CODEX FIRST:
+   Call mcp__plugin_codex-harness_codex__codex with:
+   - prompt: "Implement Step {N}: {step description}. Follow existing project patterns. Do NOT commit."
+   - sandbox: "workspace-write"
+   - approval-policy: "never"
+   - reasoning-effort: "high"
+
+3. IF CODEX FAILS (error, timeout, tool not found):
+   Spawn Agent(subagent_type="crew:builder") with prompt:
+   "Implement Step {N}: {step description}. Read .caw/task_plan.md for context."
+
+4. AFTER EACH STEP — run these Bash commands directly:
+   git status --porcelain
+   If non-empty:
+     git add -A
+     git commit -m "[feat] Step {N}: {step description}"
+
+5. PROCEED to next step
+
+WHEN ALL STEPS COMPLETE:
+   Print: SIGNAL: EXECUTION_COMPLETE
+
+TASK:
+{paste design-brief summary and deliverables list here}
+```
+
+- You (autopilot) wait for the build agent to complete, then proceed to 3b.1
 - On success:
   - Run **3b.1 — Verify Deliverables** (see below)
   - Set `build.status = "complete"`, `build.cw_state_path = ".caw/auto-state.json"`
@@ -488,7 +529,7 @@ If `completion.missing > 0` AND this is NOT already a gap-fill round (check `sta
 
 1. Print: `[5/5] Gaps detected ({completion.missing} items) — auto gap-filling...`
 2. Set `state.gap_fill_round = 1`
-3. Loop back to **Phase 3b** (crew:go with `.autopilot/remaining-work.md` as task input, `--from-plan --skip-expansion --no-questions --codex`)
+3. Loop back to **Phase 3b** — spawn a build agent with the same Worker Preamble, using `.autopilot/remaining-work.md` as the TASK section
 4. Then re-run **Phase 4** (review) and **Phase 5** (report) as normal
 5. If gaps remain after 1 gap-fill round → proceed to completion with COMPLETE_WITH_GAPS (don't loop indefinitely)
 
