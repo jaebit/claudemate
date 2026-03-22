@@ -279,25 +279,39 @@ Options:
 
 ### 3b.1 — Verify Deliverables
 
-After crew:go completes, iterate through every entry in `state.json.deliverables`:
+After crew:go completes, iterate through **every** entry in `state.json.deliverables` and update **both** the individual `status` field **and** the `completion` summary.
 
-- **type `file` / `config` / `directory`**: check if `expected_path` exists (use Bash: `test -f` or `test -d`)
-- **type `class` / `interface` / `function`**: Grep `expected_path` (or project-wide if path is approximate) for the declaration keyword (`class <name>`, `interface <name>`, `function <name>`, `def <name>`)
-- **type `test`**: check file exists AND contains at least one test attribute/decorator (`[Fact]`, `[Test]`, `@Test`, `def test_`, etc.)
+**CRITICAL**: You MUST update each deliverable's `status` field in the `deliverables` array. Do NOT only update `completion` counts — the per-item `status` is required for reporting, gap-filling, and `--continue` resume.
 
-Update each deliverable:
-- Found → `status = "built"`
-- Not found → `status = "missing"`
-- File exists but declaration missing → `status = "partial"`
+**Check rules by type:**
+- **`file` / `config` / `directory`**: check if `expected_path` exists (use Bash: `test -f` or `test -d`)
+- **`class` / `interface` / `function`**: Grep `expected_path` (or project-wide if path is approximate) for the declaration keyword (`class <name>`, `interface <name>`, `function <name>`, `def <name>`)
+- **`test`**: check file exists AND contains at least one test attribute/decorator (`[Fact]`, `[Test]`, `@Test`, `def test_`, etc.)
 
-Compute and write to `state.json`:
-- `completion.built` = count of status == "built"
-- `completion.missing` = count of status == "missing" or "partial"
+**Update each deliverable in the `deliverables` array:**
+- Found → set `"status": "built"`
+- Not found → set `"status": "missing"`
+- File exists but declaration missing → set `"status": "partial"`
+
+Example — before:
+```json
+{ "id": "d1", "name": "FooService", "type": "class", "expected_path": "src/Foo.cs", "status": "pending" }
+```
+After verification (file exists, class declaration found):
+```json
+{ "id": "d1", "name": "FooService", "type": "class", "expected_path": "src/Foo.cs", "status": "built" }
+```
+
+**Then compute `completion` from the updated statuses:**
+- `completion.built` = count where status == `"built"`
+- `completion.missing` = count where status == `"missing"` or `"partial"`
 - `completion.total` = deliverables.length
 - `completion.verdict`:
   - `"complete"` if missing == 0
   - `"partial"` if missing > 0 AND built >= 50% of total
   - `"minimal"` if built < 50% of total
+
+**Write the full updated `state.json`** with both the modified `deliverables` array and the `completion` summary.
 
 **Note**: `build.status` remains `"complete"` regardless — the build itself didn't fail, it scoped down. The gap information flows to review and report.
 

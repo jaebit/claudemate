@@ -83,34 +83,50 @@ Check `.caw/context_manifest.json`. If missing, invoke Bootstrapper Agent.
 Invoke Planner Agent with spec.md context. Output: `.caw/task_plan.md`
 
 ### Stage 4: Execution
-Execute pending steps via Builder Agent. Track files created/modified. On error: save state and report.
 
-**Team mode** (`--team`): Independent phases assigned to Builder teammates via Agent Teams. Each member works in an isolated worktree. `TeammateIdle` hook auto-assigns next tasks. Falls back to standard Task-based parallel if `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` is not set.
+**CRITICAL**: Steps MUST be executed **one at a time** in a loop. Do NOT batch-dispatch all steps to a single Builder agent call. Each step runs individually so the Post-Step Cycle (commit + simplify) executes between steps.
+
+**Execution loop (pseudocode):**
+```
+for each pending step in task_plan:
+    1. Spawn Builder Agent for THIS step only
+    2. Wait for Builder to complete
+    3. Run Post-Step Cycle (see below)
+    4. Update state, proceed to next step
+```
+
+On error: 5-level recovery: retry → Fixer-Haiku → Planner-Haiku alternative → skip non-blocking → abort. Exit on completion promise, all steps complete, max iterations, 3+ consecutive failures, or critical error.
+
+**Team mode** (`--team`): Independent phases assigned to Builder teammates via Agent Teams. Each member works in an isolated worktree. `TeammateIdle` hook auto-assigns next tasks. Falls back to standard Task-based parallel if `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` is not set. Post-Step Cycle runs in the orchestrator after each teammate reports completion.
 
 **Codex mode** (`--codex`): Offload tasks to Codex harness for background execution.
 
-**Loop behavior** (from `/crew:loop`): Repeatedly executes Builder agent until done, max iterations reached, or all steps complete. 5-level error recovery: retry → Fixer-Haiku → Planner-Haiku alternative → skip non-blocking → abort. Exit on completion promise, all steps complete, max iterations, 3+ consecutive failures, or critical error.
+#### Post-Step Cycle (MANDATORY after each Builder step)
 
-### Stage 4.1: Post-Step Cycle (after each Builder step)
+This cycle runs in the **orchestrator context** (crew:go), NOT inside the Builder agent. It executes after each Builder step returns and before proceeding to the next step.
 
-After each Builder step returns, execute this cycle before proceeding to the next step:
+**Step A — Commit behavioral change:**
+```bash
+git status --porcelain
+```
+- If changes exist:
+  - `git add <specific changed files>` (NOT `git add -A`)
+  - Classify via commit-discipline: structural → `[tidy]`, behavioral → `[feat]`/`[fix]`/`[test]`
+  - `git commit -m "[prefix] <step description>"`
+- If no changes: skip to next step
 
-1. **Commit**: Check `git status` for uncommitted changes
-   - If changes exist:
-     - `git add` the changed files (specific files, not `-A`)
-     - Classify via commit-discipline: structural → `[tidy]`, behavioral → `[feat]`/`[fix]`/`[test]`
-     - Commit with appropriate prefix and step description
-   - If no changes: skip to next step
+**Step B — Simplify:**
+- Spawn `Agent(subagent_type="code-simplifier:code-simplifier")` targeting the files modified by the Builder step
+- Agent reviews for clarity, consistency, maintainability while preserving all functionality
 
-2. **Simplify**: Spawn `Agent(subagent_type="code-simplifier:code-simplifier")` on the files modified by the Builder step
-   - Agent reviews for clarity, consistency, maintainability
-   - Preserves all functionality
+**Step C — Commit tidy change:**
+```bash
+git status --porcelain
+```
+- If simplify made changes: `git add <modified files>` + `git commit -m "[tidy] Simplify <step description>"`
+- If no changes: skip
 
-3. **Tidy Commit**: Check `git status` again after simplify
-   - If simplify made changes: `git add` modified files + commit `[tidy] Simplify <step description>`
-   - If no changes: skip
-
-4. Proceed to next pending step
+**Step D**: Proceed to next pending step
 
 ### Stage 5: QA Loop
 Invoke QA loop with max_cycles: 2, severity: major. Build → Review → Fix cycle until quality criteria met. Stall detection via issue hashing.
