@@ -287,68 +287,63 @@ Options:
   - Then invoke `Skill("arch-guard:contract-first")` to define interfaces
   - Optionally invoke `Skill("arch-guard:implement")` for interface stubs
 
-### 3b — Build Execution (Worker Preamble Pattern)
+### 3b — Build Execution (Step-by-Step Loop)
 
-**CRITICAL**: You MUST NOT write source code yourself. You MUST NOT spawn a general-purpose Agent to write code. Spawn a dedicated build agent with the Worker Preamble below.
+**CRITICAL**: YOU (autopilot) execute the build loop yourself. Do NOT delegate the entire build to a single agent. Execute each step individually with commit + simplify between steps.
 
-**How to invoke:**
+#### 3b.0 — Create Task Plan
 
-Read `.autopilot/design-brief.md` and `.caw/task_plan.md` (if exists). Then spawn:
+If `.caw/task_plan.md` does not exist, create it:
+- Spawn `Agent(subagent_type="crew:planner")` with prompt: the design-brief content + "Create a task plan in `.caw/task_plan.md` with phases and steps."
+- Wait for planner to complete and verify `.caw/task_plan.md` exists.
 
+#### 3b.1-loop — Execute Each Step
+
+Read `.caw/task_plan.md`. For each pending step, execute this sequence:
+
+**a. Build** — Spawn Builder for THIS step only:
 ```
-Agent(prompt="<insert WORKER PREAMBLE below, with TASK filled from design-brief>")
+Agent(subagent_type="crew:builder", prompt="Implement Step {N}: {step description}. Context files: {list}.")
 ```
+Wait for builder to complete.
 
-**WORKER PREAMBLE** (copy this exactly, fill TASK section):
-
+**b. Commit** — Run these Bash commands directly (do NOT delegate):
+```bash
+git status --porcelain
 ```
-ROLE: You are a BUILD ORCHESTRATOR. You execute task plan steps using Codex MCP tool or Builder Agent.
-
-CONSTRAINTS:
-- Do NOT write source code directly using Write or Edit tools
-- Do NOT create source files yourself
-- You may ONLY write to .caw/ directory (state files)
-- All source code MUST be produced by Codex MCP or Builder Agent
-
-EXECUTION LOOP — for each pending step in .caw/task_plan.md:
-
-1. READ the step description and context files
-
-2. TRY CODEX FIRST:
-   Call mcp__plugin_codex-harness_codex__codex with:
-   - prompt: "Implement Step {N}: {step description}. Follow existing project patterns. Do NOT commit."
-   - sandbox: "workspace-write"
-   - approval-policy: "never"
-   - reasoning-effort: "high"
-
-3. IF CODEX FAILS (error, timeout, tool not found):
-   Spawn Agent(subagent_type="crew:builder") with prompt:
-   "Implement Step {N}: {step description}. Read .caw/task_plan.md for context."
-
-4. AFTER EACH STEP — run these Bash commands directly:
-   git status --porcelain
-   If non-empty:
-     git add -A
-     git commit -m "[feat] Step {N}: {step description}"
-
-5. PROCEED to next step
-
-WHEN ALL STEPS COMPLETE:
-   Print: SIGNAL: EXECUTION_COMPLETE
-
-TASK:
-{paste design-brief summary and deliverables list here}
+If output is non-empty:
+```bash
+git add -A
+git commit -m "[feat] Step {N}: {step description}"
 ```
 
-- You (autopilot) wait for the build agent to complete, then proceed to 3b.1
-- On success:
-  - Run **3b.1 — Verify Deliverables** (see below)
-  - Set `build.status = "complete"`, `build.cw_state_path = ".caw/auto-state.json"`
-  - Print `[3/5] Build complete ({completion.built}/{completion.total} deliverables)`
+**c. Simplify** — Spawn code-simplifier on modified files:
+```
+Agent(subagent_type="code-simplifier:code-simplifier", prompt="Simplify the files modified in Step {N}: {file list}")
+```
 
-### 3b.1 — Verify Deliverables
+**d. Tidy commit** — Run Bash directly:
+```bash
+git status --porcelain
+```
+If output is non-empty:
+```bash
+git add -A
+git commit -m "[tidy] Simplify Step {N}"
+```
 
-After crew:go completes, iterate through **every** entry in `state.json.deliverables` and update **both** the individual `status` field **and** the `completion` summary.
+**e. Next** — Proceed to the next pending step. Repeat a-d.
+
+#### 3b.2 — Completion
+
+After all steps complete:
+- Run **3b.3 — Verify Deliverables** (see below)
+- Set `build.status = "complete"`
+- Print `[3/5] Build complete ({completion.built}/{completion.total} deliverables)`
+
+### 3b.3 — Verify Deliverables
+
+After build loop completes, iterate through **every** entry in `state.json.deliverables` and update **both** the individual `status` field **and** the `completion` summary.
 
 **CRITICAL**: You MUST update each deliverable's `status` field in the `deliverables` array. Do NOT only update `completion` counts — the per-item `status` is required for reporting, gap-filling, and `--continue` resume.
 
@@ -384,7 +379,7 @@ After verification (file exists, class declaration found):
 
 **Note**: `build.status` remains `"complete"` regardless — the build itself didn't fail, it scoped down. The gap information flows to review and report.
 
-### 3b.2 — Auto-Setup Arch-Guard Fallback (conditional)
+### 3c — Auto-Setup Arch-Guard Fallback (conditional)
 
 **Skip if**: `config.arch_guard_detected` is already true (set in Phase 2d) OR `config.no_arch` is set.
 
@@ -394,9 +389,9 @@ Fallback for cases where Phase 2d didn't enable arch-guard but the built project
 2. If yes: invoke `Skill("arch-guard:setup")`, set `config.arch_guard_detected = true`
 3. If no: skip silently
 
-### 3b.3 — Auto-Generate Architecture Tests (conditional)
+### 3d — Auto-Generate Architecture Tests (conditional)
 
-If `config.arch_guard_detected` is true (either pre-existing or just created in 3b.2):
+If `config.arch_guard_detected` is true (either pre-existing or just created in 3c):
 
 1. Invoke `Skill("arch-guard:test-gen")` to generate architecture guard-rail tests (layer dependency, reference direction, etc.)
 2. Run the generated tests (e.g., `dotnet test`, `npm test`, etc.) to verify they pass against the current build
@@ -426,7 +421,7 @@ Use the Agent tool — send a single message with up to 3 Agent calls:
 - If unavailable: skip, note in results
 
 **Stream B — Architecture Review** (conditional):
-- If `config.arch_guard_detected` is true (either pre-existing or auto-generated in 3b.2): spawn an Agent that runs `Skill("arch-guard:arch-check")` and `Skill("arch-guard:impl-review")` on the changed files
+- If `config.arch_guard_detected` is true (either pre-existing or auto-generated in 3c): spawn an Agent that runs `Skill("arch-guard:arch-check")` and `Skill("arch-guard:impl-review")` on the changed files
 - Produces architecture fitness score
 - If not active: skip, note in results
 
@@ -529,7 +524,7 @@ If `completion.missing > 0` AND this is NOT already a gap-fill round (check `sta
 
 1. Print: `[5/5] Gaps detected ({completion.missing} items) — auto gap-filling...`
 2. Set `state.gap_fill_round = 1`
-3. Loop back to **Phase 3b** — spawn a build agent with the same Worker Preamble, using `.autopilot/remaining-work.md` as the TASK section
+3. Loop back to **Phase 3b** — run the step-by-step build loop using `.autopilot/remaining-work.md` as the task plan source
 4. Then re-run **Phase 4** (review) and **Phase 5** (report) as normal
 5. If gaps remain after 1 gap-fill round → proceed to completion with COMPLETE_WITH_GAPS (don't loop indefinitely)
 
