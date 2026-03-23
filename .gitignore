@@ -6,6 +6,7 @@
 .serena/
 .omc/
 .deprecated/
+.autopilot/
 
 # IDE
 .idea/
