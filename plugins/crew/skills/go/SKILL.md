@@ -53,6 +53,7 @@ Execute the complete CW workflow in a single command with a 9-stage pipeline.
 | `--from-plan` | Start from existing task_plan.md |
 | `--verbose` | Show detailed progress |
 | `--no-questions` | Minimize interactive questions |
+| `--worktree` | Isolate each build step in a git worktree (create → build → merge back) |
 
 ## Signal-Based Phase Transitions
 
@@ -133,6 +134,36 @@ mcp__plugin_codex-harness_codex__codex(
 #### Step Execution: Default Mode (no `--codex`)
 
 Spawn Builder Agent for THIS step only (current behavior). Wait for Builder to complete.
+
+#### Worktree Mode (`--worktree`)
+
+When `--worktree` flag is set, wrap each step execution with worktree isolation:
+
+**Before step execution:**
+```
+Skill("worktree:create", "step-{N}")
+```
+This creates `.worktrees/step-{N}` with a branch `step-{N}`.
+
+**Step execution:** Use Codex or Builder as normal, but instruct them to work in `.worktrees/step-{N}/`:
+- Add to the step prompt: `"IMPORTANT: Work in directory .worktrees/step-{N}/ — all file reads/writes must be relative to that directory. When done, commit your changes with: cd .worktrees/step-{N} && git add -A && git commit -m '[feat] Step {N}: {step description}'"`
+
+**After step execution (replaces Post-Step Cycle commit step):**
+Merge the worktree branch back to main:
+```bash
+BRANCH="step-{N}"
+git merge --squash "$BRANCH"
+git commit -m "[feat] Step {N}: {step description}"
+```
+Then run Simplify + Tidy as normal (Post-Step Cycle steps 2-3).
+
+**After simplify/tidy:** Cleanup the worktree:
+```bash
+git worktree remove .worktrees/step-{N} 2>/dev/null
+git branch -d step-{N} 2>/dev/null
+```
+
+When `--worktree` is NOT set, the existing flow (direct execution + Post-Step Cycle) is unchanged.
 
 #### Team Mode (`--team`)
 
