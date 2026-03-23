@@ -58,3 +58,4 @@ cd plugins/crew && python -m pytest tests/
 - **[Crew](./plugins/crew/CLAUDE.md)**
 - **[Codex Harness](./plugins/codex-harness/CLAUDE.md)**
 - **[Gemini CLI](./plugins/gemini-cli/CLAUDE.md)**
+- **[Worktree](./plugins/worktree/CLAUDE.md)**

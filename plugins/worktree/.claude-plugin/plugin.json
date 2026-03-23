@@ -1,0 +1,5 @@
+{
+  "name": "worktree",
+  "version": "0.1.0",
+  "description": "Git worktree lifecycle management — create, merge, cleanup"
+}

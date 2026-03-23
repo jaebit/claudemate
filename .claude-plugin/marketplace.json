@@ -40,6 +40,12 @@
       "description": "End-to-end autonomous coding pipeline — orchestrates cw, multi-model-debate, codex-harness, and arch-guard into a single /autopilot command",
       "source": "./plugins/autopilot",
       "version": "0.1.0"
+    },
+    {
+      "name": "worktree",
+      "description": "Git worktree lifecycle management — create, merge, cleanup",
+      "source": "./plugins/worktree",
+      "version": "0.1.0"
     }
   ]
 }
