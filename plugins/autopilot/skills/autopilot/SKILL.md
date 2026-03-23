@@ -45,6 +45,7 @@ End-to-end pipeline: idea → research → design → build → review → repor
 | `--continue` | Resume from `.autopilot/state.json` |
 | `--verbose` | Detailed per-phase progress |
 | `--no-questions` | Minimize interactive prompts (still shows user gate) |
+| `--worktree` | Isolate each build step in a git worktree (create → build → merge back) |
 
 ## Pipeline Overview
 
@@ -81,7 +82,8 @@ End-to-end pipeline: idea → research → design → build → review → repor
     "no_arch": false,
     "arch_guard_detected": false,
     "verbose": false,
-    "no_questions": false
+    "no_questions": false,
+    "worktree": false
   },
   "phases": {
     "research": { "status": "pending" },
@@ -300,6 +302,64 @@ If `.caw/task_plan.md` does not exist, create it:
 #### 3b.1-loop — Execute Each Step
 
 Read `.caw/task_plan.md`. For each pending step, execute this sequence:
+
+**If `config.worktree` is true — Worktree-Isolated Mode:**
+
+**a. Create worktree** — Invoke worktree:create for this step:
+```
+Skill("worktree:create", "step-{N}")
+```
+This creates `.worktrees/step-{N}` with a branch `step-{N}`.
+
+**b. Build** — Spawn Builder to work INSIDE the worktree:
+```
+Agent(subagent_type="crew:builder", prompt="Implement Step {N}: {step description}. Context files: {list}. IMPORTANT: Work in directory .worktrees/step-{N}/ — all file reads/writes must be relative to that directory. When done, commit your changes with: cd .worktrees/step-{N} && git add -A && git commit -m '[feat] Step {N}: {step description}'")
+```
+Wait for builder to complete.
+
+**c. Merge back** — Invoke worktree:merge from the worktree context:
+```
+Skill("worktree:merge", "")
+```
+Note: worktree:merge must be invoked from inside the worktree. If the Skill tool cannot change cwd, run manually:
+```bash
+cd .worktrees/step-{N} && git status --porcelain
+```
+If worktree has uncommitted changes, commit them first. Then merge from the main repo:
+```bash
+BRANCH="step-{N}"
+REPO_ROOT=$(git rev-parse --show-toplevel)
+ORIGINAL_REPO=$(cd "$REPO_ROOT" && git rev-parse --git-common-dir | xargs dirname)
+git -C "$ORIGINAL_REPO" merge --squash "$BRANCH"
+git -C "$ORIGINAL_REPO" commit -m "[feat] Step {N}: {step description}"
+```
+
+**d. Simplify** — Spawn code-simplifier on modified files:
+```
+Agent(subagent_type="code-simplifier:code-simplifier", prompt="Simplify the files modified in Step {N}: {file list}")
+```
+
+**e. Tidy commit** — Run Bash directly:
+```bash
+git status --porcelain
+```
+If output is non-empty:
+```bash
+git add -A
+git commit -m "[tidy] Simplify Step {N}"
+```
+
+**f. Cleanup** — Remove the worktree:
+```bash
+git worktree remove .worktrees/step-{N} 2>/dev/null
+git branch -d step-{N} 2>/dev/null
+```
+
+**g. Next** — Proceed to the next pending step. Repeat a-f.
+
+---
+
+**If `config.worktree` is false — Default Mode (no isolation):**
 
 **a. Build** — Spawn Builder for THIS step only:
 ```
