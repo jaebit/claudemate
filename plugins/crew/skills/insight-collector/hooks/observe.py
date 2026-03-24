@@ -417,6 +417,12 @@ def main():
         print(f"Unknown event type: {event_type}", file=sys.stderr)
         sys.exit(1)
 
+    # Only record observations if crew workflow is active (.caw/ exists)
+    # This prevents .caw/ from being created in repos that don't use crew
+    caw_dir = get_caw_dir()
+    if not caw_dir.exists():
+        sys.exit(0)
+
     # Read hook input from stdin
     hook_input = read_stdin_json()
 

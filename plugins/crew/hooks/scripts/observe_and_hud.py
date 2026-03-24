@@ -90,8 +90,8 @@ def read_stdin_json():
 def main():
     hook_input = read_stdin_json()
 
-    # Run observation (always)
-    if hook_input:
+    # Run observation only if crew workflow is active (.caw/ exists)
+    if hook_input and find_caw_root():
         run_observation(hook_input)
 
     # Run HUD update (if enabled)
