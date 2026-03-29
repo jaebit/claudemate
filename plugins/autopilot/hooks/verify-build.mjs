@@ -3,7 +3,7 @@
 // Verify build output: check if git commits were produced during Phase 3.
 // Called on SessionStart (record baseline) and SubagentStop (check for new commits).
 
-import { readFile, writeFile, mkdir } from "fs/promises";
+import { readFile, writeFile } from "fs/promises";
 import { join } from "path";
 import { execFileSync } from "child_process";
 
@@ -22,9 +22,15 @@ function getCommitCount() {
 
 async function main() {
   if (event === "session-start") {
+    // Only record baseline if .autopilot/ already exists (active pipeline)
+    try {
+      await readFile(join(cwd, ".autopilot", "state.json"), "utf-8");
+    } catch {
+      // No active autopilot pipeline — skip baseline recording
+      return;
+    }
     const count = getCommitCount();
     try {
-      await mkdir(join(cwd, ".autopilot"), { recursive: true });
       await writeFile(verifyPath, JSON.stringify({ baseline_commits: count, recorded_at: new Date().toISOString() }));
     } catch {}
     return;
