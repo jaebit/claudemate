@@ -47,12 +47,11 @@ description: "Debate round {N} Claude evaluation"
 ```
 The sub-agent may use Read/Glob/Grep to research the codebase if context is relevant.
 
-**Codex** (MCP tool):
+**Codex** (Bash):
+```bash
+codex -q "<prompt with Codex perspective>"
 ```
-tool: mcp__plugin_codex-harness_codex__codex
-prompt: "<prompt with Codex perspective>"
-sandbox: "read-only"
-```
+Run via Bash tool. Requires `codex` CLI installed and authenticated.
 
 **Gemini** (Agent tool → Bash):
 ```

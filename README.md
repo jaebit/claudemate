@@ -10,7 +10,6 @@ Claude Code plugin marketplace — automate, orchestrate, and extend AI-powered 
 | [autopilot](./plugins/autopilot) | 0.1.0 | End-to-end autonomous pipeline — research → design → build → review → report |
 | [multi-model-debate](./plugins/multi-model-debate) | 1.0.0 | Multi-agent debates using Claude, Codex, and Gemini for decision-making |
 | [arch-guard](./plugins/arch-guard) | 0.2.0 | Architecture compliance — layer boundary checks, contract-first development, ADRs |
-| [codex-harness](./plugins/codex-harness) | 1.0.0 | Codex MCP integration — native codex/codex-reply tools + cloud operations |
 | [gemini-cli](./plugins/gemini-cli) | 1.0.0 | Gemini CLI integration — code review, commit messages, documentation |
 
 ## Quick Start
@@ -35,7 +34,7 @@ Single command from idea to working code:
 /autopilot "build a notification system"
 ```
 
-Chains crew, multi-model-debate, codex-harness, and arch-guard into a 5-phase autonomous pipeline with one user confirmation gate after design.
+Chains crew, multi-model-debate, and arch-guard into a 5-phase autonomous pipeline with one user confirmation gate after design.
 
 ### crew
 

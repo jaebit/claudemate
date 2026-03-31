@@ -4,7 +4,7 @@ Structured 3-model debate orchestration (Claude + Codex + Gemini) for software e
 
 ## Prerequisites
 
-- **codex-harness** plugin installed (provides `mcp__plugin_codex-harness_codex__codex`)
+- **codex** CLI installed and authenticated (`which codex` must succeed — use `openai/codex-plugin-cc` or `npm i -g @openai/codex`)
 - **gemini-cli** installed and authenticated (`which gemini` must succeed)
 
 ## Skills
@@ -16,7 +16,7 @@ Structured 3-model debate orchestration (Claude + Codex + Gemini) for software e
 ## Constraints
 
 - **Parallel dispatch**: Always dispatch 3 agents in the same message (3 tool calls)
-- **Codex**: Use `mcp__plugin_codex-harness_codex__codex` with `sandbox: read-only`
+- **Codex**: Use Bash tool: `codex -q "<prompt>"` (read-only by default)
 - **Gemini**: Use Agent tool → sub-agent runs `gemini -p "..."` via Bash
 - **Claude**: Use Agent tool (sub-agent with Read/Glob/Grep)
 - **Output**: All debate artifacts go to `.debate/<debate-id>/`

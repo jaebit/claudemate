@@ -6,12 +6,6 @@
   },
   "plugins": [
     {
-      "name": "codex-harness",
-      "description": "Codex MCP integration for Claude Code - native codex/codex-reply tools + cloud operations",
-      "source": "./plugins/codex-harness",
-      "version": "1.0.0"
-    },
-    {
       "name": "gemini-cli",
       "description": "Google Gemini CLI integration for code review, commit messages, and documentation",
       "source": "./plugins/gemini-cli",
@@ -37,7 +31,7 @@
     },
     {
       "name": "autopilot",
-      "description": "End-to-end autonomous coding pipeline — orchestrates cw, multi-model-debate, codex-harness, and arch-guard into a single /autopilot command",
+      "description": "End-to-end autonomous coding pipeline — orchestrates crew, multi-model-debate, and arch-guard into a single /autopilot command",
       "source": "./plugins/autopilot",
       "version": "0.1.0"
     },

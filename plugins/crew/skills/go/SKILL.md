@@ -116,17 +116,12 @@ Instructions:
 - Do NOT make git commits — the orchestrator handles commits after you complete
 ```
 
-**2. Call the Codex MCP tool:**
-```
-mcp__plugin_codex-harness_codex__codex(
-  prompt: <constructed prompt>,
-  sandbox: "workspace-write",
-  approval-policy: "never",
-  reasoning-effort: "high"
-)
+**2. Run Codex via Bash:**
+```bash
+codex -q --approval-policy never "<constructed prompt>"
 ```
 
-**3. On failure** (MCP tool error, timeout, plugin not loaded):
+**3. On failure** (codex not installed, timeout, auth error):
 - Log: `Codex unavailable for Step {N}, falling back to Builder`
 - Use Builder Agent (Sonnet) for THIS step only
 - Continue trying Codex for subsequent steps (per-step fallback, not per-pipeline)

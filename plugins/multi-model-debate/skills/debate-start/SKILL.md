@@ -19,7 +19,7 @@ Launch a structured multi-model debate with Claude, Codex, and Gemini.
    - `--rounds <N>`: Number of debate rounds (default: 2)
 
 2. **Verify prerequisites:**
-   - Check Codex MCP tool exists: confirm `mcp__plugin_codex-harness_codex__codex` is available
+   - Check Codex CLI: run `which codex` via Bash
    - Check Gemini CLI: run `which gemini` via Bash
    - If either fails, report what's missing and stop
 

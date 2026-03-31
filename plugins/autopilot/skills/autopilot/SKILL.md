@@ -4,7 +4,7 @@ description: >
   End-to-end autonomous coding pipeline. Use when the user says "autopilot",
   "build this from scratch", "go from idea to code", "autonomous build",
   or wants to go from a topic/idea to working code with a single command.
-  Orchestrates crew, multi-model-debate, codex-harness, and arch-guard.
+  Orchestrates crew, multi-model-debate, and arch-guard.
 argument-hint: "<topic> [flags]"
 user_invocable: true
 disable-model-invocation: true
