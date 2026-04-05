@@ -5,6 +5,7 @@ description: >
   worktrees whose branches are already merged. With --all, removes all
   worktrees but always requires user confirmation for unmerged ones.
 argument-hint: "[--all]"
+user_invocable: true
 disable-model-invocation: false
 allowed-tools: Bash, AskUserQuestion
 ---
