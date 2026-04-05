@@ -15,6 +15,8 @@ End-to-end autonomous coding pipeline. Single `/autopilot <topic>` command that 
 - **Required**: `crew` plugin
 - **Optional**: `multi-model-debate` plugin (for design debates)
 - **Optional**: `codex` CLI + official plugin `openai/codex-plugin-cc` (for cross-model review)
+  - Install: `npm i -g @openai/codex`
+  - Verify: `which codex` must return a path
 - **Optional**: `arch-guard` plugin (auto-detected via `arch-guard.json`)
 
 ## Usage
