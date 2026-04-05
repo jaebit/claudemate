@@ -5,6 +5,7 @@ description: >
   Use when starting feature work, before risky build steps, or when parallel
   isolation is needed. Agent-first: no interactive prompts for directory selection.
 argument-hint: "<branch-name> [--base <branch>]"
+user_invocable: true
 disable-model-invocation: false
 allowed-tools: Bash, Read
 ---
