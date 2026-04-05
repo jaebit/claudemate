@@ -69,6 +69,3 @@ See [docs/config-reference.md](docs/config-reference.md) for the full `arch-guar
 
 See [docs/architecture-decisions.md](docs/architecture-decisions.md) for the rationale behind arch-guard's design.
 
-## Relationship to arix-dev
-
-arch-guard is the generalized version of the [arix-dev](../arix-dev/) plugin. While arix-dev has hardcoded rules for the Arix 6-layer architecture, arch-guard reads rules from a user-defined config file. Both plugins can coexist without conflicts.
