@@ -5,6 +5,7 @@ description: >
   git history and source code to craft a comprehensive commit message.
   Must be run from inside a worktree.
 argument-hint: "[target-branch]"
+user_invocable: true
 disable-model-invocation: false
 allowed-tools: Bash, Read
 ---
