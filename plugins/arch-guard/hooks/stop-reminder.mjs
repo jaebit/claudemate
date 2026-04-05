@@ -1,19 +1,7 @@
 #!/usr/bin/env node
 // Stop hook: only active in arch-guard projects (those with arch-guard.json).
 // Exits 0 silently in non-arch-guard projects to avoid global noise.
-import { existsSync } from "fs";
-import { join, dirname } from "path";
-
-function isConfiguredProject(cwd) {
-  let dir = cwd;
-  for (let i = 0; i < 4; i++) {
-    if (existsSync(join(dir, "arch-guard.json"))) return true;
-    const parent = dirname(dir);
-    if (parent === dir) break;
-    dir = parent;
-  }
-  return false;
-}
+import { isConfiguredProject } from "../_shared/detect-project.mjs";
 
 if (!isConfiguredProject(process.cwd())) {
   process.exit(0);
