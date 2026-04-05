@@ -1,0 +1,125 @@
+# 도메인 설정
+#
+# 이 파일은 두 개의 논리적 섹션으로 구성됩니다:
+#   1. Runtime Charter — 실행 환경 정책 (permission, budget, safety, child lifecycle)
+#   2. Harness Config  — 태스크 하네스 설정 (pipeline, roles, stages, criteria weights, improvement)
+# 자세한 설명: domain/knowledge-base/runtime-charter.md
+domain:
+  name: "claudemate"
+  domain_type: "ai-agent"  # general | frontend | backend | infra | data
+  description: "claudemate 플러그인 마켓플레이스 — Claude Code 플러그인/스킬/에이전트/MCP 서버 관리"
+
+  # ══════════════════════════════════════════════
+  # ║        SECTION 1: Runtime Charter          ║
+  # ║  실행 환경 정책 — permission, budget,       ║
+  # ║  safety, trust, child lifecycle            ║
+  # ══════════════════════════════════════════════
+
+  # LLM 설정 (Runtime: 모델 할당 및 자원 전략)
+  llm:
+    planner_model: "claude-sonnet-4-6"
+    worker_model: "claude-sonnet-4-6"
+    evaluator_model: "claude-sonnet-4-6"
+    reflector_model: "claude-sonnet-4-6"
+
+    # 모델 체급 분류
+    model_tiers:
+      "claude-sonnet-4-6": "sonnet"
+      "claude-opus-4-6": "opus"
+      "claude-haiku-4-5-20251001": "haiku"
+
+    # 체급별 컨텍스트 전략
+    context_strategies:
+      haiku:
+        handoff_style: "structured_summary"
+        sprint_context_limit: 3
+      sonnet:
+        handoff_style: "structured_handoff"
+        sprint_context_limit: 5
+      opus:
+        handoff_style: "full_context"
+        sprint_context_limit: null
+    
+  # ══════════════════════════════════════════════
+  # ║        SECTION 2: Harness Config           ║
+  # ║  태스크 하네스 설정 — pipeline, stages,      ║
+  # ║  criteria weights, self-improvement        ║
+  # ══════════════════════════════════════════════
+
+  # 파이프라인 설정 (Harness: 스프린트 제한, 임계값)
+  pipeline:
+    default_pipeline: ""              # 빈 문자열 = legacy fallback. "default" | "hotfix" | "research" 중 선택
+    max_sprints: 5
+    max_retries_per_sprint: 3
+    passing_threshold: 0.7
+    degraded_threshold: 0.5
+    golden_example_threshold: 0.85
+    
+  # 자기 개선 설정 (Harness: 스킬 관리, 메타 개선, 하드닝)
+  self_improvement:
+    max_skill_updates_per_session: 5
+    skill_score_decay: 0.995
+    min_skill_score: 0.1
+    enable_meta_improvement: false  # true: Reflector가 자동으로 스킬 업데이트 실행
+    meta_improvement_guardrails:
+      max_auto_updates_per_reflection: 3
+      require_pass_for_promotion: true
+      max_active_skills: 20
+    hardening:
+      min_utility_score: 0.8
+      min_usage_count: 5
+      min_success_rate: 0.9
+      policy_timeout_sec: 10
+      fallback_to_llm: true
+
+  # 안전 설정 (Runtime: 불변 경로, 승인 정책, 실행 예산)
+  safety:
+    immutable_paths:
+      - "domain/rules/"
+      - "domain/evaluator/validators/"
+    append_only_paths:
+      - "data/archive/"
+    human_approval_required:
+      - "domain/evaluator/criteria.yaml"
+      - "agents/*.md"
+    runtime:
+      max_sprint_duration_min: 30       # 스프린트당 최대 실행 시간
+      max_total_duration_min: 120       # 태스크 전체 최대 실행 시간
+      max_file_changes_per_sprint: 20   # 스프린트당 최대 파일 변경 수
+      max_retries_before_escalation: 3  # 에스컬레이션 전 최대 재시도
+
+  # 스웜 오케스트레이션 설정 (Harness: 병렬 가설 탐색)
+  swarm:
+    max_parallel_workers: 5
+    hypothesis_timeout_min: 60
+    adoption_threshold: 0.7
+
+  # 스킬 전이 설정 (Harness: 도메인 간 스킬 이식)
+  transfer:
+    export_min_utility: 0.7
+    export_min_usage: 3
+    export_min_success_rate: 0.8
+    import_as_provisional: true
+
+  # 분산 신뢰 설정 (Runtime: 신뢰 수준, 워커 제한, 검증 정책)
+  trust:
+    trust_level: "full"
+    worker_restrictions:
+      blocked_tools: ["verify_swarm_results", "harden_skill", "apply_meta_modification", "rollback_meta_modification"]
+      blocked_paths: ["domain/evaluator/", "domain/rules/", "data/archive/"]
+    verification:
+      require_independent_eval: true
+      score_deviation_threshold: 0.15
+      min_trust_score_for_adoption: 0.6
+
+  # 메타인지 설정 (Harness: 정체 탐지, 자동 롤백, HyperAgent)
+  meta_cognition:
+    enable_auto_meta: false
+    plateau_detection:
+      min_generations: 3
+      min_improvement_threshold: 0.02
+    auto_rollback:
+      decline_generations: 2
+      decline_threshold: -0.05
+    max_modifications_per_session: 1
+    immutable_agents: ["evaluator"]
