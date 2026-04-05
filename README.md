@@ -6,11 +6,12 @@ Claude Code plugin marketplace — automate, orchestrate, and extend AI-powered 
 
 | Plugin | Version | Description |
 |--------|---------|-------------|
-| [crew](./plugins/crew) | 4.0.0 | Agent-orchestrated development — 9-stage pipeline, 8 adaptive agents, parallel execution, research, review |
-| [autopilot](./plugins/autopilot) | 0.1.0 | End-to-end autonomous pipeline — research → design → build → review → report |
+| [crew](./plugins/crew) | 4.1.1 | Agent-orchestrated development — 9-stage pipeline, 8 adaptive agents, parallel execution, research, review |
+| [autopilot](./plugins/autopilot) | 0.4.0 | End-to-end autonomous pipeline — research → design → build → review → report |
 | [multi-model-debate](./plugins/multi-model-debate) | 1.0.0 | Multi-agent debates using Claude, Codex, and Gemini for decision-making |
-| [arch-guard](./plugins/arch-guard) | 0.2.0 | Architecture compliance — layer boundary checks, contract-first development, ADRs |
+| [arch-guard](./plugins/arch-guard) | 0.2.2 | Architecture compliance — layer boundary checks, contract-first development, ADRs |
 | [gemini-cli](./plugins/gemini-cli) | 1.0.0 | Gemini CLI integration — code review, commit messages, documentation |
+| [worktree](./plugins/worktree) | 0.1.0 | Git worktree lifecycle management — create, merge, cleanup |
 
 ## Quick Start
 
