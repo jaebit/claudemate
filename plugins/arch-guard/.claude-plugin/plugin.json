@@ -1,5 +1,5 @@
 {
   "name": "arch-guard",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Architecture compliance enforcement for layered projects — config-driven layer boundary checks, contract-first development, and design decision records"
 }
