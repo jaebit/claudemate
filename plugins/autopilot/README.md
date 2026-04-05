@@ -27,10 +27,11 @@ claude plugins install autopilot
 | `--continue` | Resume from `.autopilot/state.json` |
 | `--verbose` | Detailed per-phase progress |
 | `--no-questions` | Minimize interactive prompts (still shows user gate) |
+| `--worktree` | Isolate each build step in a git worktree |
 
 ## Requirements
 
 - `crew` plugin (required)
 - `multi-model-debate` plugin (optional — for design debates)
-- `codex-harness` plugin (optional — for cross-model review)
+- `codex` CLI + `openai/codex-plugin-cc` (optional — for cross-model review)
 - `arch-guard` plugin (optional — auto-detected via `arch-guard.json`)
