@@ -1,12 +1,12 @@
 name: "task-planner"
-version: "1.4.0"
+version: "1.5.0"
 status: "active"
 created_at: "2026-04-05T12:30:00Z"
-updated_at: "2026-04-05T12:30:00Z"
+updated_at: "2026-04-05T14:00:00Z"
 created_by: "reflector"
 description: "사용자 요청을 구조화된 태스크 계획으로 변환, Contract Validation 품질 기준 준수"
 
-utility_score: 0.75
+utility_score: 0.82
 usage_count: 3
 success_count: 3
 success_rate: 1.0
@@ -21,6 +21,10 @@ tags:
   - "sprint-design"
 
 changelog:
+  - version: "1.5.0"
+    date: "2026-04-05T14:00:00Z"
+    changes: "골든 예제 2개 추가 (실제 REVISION_NEEDED → PASS 케이스), 자체 검토 체크리스트 간소화, 복잡도 감소"
+    adaptation: true
   - version: "1.4.0"
     date: "2026-04-05T12:30:00Z"
     changes: "Contract Validation 품질 기준 추가, acceptance_criteria 객관적 기준 강화"
