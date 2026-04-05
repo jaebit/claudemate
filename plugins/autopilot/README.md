@@ -2,7 +2,7 @@
 
 End-to-end autonomous coding pipeline for Claude Code.
 
-Takes a topic or idea and produces working code through a 5-phase pipeline: research → design → build → review → report. Orchestrates existing plugins (`crew`, `multi-model-debate`, `codex-harness`, `arch-guard`) rather than reimplementing their logic.
+Takes a topic or idea and produces working code through a 5-phase pipeline: research → design → build → review → report. Orchestrates existing plugins (`crew`, `multi-model-debate`, `codex` CLI, `arch-guard`) rather than reimplementing their logic.
 
 ## Install
 
