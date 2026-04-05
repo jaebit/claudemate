@@ -1,0 +1,18 @@
+rules:
+  - id: no_self_modify_evaluator
+    description: "Evaluator agent 정의는 자기개선 대상에서 제외"
+    severity: critical
+    protected_paths:
+      - "agents/evaluator.md"
+
+  - id: no_hook_structure_modify
+    description: "hooks.json 구조는 자기개선으로 변경 불가"
+    severity: critical
+    protected_paths:
+      - "hooks/hooks.json"
+
+  - id: no_plugin_manifest_modify
+    description: "plugin.json은 자기개선으로 변경 불가"
+    severity: critical
+    protected_paths:
+      - ".claude-plugin/plugin.json"

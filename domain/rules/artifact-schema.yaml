@@ -1,0 +1,70 @@
+rules:
+  - id: "artifact_sprint_contract"
+    name: "Sprint Contract 필수 필드 검증"
+    severity: "critical"
+    required_fields:
+      - "id"
+      - "title"
+      - "status"
+      - "acceptance_criteria"
+      - "target_files"
+      - "dependencies"
+
+  - id: "artifact_qa_result"
+    name: "QA Result 필수 필드 검증"
+    severity: "critical"
+    required_fields:
+      - "sprint_id"
+      - "criteria_scores"
+      - "total_score"
+      - "pass"
+      - "failure_class"
+      - "evaluated_at"
+
+  - id: "artifact_generation_archive"
+    name: "Generation Archive 필수 필드 검증"
+    severity: "high"
+    required_fields:
+      - "generation_id"
+      - "plan_id"
+      - "sprints"
+      - "reflections"
+      - "created_at"
+      - "model_used"
+
+  - id: "artifact_evaluation_result"
+    name: "Evaluation Result 필수 필드 검증"
+    severity: "critical"
+    required_fields:
+      - "evaluation_id"
+      - "sprint_id"
+      - "criteria_scores"
+      - "total_score"
+      - "pass"
+      - "failure_class"
+      - "recommendations"
+      - "evaluated_at"
+
+  - id: "artifact_episode_output"
+    name: "Episode Output 표준 봉투"
+    severity: "high"
+    required_fields:
+      - "episode_id"        # "{agent}-{timestamp}"
+      - "agent"             # planner | worker | evaluator | reflector | verifier
+      - "pipeline_step"     # pipeline YAML의 step id
+      - "status"            # ok | error | partial | skipped
+      - "started_at"        # ISO timestamp
+      - "completed_at"      # ISO timestamp
+      - "summary"           # 1-3문장 요약
+      - "artifacts"         # [{path, description}]
+      - "payload"           # 에이전트 고유 출력 (기존 형식 그대로)
+      - "next_input_hint"   # 다음 단계가 받아야 할 정보 힌트
+
+  - id: "artifact_pipeline_definition"
+    name: "Pipeline Definition 필수 필드 검증"
+    severity: "high"
+    required_fields:
+      - "pipeline.id"
+      - "pipeline.name"
+      - "pipeline.version"
+      - "pipeline.steps"

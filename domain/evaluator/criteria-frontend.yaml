@@ -1,0 +1,37 @@
+criteria:
+  design_quality:
+    weight: 0.25
+    description: "UI/UX가 접근성 표준과 디자인 원칙을 준수하는가?"
+    checklist:
+      - "반응형 디자인이 구현되었는가?"
+      - "접근성(a11y) 기준을 충족하는가?"
+      - "일관된 디자인 시스템을 따르는가?"
+  functionality:
+    weight: 0.25
+    description: "핵심 기능이 명세대로 동작하는가?"
+    checklist:
+      - "모든 사용자 플로우가 동작하는가?"
+      - "에지 케이스가 처리되는가?"
+      - "크로스 브라우저 호환성이 있는가?"
+  code_quality:
+    weight: 0.20
+    description: "코드가 표준을 준수하고 유지보수 가능한가?"
+    checklist:
+      - "컴포넌트 구조가 적절한가?"
+      - "상태 관리가 예측 가능한가?"
+      - "불필요한 리렌더링이 없는가?"
+  test_coverage:
+    weight: 0.15
+    checklist:
+      - "컴포넌트 단위 테스트가 있는가?"
+      - "E2E 테스트가 핵심 플로우를 커버하는가?"
+  performance:
+    weight: 0.15
+    description: "로딩 속도와 런타임 성능이 적절한가?"
+    checklist:
+      - "LCP가 2.5초 이내인가?"
+      - "번들 크기가 적절한가?"
+      - "이미지 최적화가 적용되었는가?"
+passing_threshold: 0.7
+golden_example_threshold: 0.85
+domain_type: "frontend"

@@ -1,0 +1,51 @@
+rules:
+  - id: AIAG-001
+    name: no_self_role_modification
+    description: "에이전트가 자신의 역할 정의 파일을 수정할 수 없음"
+    severity: critical
+    protected_paths:
+      - "agents/*.md"
+    forbidden_patterns:
+      - "에이전트가 자신의 agents/*.md를 Write/Edit 도구로 수정"
+
+  - id: AIAG-002
+    name: evaluator_generator_tool_separation
+    description: "Evaluator와 Generator/Worker가 동일 도구 집합을 공유할 수 없음"
+    severity: critical
+    forbidden_patterns:
+      - "Evaluator가 Write/Edit 도구를 사용하여 코드 생성"
+      - "Worker/Generator가 평가 전용 MCP 도구를 호출"
+
+  - id: AIAG-003
+    name: trust_level_human_approval
+    description: "trust_level 변경은 인간 승인이 필요함"
+    severity: critical
+    protected_paths:
+      - "domain/config.yaml"
+    forbidden_patterns:
+      - "trust_level 값을 에이전트가 자동으로 변경"
+
+  - id: AIAG-004
+    name: contract_based_invocation
+    description: "에이전트 간 직접 프롬프트 주입 금지 — 반드시 계약(contract) 기반 호출"
+    severity: high
+    forbidden_patterns:
+      - "에이전트가 다른 에이전트의 system prompt를 직접 구성"
+      - "Sprint Contract 없이 Worker에게 태스크 할당"
+
+  - id: AIAG-005
+    name: no_evaluator_criteria_modification
+    description: "Evaluator의 평가 기준(criteria) 파일 수정 금지"
+    severity: critical
+    protected_paths:
+      - "domain/evaluator/criteria.yaml"
+      - "domain/evaluator/validators/"
+
+  - id: AIAG-006
+    name: no_runtime_role_reassignment
+    description: "런타임에서 에이전트 역할 재할당(role reassignment) 금지"
+    severity: high
+    forbidden_patterns:
+      - "실행 중 Planner를 Worker로 전환"
+      - "실행 중 Evaluator를 Generator로 전환"
+      - "역할 정의를 동적으로 오버라이드"
