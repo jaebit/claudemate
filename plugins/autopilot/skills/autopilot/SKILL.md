@@ -477,7 +477,7 @@ This catches layer violations and missing integrations immediately after build, 
 Use the Agent tool — send a single message with up to 3 Agent calls:
 
 **Stream A — Codex Review** (conditional):
-- If `codex-harness` plugin is available: spawn an Agent that invokes the codex MCP tool with a review prompt covering the changed files
+- If `codex` CLI is available (`which codex` returns 0): spawn an Agent that runs `codex -q "Review these changed files for bugs, security issues, and code quality: {file list}"` via Bash tool
 - If unavailable: skip, note in results
 
 **Stream B — Architecture Review** (conditional):
@@ -668,7 +668,7 @@ The subagent gets a fresh context, loads the skill content, and executes the ful
 - Invoke crew:explore, crew:go, crew:review via Agent tool (spawning agents that run the slash commands, since these skills have disable-model-invocation)
 - Invoke multi-model-debate:debate-orchestration via Skill tool (if available)
 - Invoke arch-guard skills via Skill tool (if arch-guard.json exists), including arch-guard:adr for ADR generation
-- Invoke codex MCP tool via Agent (if codex-harness available)
+- Invoke codex CLI via Agent (if codex CLI available)
 - Present one user gate after design phase via AskUserQuestion
 - Read/write `.autopilot/state.json` for resume support
 - Run `git diff --stat` for reporting
