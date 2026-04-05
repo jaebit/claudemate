@@ -1,192 +1,102 @@
-# Planner QA Gate 스킬
+# Planner QA Gate
 
-계획 수립 완료 후 자동 품질 검증을 수행하여 Contract Validation 실패를 사전 방지하는 스킬입니다.
+Planner가 계획을 완성한 직후, Worker 실행 전에 acceptance_criteria 품질을 검증합니다.
 
-## Level 1: 사전 품질 검증
+> **목적**: Contract Validation에서 REVISION_NEEDED 반복을 사전 방지.
 
-### 핵심 검증 항목
-1. **주관적 기준 탐지**: acceptance_criteria의 모호한 표현 식별
-2. **검증 가능성 확인**: 각 기준이 명령어로 검증 가능한지 점검  
-3. **의존성 유효성**: 스프린트 간 의존관계 논리적 일관성
-4. **범위 적정성**: 각 스프린트가 30분 내 완료 가능한지 평가
+---
 
-### 자동 검증 프로세스
+## 실행 절차
+
+### 1. 주관적 문구 스캔
+
+`data/current-task.yaml`을 열고 모든 `acceptance_criteria` 항목에서 다음 패턴을 검색:
+
 ```
-Plan Generated
-      ↓
- QA Gate Check
-      ↓
-[PASS] → Execute
-      ↓
-[FAIL] → Auto-Fix → Re-validate
+정확히 | 완전히 | 적절히 | 올바르게 | 제대로 | 충분히
+correctly | properly | accurately | completely
 ```
 
-## Level 2: 주관적 기준 자동 탐지
+발견되면 → **즉시 수정** (아래 변환 규칙 적용).
 
-### 탐지 패턴 (정규표현식)
-```javascript
-const subjectiveIndicators = [
-  // 한국어 패턴
-  /(정확히|완전히|적절히|올바르게|제대로|충분히)/,
-  
-  // 영어 패턴  
-  /(correctly|properly|accurately|completely|adequately|appropriately)/,
-  
-  // 모호한 동작어
-  /(반영|수정|변경|처리|구현|설정).*됨$/,
-  
-  // 정도 부사
-  /(잘|좋게|효과적으로|성공적으로)/
-];
-```
+### 2. 이진 검증 가능성 확인
 
-### 자동 수정 제안
-탐지된 주관적 기준을 즉시 객관적 대안으로 치환:
+각 기준이 아래 형식 중 하나인지 확인:
+
+| 형식 | 예시 |
+|------|------|
+| 패턴 부재 | `grep -c 'X' file = 0` |
+| 패턴 존재 | `grep -c 'X' file > 0` |
+| 파일 존재 | `test -f path` |
+| 파일 부재 | `test ! -f path` |
+| 심볼 부재 | `grep -c 'function foo' file = 0` |
+| 임포트 확인 | `grep -c 'import.*X' file = 1` |
+
+형식 불일치 → **구체적 명령어로 재작성**.
+
+### 3. 범위 명확성 확인
+
+- "제거됨" → 어느 파일에서? 파일 경로 명시
+- "추가됨" → 어느 파일에? 패턴은 무엇?
+- "유지됨" → 무엇이? `> 0` 조건 명시
+
+---
+
+## 변환 규칙 (Before → After)
+
+### 문서 수정
 
 ```yaml
-# 원본 (주관적)
-- "plugin.json이 정확히 수정됨"
+# Before (거부됨)
+- "README.md에서 arix-dev 참조가 완전히 제거됨"
 
-# 자동 수정 제안 (객관적)  
-- "plugin.json의 description 필드가 'codex CLI'로 설정됨"
-  verification: "jq -r '.description' plugin.json = 'codex CLI'"
+# After (통과)
+- "grep -c 'arix-dev' plugins/X/README.md = 0"
 ```
 
-## Level 3: 검증 가능성 점수
+### 코드 변경
 
-### 점수 기준 (0-100점)
-- **100점**: grep/jq/test 명령어 포함
-- **80점**: 구체적 파일/함수명 언급
-- **60점**: 명확한 변경 대상 지정
-- **40점**: 일반적 설명이지만 측정 가능
-- **20점**: 모호하지만 추론 가능
-- **0점**: 완전히 주관적
-
-### 통과 기준
-- 모든 acceptance_criteria가 80점 이상
-- 평균 점수 90점 이상
-- 0점 기준 존재 시 즉시 실패
-
-## Level 4: 의존성 검증
-
-### 의존성 그래프 분석
 ```yaml
-# 유효한 의존성
-sprint-1: []
-sprint-2: [sprint-1]  
-sprint-3: [sprint-2]
+# Before (거부됨)
+- "stop-reminder.mjs에서 중복 함수가 적절히 제거됨"
 
-# 무효한 의존성 (순환 참조)
-sprint-1: [sprint-3]
-sprint-2: [sprint-1]
-sprint-3: [sprint-2]
+# After (통과)
+- "grep -c 'function isConfiguredProject' plugins/X/hooks/stop-reminder.mjs = 0"
+- "grep -c 'detect-project.mjs' plugins/X/hooks/stop-reminder.mjs = 1"
 ```
 
-### 논리적 일관성 검증
-1. **순환 의존성**: DAG(Directed Acyclic Graph) 검증
-2. **누락 의존성**: 파일 변경이 겹치는 스프린트 간 의존성 확인
-3. **과도한 의존성**: 불필요한 순차 실행 제거
+### 설정 수정
 
-## Level 5: 범위 적정성 평가
-
-### 스프린트 크기 추정
-```javascript
-const estimateComplexity = (sprint) => {
-  const factors = {
-    fileCount: sprint.files.length * 2,      // 파일 수 × 2분
-    newFiles: sprint.newFiles.length * 5,    // 새 파일 × 5분  
-    deletions: sprint.deletions.length * 3,  // 삭제 × 3분
-    integration: sprint.hasIntegration ? 10 : 0  // 통합 작업 +10분
-  };
-  return Object.values(factors).reduce((a, b) => a + b, 0);
-};
-```
-
-### 분할 제안
-30분 초과 예상 스프린트는 자동 분할 제안:
 ```yaml
-# 원본 (과도한 범위)
-sprint-1:
-  goal: "전체 플러그인 config 수정"
-  files: [plugin.json, README.md, SKILL.md, meta.yaml]
+# Before (거부됨)
+- "plugin.json의 description이 codex CLI 방식을 정확히 반영"
 
-# 분할 제안
-sprint-1a:
-  goal: "plugin.json 수정"  
-  files: [plugin.json]
-sprint-1b:
-  goal: "문서 업데이트"
-  files: [README.md, SKILL.md]
+# After (통과)
+- "grep -c 'codex-harness' plugins/X/.claude-plugin/plugin.json = 0"
+- "grep -c 'codex' plugins/X/.claude-plugin/plugin.json > 0"
 ```
 
-## 검증 실행 플로우
+### 유지 확인 (의도적 보존)
 
-### 1단계: 기본 구조 검증
-```javascript
-const validateStructure = (plan) => {
-  return {
-    hasSprints: plan.sprints.length > 0,
-    hasAcceptanceCriteria: plan.sprints.every(s => s.acceptance_criteria),
-    hasValidIds: plan.sprints.every(s => s.id.match(/^sprint-\d+$/))
-  };
-};
-```
-
-### 2단계: 품질 점수 산출
-```javascript
-const calculateQualityScore = (criteria) => {
-  const scores = criteria.map(c => assessObjectivity(c));
-  return {
-    average: scores.reduce((a, b) => a + b) / scores.length,
-    minimum: Math.min(...scores),
-    failing: scores.filter(s => s < 80).length
-  };
-};
-```
-
-### 3단계: 자동 수정 적용
-통과하지 못한 기준에 대해:
-1. 주관적 문구 식별
-2. 컨텍스트 기반 객관적 대안 생성
-3. verification 명령어 추가
-4. 재검증 수행
-
-## 실제 사용 시나리오
-
-### 입력: 원본 계획
 ```yaml
-acceptance_criteria:
-  - "plugin.json이 적절히 수정됨"
-  - "README 파일이 정확히 업데이트됨"
+# Before (불명확)
+- "docs/architecture-decisions.md의 arix-dev 참조는 유지 (역사적 맥락)"
+
+# After (명확)
+- "grep -c 'arix-dev' plugins/X/docs/architecture-decisions.md > 0"
 ```
 
-### QA Gate 처리 결과
-```yaml
-quality_issues:
-  - criterion: "plugin.json이 적절히 수정됨"
-    score: 20
-    issue: "주관적 기준 '적절히'"
-    suggestion: "plugin.json의 description이 'codex CLI'로 변경됨"
-    
-validation_passed: false
-auto_fix_applied: true
+---
 
-improved_criteria:
-  - description: "plugin.json의 description이 'codex CLI'로 변경됨"  
-    verification: "jq -r '.description' plugin.json = 'codex CLI'"
-  - description: "README.md에서 codex-harness 참조가 제거됨"
-    verification: "grep -c 'codex-harness' README.md = 0"
-```
+## 판정
 
-## 통과/실패 기준
+모든 항목 통과 시 → `QA_GATE: PASSED` — Worker 실행 진행  
+하나라도 실패 시 → 즉시 수정 후 재검증 (최대 1회)
 
-### 자동 통과 조건
-- 모든 acceptance_criteria 품질 점수 ≥ 80
-- 의존성 그래프가 DAG
-- 모든 스프린트 예상 시간 ≤ 30분
+---
 
-### 수정 후 재검증 
-- 자동 수정 적용 후 즉시 재검증
-- 3회 수정 후에도 통과하지 못하면 인간 에스컬레이션
+## 이 스킬이 필요한 상황
 
-이 스킬을 통해 계획 품질을 사전에 보장하여 Contract Validation 실패를 방지할 수 있습니다.
+- Planner 출력 직후, Contract Validation 이전
+- 이전 세션에서 REVISION_NEEDED가 발생한 경우
+- 스프린트 계획을 수동으로 작성한 경우
