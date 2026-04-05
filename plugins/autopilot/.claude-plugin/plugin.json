@@ -1,5 +1,5 @@
 {
   "name": "autopilot",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "End-to-end autonomous coding pipeline — orchestrates cw, multi-model-debate, codex CLI, and arch-guard into a single /autopilot command"
 }
