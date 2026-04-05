@@ -1,0 +1,27 @@
+name: "planner-qa-gate"
+version: "1.0.0"
+status: "active"
+created_at: "2026-04-05T12:40:00Z"
+updated_at: "2026-04-05T12:40:00Z"
+created_by: "reflector"
+description: "계획 수립 후 자동 품질 검증 - Contract Validation 사전 방지"
+
+utility_score: 0.5
+usage_count: 0
+success_count: 0
+success_rate: 0.0
+
+domains:
+  - "claudemate"
+
+tags:
+  - "qa-gate"
+  - "planning"
+  - "validation"
+  - "prevention"
+
+changelog:
+  - version: "1.0.0"
+    date: "2026-04-05T12:40:00Z"
+    changes: "초기 스킬 생성 - 주관적 기준 자동 탐지 및 수정 제안"
+    adaptation: false
