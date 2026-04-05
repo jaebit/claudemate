@@ -36,3 +36,23 @@ plans/
 research-output/
 research-output-edge-ai/
 research-output-jquery4/
+# Harness managed
+__pycache__/
+*.pyc
+.env
+.venv/
+.DS_Store
+data/metrics/*.jsonl
+
+# Build artifacts
+target/
+node_modules/
+dist/
+build/
+.next/
+.nuxt/
+vendor/
+*.o
+*.so
+*.dylib
+
