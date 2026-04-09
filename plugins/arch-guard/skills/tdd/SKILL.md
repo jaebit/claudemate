@@ -6,7 +6,7 @@ description: >
   using architecture-aware TDD with Tidy First commit discipline.
   Does not write code — provides architecture-aware guidance only.
 argument-hint: "<project-name> <class-name> e.g. MyApp.Execution.Workflow StepExecutor"
-user_invocable: true
+user_invocable: false
 allowed-tools:
   - Read
   - Write

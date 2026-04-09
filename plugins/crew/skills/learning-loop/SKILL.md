@@ -1,5 +1,6 @@
 ---
 name: learning-loop
+user_invocable: false
 description: Continuous improvement through Ralph Loop reflection, instinct evolution, integrated research, and cross-session memory sync
 context: fork
 agent: general-purpose

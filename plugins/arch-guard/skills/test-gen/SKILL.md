@@ -6,7 +6,7 @@ description: >
   xUnit architecture guard-rail tests that codify the layer reference rules, namespace
   restrictions, and forbidden patterns from arch-guard.json.
 argument-hint: "[layer-name] e.g. Execution (optional — omit for all layers)"
-user_invocable: true
+user_invocable: false
 allowed-tools:
   - Read
   - Write

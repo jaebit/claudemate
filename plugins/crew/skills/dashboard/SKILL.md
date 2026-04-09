@@ -1,5 +1,6 @@
 ---
 name: dashboard
+user_invocable: false
 description: "Display workflow progress, metrics, and cost analytics"
 argument-hint: "[--verbose] [--cost] [--tokens] [--all]"
 disable-model-invocation: true

@@ -5,7 +5,7 @@ description: >
   "integration-map", "dependency map", "change impact scope", or wants to trace how a module
   change propagates across layers via the project reference graph.
 argument-hint: "<module-or-file> e.g. MyApp.Execution.Contracts"
-user_invocable: true
+user_invocable: false
 allowed-tools:
   - Read
   - Bash

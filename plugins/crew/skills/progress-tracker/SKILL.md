@@ -1,5 +1,6 @@
 ---
 name: progress-tracker
+user_invocable: false
 description: Tracks workflow progress metrics including completion percentage, time spent, and step status
 context: fork
 agent: general-purpose

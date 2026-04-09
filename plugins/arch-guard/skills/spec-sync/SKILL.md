@@ -6,7 +6,7 @@ description: >
   or wants to check which design-doc components actually exist in the source tree. Generates
   a structural presence checklist (exists / not exists) — for phase progress percentages
   use track instead.
-user_invocable: true
+user_invocable: false
 allowed-tools:
   - Read
   - Bash

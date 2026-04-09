@@ -1,5 +1,6 @@
 ---
 name: pattern-learner
+user_invocable: false
 description: Analyzes codebase to learn project-specific patterns including code style, architecture conventions, and testing approaches
 context: fork
 agent: Explore

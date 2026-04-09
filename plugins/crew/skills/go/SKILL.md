@@ -1,5 +1,6 @@
 ---
 name: go
+user_invocable: false
 description: "Run the full CW workflow automatically - plan, build, review, and reflect in one command"
 argument-hint: "<task description> [flags]"
 disable-model-invocation: true

@@ -1,5 +1,6 @@
 ---
 name: parallel
+user_invocable: false
 description: "Execute tasks in parallel using swarm or Agent Teams"
 argument-hint: "<tasks...> [flags]"
 disable-model-invocation: true

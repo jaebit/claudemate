@@ -1,5 +1,6 @@
 ---
 name: structured-research
+user_invocable: false
 description: "Deep research and investigation skill that produces comprehensive, cross-validated reports on any topic. Use this skill whenever the user asks to research, investigate, compare, or do a deep dive on technologies, architectures, tools, libraries, frameworks, or strategies. Triggers on phrases like 'research X', 'deep dive on', 'compare X vs Y', 'thorough analysis of', 'investigate how', 'pros and cons', 'trade-offs between', '비교 분석', '심층 분석', '조사해줘'. Decomposes topics into subtopics, dispatches parallel web/docs investigations via MCP tools, cross-validates findings for contradictions, and synthesizes into a structured research report with confidence ratings and sourced citations."
 context: fork
 agent: general-purpose

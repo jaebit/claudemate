@@ -5,7 +5,7 @@ description: >
   "roadmap status", "milestone progress", or wants phase-based progress percentages with exit
   criteria fulfillment rates — for structural presence checklists (exists/not exists) use
   spec-sync instead.
-user_invocable: true
+user_invocable: false
 allowed-tools:
   - Read
   - Bash

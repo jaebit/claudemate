@@ -6,7 +6,7 @@ description: >
   following the architecture rules defined in arch-guard.json. Creates project structure,
   references, test project, and registers in solution.
 argument-hint: "<module-name> e.g. MyApp.Execution.Workflow"
-user_invocable: true
+user_invocable: false
 allowed-tools:
   - Read
   - Write

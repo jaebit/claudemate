@@ -1,5 +1,6 @@
 ---
 name: manage
+user_invocable: false
 description: "Workflow utilities - context, sync, worktree, tidy, and more"
 argument-hint: "<subcommand> [options]"
 disable-model-invocation: true

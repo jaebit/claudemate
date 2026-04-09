@@ -7,7 +7,7 @@ description: >
   interfaces are defined before writing implementation code. Can also design and generate
   interfaces interactively.
 argument-hint: "<project-name> e.g. MyApp.Execution.Workflow"
-user_invocable: true
+user_invocable: false
 allowed-tools:
   - Read
   - Write

@@ -6,7 +6,7 @@ description: >
   or wants to verify implementation code against architecture docs — checking component
   responsibility boundaries, interface contract compliance, and reference rule compliance.
 argument-hint: "<project-or-file> e.g. MyApp.Execution.Workflow or path to source file"
-user_invocable: true
+user_invocable: false
 allowed-tools:
   - Read
   - Bash

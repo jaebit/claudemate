@@ -1,5 +1,6 @@
 ---
 name: review
+user_invocable: false
 description: "Unified code review, QA, compliance checking, and auto-fix"
 argument-hint: "[path] [flags]"
 disable-model-invocation: true

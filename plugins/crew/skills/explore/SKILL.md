@@ -1,5 +1,6 @@
 ---
 name: explore
+user_invocable: false
 description: "Pre-planning discovery - brainstorm, design, or research"
 argument-hint: "<topic> [--arch|--ui|--research|--research-deep|--debate]"
 disable-model-invocation: true

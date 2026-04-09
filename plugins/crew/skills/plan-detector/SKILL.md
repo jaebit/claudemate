@@ -1,5 +1,6 @@
 ---
 name: plan-detector
+user_invocable: false
 description: Detects Plan Mode completion and suggests starting CAW workflow. Use when ExitPlanMode is called or when a plan file is created/updated in the configured plansDirectory (resolves from settings).
 user-invocable: false
 allowed-tools: Read, Glob, AskUserQuestion

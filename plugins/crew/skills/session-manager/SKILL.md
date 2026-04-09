@@ -1,5 +1,6 @@
 ---
 name: session-manager
+user_invocable: false
 description: Unified session state management, context prioritization, HUD metrics, and analytics dashboard
 user-invocable: false
 allowed-tools: Read, Write, Glob, Grep, Bash

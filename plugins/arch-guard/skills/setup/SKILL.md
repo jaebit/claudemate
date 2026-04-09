@@ -5,7 +5,7 @@ description: >
   "initialize architecture rules", "generate arch-guard.json", "configure layer rules",
   or wants to create an arch-guard.json configuration file for their project by analyzing
   the codebase structure and interactively defining layer rules.
-user_invocable: true
+user_invocable: false
 allowed-tools:
   - Read
   - Write

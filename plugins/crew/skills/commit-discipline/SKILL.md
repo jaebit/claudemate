@@ -1,5 +1,6 @@
 ---
 name: commit-discipline
+user_invocable: false
 description: "Classifies staged git changes as structural (tidy) or behavioral (build) per Kent Beck's Tidy First principles, and detects when both are mixed in a single commit. Invoke before committing to check: should I split this commit? Are my renames/refactors mixed with new features? Is this a valid [tidy] or [feat] commit? Also handles commit prefix selection, hotfix exceptions, and staged diff readiness review."
 context: fork
 agent: general-purpose

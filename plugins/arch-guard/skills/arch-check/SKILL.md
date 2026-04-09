@@ -5,7 +5,7 @@ description: >
   "arch-check", "reference rule violations", "cross-layer reference check", "architecture scan",
   or wants to detect layer boundary violations by analyzing source references against
   arch-guard.json rules.
-user_invocable: true
+user_invocable: false
 allowed-tools:
   - Read
   - Bash

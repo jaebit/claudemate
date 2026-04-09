@@ -6,7 +6,7 @@ description: >
   an Architecture Decision Record documenting a design choice with context, rationale,
   alternatives, and consequences.
 argument-hint: "<decision-title> e.g. \"Why we chose PostgreSQL JSONB\""
-user_invocable: true
+user_invocable: false
 allowed-tools:
   - Read
   - Write

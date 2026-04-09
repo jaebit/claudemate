@@ -1,5 +1,6 @@
 ---
 name: quality-gate
+user_invocable: false
 description: Runs automated quality checks (compilation, linting, tests, Tidy First commit discipline) before marking a workflow step as complete. Use this skill whenever a builder finishes a step and needs validation, during phase transitions, or when the user asks to validate, verify, or check their completed work before proceeding. Also triggers on "quality gate", "run checks before I move on", "is this step ready", or "validate step N".
 context: fork
 agent: general-purpose

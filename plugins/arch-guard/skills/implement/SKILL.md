@@ -6,7 +6,7 @@ description: >
   classes and unit test stubs from Contracts interfaces following the architecture rules in
   arch-guard.json. Creates sealed classes with constructor injection and empty test methods.
 argument-hint: "<project-name> [interface-name] e.g. MyApp.Execution.Workflow IStepExecutor"
-user_invocable: true
+user_invocable: false
 allowed-tools:
   - Read
   - Write

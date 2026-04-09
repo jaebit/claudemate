@@ -1,5 +1,6 @@
 ---
 name: insight-collector
+user_invocable: false
 description: Hybrid learning system that captures insights and automatically learns behavioral patterns from tool usage
 user-invocable: false
 allowed-tools: Read, Write, Glob, Bash
