@@ -372,7 +372,7 @@ Agent(subagent_type="crew:builder", prompt="Implement Step {N}: {step descriptio
 Wait for builder to complete.
 
 *If `config.builder == "codex"`:*
-- **Step 1 (first step only):** Call `mcp__plugin_codex-harness_codex__codex` with:
+- **Step 1 (first step only):** Call `mcp__plugin_codex-cli_codex__codex` with:
   ```
   prompt: "Implement Step {N}: {step description}. Files in scope: {list}."
   sandbox: "workspace-write"
@@ -380,7 +380,7 @@ Wait for builder to complete.
   developer-instructions: "Implement only the assigned step scope. Do not spawn internal subagents."
   ```
   Save the returned `threadId` to `state.json build.codex_thread_id`.
-- **Step 2+ (subsequent steps):** Call `mcp__plugin_codex-harness_codex__codex-reply` with:
+- **Step 2+ (subsequent steps):** Call `mcp__plugin_codex-cli_codex__codex-reply` with:
   ```
   threadId: <state.json build.codex_thread_id>
   prompt: "Implement Step {N}: {step description}. Files in scope: {list}."

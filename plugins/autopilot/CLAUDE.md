@@ -14,7 +14,7 @@ End-to-end autonomous coding pipeline. Single `/autopilot <topic>` command that 
 
 - **Required**: `crew` plugin
 - **Optional**: `multi-model-debate` plugin (for design debates)
-- **Optional**: `codex-harness` plugin (for `--builder codex` build mode — provides `mcp__plugin_codex-harness_codex__codex` and `codex-reply` tools)
+- **Optional**: `codex-cli` plugin (for `--builder codex` build mode — provides `mcp__plugin_codex-cli_codex__codex` and `codex-reply` tools)
 - **Optional**: `openai/codex-plugin-cc` (preferred for Phase 4 review — provides `adversarial-review` and `review-gate`; falls back to `codex` CLI if absent)
   - Install: `npm i -g @openai/codex` and `claude plugins add github:openai/codex-plugin-cc`
   - Verify: `which codex` must return a path

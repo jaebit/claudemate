@@ -52,7 +52,7 @@
 
 **PASS로 수정된 기준:**
 ```yaml
-- "plugins/autopilot/.claude-plugin/plugin.json description에 'codex-harness' 없음"
+- "plugins/autopilot/.claude-plugin/plugin.json description에 'codex-cli' 없음"
 - "plugins/autopilot/.claude-plugin/plugin.json description에 'codex' 포함"
 - "plugins/autopilot/skills/autopilot/SKILL.md에 'codex -q' 패턴 포함"
 - "plugins/autopilot/skills/autopilot/SKILL.md에 '## Phase 4: REVIEW' 섹션 헤더 유지됨"

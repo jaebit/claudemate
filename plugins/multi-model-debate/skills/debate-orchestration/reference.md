@@ -49,7 +49,7 @@ The sub-agent may use Read/Glob/Grep to research the codebase if context is rele
 
 **Codex** (MCP tool — Round 1, initial call):
 ```
-tool: mcp__plugin_codex-harness_codex__codex
+tool: mcp__plugin_codex-cli_codex__codex
 prompt: "<prompt with Codex perspective>"
 sandbox: "read-only"
 approval-policy: "never"
@@ -59,7 +59,7 @@ developer-instructions: "Role: {perspective}. Evaluate read-only. Do not spawn i
 
 **Codex** (MCP tool — Round 2+, cross-examination):
 ```
-tool: mcp__plugin_codex-harness_codex__codex-reply
+tool: mcp__plugin_codex-cli_codex__codex-reply
 threadId: <state.json workers.codex.thread_id>
 prompt: "<cross-examination prompt with opposing arguments>"
 ```

@@ -1,4 +1,4 @@
-# Codex Harness
+# Codex CLI
 
 MCP-native Codex integration. Requires Codex CLI with `codex mcp-server` support.
 

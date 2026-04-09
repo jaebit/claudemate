@@ -4,7 +4,7 @@ Structured 3-model debate plugin for Claude Code. Orchestrates Claude, Codex, an
 
 ## Prerequisites
 
-- [codex-harness](../codex-harness) plugin (provides Codex MCP tools)
+- [codex-cli](../codex-cli) plugin (provides Codex MCP tools)
 - [Gemini CLI](https://github.com/google-gemini/gemini-cli) installed and authenticated
 
 ## Installation

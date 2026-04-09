@@ -1,10 +1,10 @@
-# Codex Harness Plugin for Claude Code
+# Codex CLI Plugin for Claude Code
 
 Codex MCP 서버를 통해 Claude Code에서 Codex를 네이티브 도구로 사용할 수 있는 플러그인입니다.
 
 ## Architecture
 
-기존 codex-cli 플러그인은 14개의 CLI 래퍼 커맨드로 구성되어 있었습니다. codex-harness는 `codex mcp-server`를 활용하여 MCP 네이티브 통합으로 전환합니다.
+`codex mcp-server`를 활용한 MCP 네이티브 통합 플러그인입니다. 기존 CLI 래퍼 커맨드 방식 대신 MCP 도구로 Codex를 직접 호출합니다.
 
 - **MCP 서버**: `codex mcp-server`가 플러그인 로드 시 자동 시작
 - **MCP 도구**: `codex`, `codex-reply` 2개의 네이티브 도구 제공
@@ -75,14 +75,14 @@ Codex MCP 서버를 통해 Claude Code에서 Codex를 네이티브 도구로 사
 
 ```bash
 claude plugins add github:jaebit/context-aware-workflow
-claude plugins install codex-harness
+claude plugins install codex-cli
 ```
 
 ### Manual Installation
 
 이 플러그인 폴더를 다음 위치에 복사합니다:
 ```
-~/.claude/plugins/codex-harness/
+~/.claude/plugins/codex-cli/
 ```
 
 Claude Code 재시작 후 자동으로 로드됩니다.

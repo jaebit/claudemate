@@ -6,9 +6,9 @@
   },
   "plugins": [
     {
-      "name": "codex-harness",
+      "name": "codex-cli",
       "description": "Codex MCP integration for Claude Code - native codex/codex-reply tools + cloud operations",
-      "source": "./plugins/codex-harness",
+      "source": "./plugins/codex-cli",
       "version": "1.0.0"
     },
     {
@@ -37,7 +37,7 @@
     },
     {
       "name": "autopilot",
-      "description": "End-to-end autonomous coding pipeline — orchestrates cw, multi-model-debate, codex-harness, and arch-guard into a single /autopilot command",
+      "description": "End-to-end autonomous coding pipeline — orchestrates cw, multi-model-debate, codex-cli, and arch-guard into a single /autopilot command",
       "source": "./plugins/autopilot",
       "version": "0.4.0"
     },

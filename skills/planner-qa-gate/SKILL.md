@@ -72,7 +72,7 @@ correctly | properly | accurately | completely
 - "plugin.json의 description이 codex CLI 방식을 정확히 반영"
 
 # After (통과)
-- "grep -c 'codex-harness' plugins/X/.claude-plugin/plugin.json = 0"
+- "grep -c 'codex-cli' plugins/X/.claude-plugin/plugin.json = 0"
 - "grep -c 'codex' plugins/X/.claude-plugin/plugin.json > 0"
 ```
 
