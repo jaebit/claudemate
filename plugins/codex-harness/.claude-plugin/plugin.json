@@ -1,0 +1,11 @@
+{
+  "name": "codex-harness",
+  "version": "1.0.0",
+  "description": "Codex MCP integration for Claude Code - native codex/codex-reply tools + cloud operations",
+  "mcpServers": {
+    "codex": {
+      "command": "codex",
+      "args": ["mcp-server"]
+    }
+  }
+}

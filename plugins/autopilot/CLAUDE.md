@@ -14,8 +14,9 @@ End-to-end autonomous coding pipeline. Single `/autopilot <topic>` command that 
 
 - **Required**: `crew` plugin
 - **Optional**: `multi-model-debate` plugin (for design debates)
-- **Optional**: `codex` CLI + official plugin `openai/codex-plugin-cc` (for cross-model review)
-  - Install: `npm i -g @openai/codex`
+- **Optional**: `codex-harness` plugin (for `--builder codex` build mode — provides `mcp__plugin_codex-harness_codex__codex` and `codex-reply` tools)
+- **Optional**: `openai/codex-plugin-cc` (preferred for Phase 4 review — provides `adversarial-review` and `review-gate`; falls back to `codex` CLI if absent)
+  - Install: `npm i -g @openai/codex` and `claude plugins add github:openai/codex-plugin-cc`
   - Verify: `which codex` must return a path
 - **Optional**: `arch-guard` plugin (auto-detected via `arch-guard.json`)
 
@@ -48,8 +49,8 @@ End-to-end autonomous coding pipeline. Single `/autopilot <topic>` command that 
 ```
 [1/5] RESEARCH    crew:explore --research-deep    autonomous
 [2/5] DESIGN      crew:explore --arch + debate    autonomous → USER GATE (shows deliverable list)
-[3/5] BUILD       arch-guard scaffold + crew:go   autonomous → deliverable verification
-[4/5] REVIEW      codex + arch-check + crew:review + completeness    autonomous (parallel)
+[3/5] BUILD       arch-guard scaffold + crew:go|codex (--builder)  autonomous → deliverable verification
+[4/5] REVIEW      codex-plugin-cc|cli + arch-check + crew:review + completeness  autonomous (parallel)
 [5/5] REPORT      synthesis + gap analysis        autonomous
 ```
 

@@ -47,11 +47,22 @@ description: "Debate round {N} Claude evaluation"
 ```
 The sub-agent may use Read/Glob/Grep to research the codebase if context is relevant.
 
-**Codex** (Bash):
-```bash
-codex -q "<prompt with Codex perspective>"
+**Codex** (MCP tool — Round 1, initial call):
 ```
-Run via Bash tool. Requires `codex` CLI installed and authenticated.
+tool: mcp__plugin_codex-harness_codex__codex
+prompt: "<prompt with Codex perspective>"
+sandbox: "read-only"
+approval-policy: "never"
+developer-instructions: "Role: {perspective}. Evaluate read-only. Do not spawn internal subagents."
+```
+→ Save returned `threadId` to `state.json workers.codex.thread_id`.
+
+**Codex** (MCP tool — Round 2+, cross-examination):
+```
+tool: mcp__plugin_codex-harness_codex__codex-reply
+threadId: <state.json workers.codex.thread_id>
+prompt: "<cross-examination prompt with opposing arguments>"
+```
 
 **Gemini** (Agent tool → Bash):
 ```

@@ -46,14 +46,15 @@ End-to-end pipeline: idea → research → design → build → review → repor
 | `--verbose` | Detailed per-phase progress |
 | `--no-questions` | Minimize interactive prompts (still shows user gate) |
 | `--worktree` | Isolate each build step in a git worktree (create → build → merge back) |
+| `--builder <crew\|codex>` | Build engine: `crew` (default, crew:builder agents) or `codex` (codex MCP tool per step) |
 
 ## Pipeline Overview
 
 ```
 [1/5] RESEARCH    crew:explore --research-deep           autonomous
 [2/5] DESIGN      crew:explore --arch + debate + arch    autonomous → USER GATE
-[3/5] BUILD       arch-guard scaffold + crew:go           autonomous
-[4/5] REVIEW      codex + arch-check + crew:review        autonomous (parallel)
+[3/5] BUILD       arch-guard scaffold + crew:go|codex      autonomous
+[4/5] REVIEW      codex-plugin-cc|cli + arch-check + crew:review  autonomous (parallel)
 [5/5] REPORT      synthesis                              autonomous
 ```
 
@@ -83,13 +84,14 @@ End-to-end pipeline: idea → research → design → build → review → repor
     "arch_guard_detected": false,
     "verbose": false,
     "no_questions": false,
-    "worktree": false
+    "worktree": false,
+    "builder": "crew"
   },
   "phases": {
     "research": { "status": "pending" },
     "design": { "status": "pending", "user_approved": false, "revision_count": 0 },
-    "build": { "status": "pending" },
-    "review": { "status": "pending", "rounds": 0 },
+    "build": { "status": "pending", "codex_thread_id": null },
+    "review": { "status": "pending", "rounds": 0, "codex_source": null },
     "report": { "status": "pending" }
   },
   "deliverables": [],
@@ -105,7 +107,7 @@ End-to-end pipeline: idea → research → design → build → review → repor
 ```
 
 7. Detect arch-guard: if `arch-guard.json` exists and `--no-arch` not set, set `config.arch_guard_detected = true`.
-8. Apply flag overrides to `config`.
+8. Apply flag overrides to `config`. For `--builder codex`, set `config.builder = "codex"`.
 
 Print: `AUTOPILOT started: "<topic>"`
 
@@ -361,10 +363,31 @@ git branch -d step-{N} 2>/dev/null
 
 **If `config.worktree` is false — Default Mode (no isolation):**
 
-**a. Build** — Spawn Builder for THIS step only:
+**a. Build** — Choose engine based on `config.builder`:
+
+*If `config.builder == "crew"` (default):*
 ```
 Agent(subagent_type="crew:builder", prompt="Implement Step {N}: {step description}. Context files: {list}.")
 ```
+Wait for builder to complete.
+
+*If `config.builder == "codex"`:*
+- **Step 1 (first step only):** Call `mcp__plugin_codex-harness_codex__codex` with:
+  ```
+  prompt: "Implement Step {N}: {step description}. Files in scope: {list}."
+  sandbox: "workspace-write"
+  approval-policy: "never"
+  developer-instructions: "Implement only the assigned step scope. Do not spawn internal subagents."
+  ```
+  Save the returned `threadId` to `state.json build.codex_thread_id`.
+- **Step 2+ (subsequent steps):** Call `mcp__plugin_codex-harness_codex__codex-reply` with:
+  ```
+  threadId: <state.json build.codex_thread_id>
+  prompt: "Implement Step {N}: {step description}. Files in scope: {list}."
+  ```
+  This maintains codebase context across steps.
+- If `codex_thread_id` is null (prior step failed), fall back to a new `codex` call and re-save threadId.
+
 Wait for builder to complete.
 
 **b. Commit** — Run these Bash commands directly (do NOT delegate):
@@ -477,8 +500,10 @@ This catches layer violations and missing integrations immediately after build, 
 Use the Agent tool — send a single message with up to 3 Agent calls:
 
 **Stream A — Codex Review** (conditional):
-- If `codex` CLI is available (`which codex` returns 0): spawn an Agent that runs `codex -q "Review these changed files for bugs, security issues, and code quality: {file list}"` via Bash tool
-- If unavailable: skip, note in results
+- **Prefer codex-plugin-cc** if available: check for `mcp__plugin_openai-codex-plugin-cc_*` tools. If present, use `adversarial-review` for aggressive bug/security finding and `review-gate` for pass/fail verdict.
+- **Fallback — codex CLI**: if plugin-cc not available but `codex` CLI is (`which codex` returns 0), spawn an Agent that runs `codex -q "Review these changed files for bugs, security issues, and code quality: {file list}"` via Bash tool.
+- If neither available: skip, note in results.
+- Record source in `state.json review.codex_source: "plugin-cc" | "cli" | "skipped"`.
 
 **Stream B — Architecture Review** (conditional):
 - If `config.arch_guard_detected` is true (either pre-existing or auto-generated in 3c): spawn an Agent that runs `Skill("arch-guard:arch-check")` and `Skill("arch-guard:impl-review")` on the changed files

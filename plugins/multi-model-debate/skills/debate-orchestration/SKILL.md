@@ -38,17 +38,26 @@ For detailed prompt templates and report structure, see [reference.md](reference
      "rounds": "<N>",
      "currentRound": 0,
      "lastCompletedPhase": "setup",
-     "status": "in-progress"
+     "status": "in-progress",
+     "workers": {
+       "claude": { "role": "...", "thread_id": null },
+       "codex":  { "role": "...", "thread_id": null },
+       "gemini": { "role": "...", "thread_id": null }
+     }
    }
    ```
+   Populate `workers[*].role` from the assigned perspectives above.
 
 ## Phase 2: ROUND 1 — Independent Evaluation
 
 Dispatch all 3 agents **in parallel** (single message, 3 tool calls) using the shared prompt template from [reference.md](reference.md).
 
+- **Codex**: use the initial `codex` MCP tool call (see reference.md for params). After the call completes, save the returned `threadId` → `state.json workers.codex.thread_id`.
+- **Claude / Gemini**: Agent tool as usual.
+
 ### Save Results
 - `round-{N}-claude.md`, `round-{N}-codex.md`, `round-{N}-gemini.md`
-- Update `state.json`: `currentRound: 1`, `lastCompletedPhase: "round-1"`
+- Update `state.json`: `currentRound: 1`, `lastCompletedPhase: "round-1"`, `workers.codex.thread_id: <saved>`
 
 ## Phase 3: SYNTHESIS — Comparative Analysis
 
@@ -70,6 +79,8 @@ The orchestrator performs this directly (no sub-agents).
 Only runs for Majority/Disagreement items. Skipped items marked as resolved.
 
 Use cross-examination prompt template from [reference.md](reference.md). Dispatch 3 agents in parallel (same pattern as Phase 2).
+
+- **Codex**: if `state.json workers.codex.thread_id` is set, use `codex-reply` with that threadId (maintains context from round 1). If null (e.g., round 1 failed to save), fall back to a new `codex` call.
 
 ### Save Results
 - `round-{N}-claude.md`, `round-{N}-codex.md`, `round-{N}-gemini.md`
