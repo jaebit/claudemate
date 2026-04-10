@@ -96,6 +96,33 @@ ls .debate/20260410-*/state.json 2>/dev/null | wc -l | awk '{exit($1<1)}'
 - report.md 결론 섹션: `grep -qiE '(결론|합의|consensus|recommendation)' report.md`
 - synthesis 키워드 커버리지: `grep -cE '(키워드)' synthesis.md` >= 2
 
+## 응답 품질 기준 (v1.1.0)
+
+### 각 모델 Round 1 응답 최소 분량
+
+모든 참여 모델(Claude, Codex, Gemini)의 Round 1 응답은 **결정 포인트(DP)당 최소 150단어** 이상이어야 합니다.
+
+Gemini CLI(`gemini -p`)의 응답이 짧은 경향이 있으므로, 프롬프트에 다음을 명시합니다:
+```
+Be thorough — at least 300 words per decision point.
+```
+
+Round 1 파일이 기준 미달 시 프롬프트를 보강하여 재실행하거나, synthesis에서 해당 모델의 분석이 얕음을 명시합니다.
+
+### report.md Recommended Actions 우선순위
+
+Recommended Actions에 **P0/P1/P2 우선순위 레이블**과 **의존성**을 명시합니다:
+
+```markdown
+## Recommended Actions
+
+1. **[P0]** Vault PoC 초기화 — 다른 모든 액션의 전제
+2. **[P0]** Frontmatter 표준 문서화 — vault 구조와 동시 진행 가능
+3. **[P1]** Zone-Based Editing 구현 — vault PoC 완료 후 (depends: #1)
+4. **[P1]** MCP Server 프로토타입 — vault PoC 완료 후 (depends: #1)
+5. **[P2]** 벤치마크 — MCP 완료 후 (depends: #4)
+```
+
 ## 병렬 디스패치 규칙
 
 Round 1 및 Round 2에서 3개 모델을 **단일 메시지에서 동시 디스패치**:
