@@ -9,7 +9,7 @@ episode_output:
   artifacts:
     - path: ".skills-workspace/s3-indexer/"
       description: "Rust S3 인덱싱 엔진 전체 프로젝트"
-    - path: "data/current-task.yaml"
+    - path: ".autohone/data/current-task.yaml"
       description: "Sprint Contract (5 sprints)"
 
   payload:
