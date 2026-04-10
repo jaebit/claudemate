@@ -46,7 +46,7 @@ episode_output:
 
       action_items:
         - type: "UPDATE_SKILL"
-          target: "skills/task-planner/SKILL.md"
+          target: ".autohone/skills/task-planner/SKILL.md"
           description: "Rust/Python/JS import aliasing 주의 섹션 추가 — fully-qualified 패턴 대신 심볼 이름만 grep 권장"
           priority: "HIGH"
           auto_applied: true
