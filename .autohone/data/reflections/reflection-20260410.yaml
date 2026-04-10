@@ -52,7 +52,7 @@ episode_output:
           auto_applied: true
 
         - type: "UPDATE_SKILL"
-          target: "skills/task-planner/meta.yaml"
+          target: ".autohone/skills/task-planner/meta.yaml"
           description: "utility_score, usage_count, success_count 업데이트 (이번 세션 반영)"
           priority: "MEDIUM"
           auto_applied: true
