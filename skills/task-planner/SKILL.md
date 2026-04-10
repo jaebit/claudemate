@@ -76,6 +76,40 @@
 
 ---
 
+## 언어별 Import 패턴 주의 (criteria 작성 시)
+
+**Rust, Python, JS 등은 import aliasing/grouping을 사용한다.**
+acceptance_criteria에서 fully-qualified 경로를 grep하면 false-negative가 발생할 수 있다.
+
+### 규칙: 심볼 이름만 grep할 것
+
+```yaml
+# ❌ FAIL — Rust grouped import에서 매칭 안됨
+- "grep -c 'criterion::criterion_group' file.rs > 0"
+# 실제 코드: use criterion::{black_box, criterion_group, criterion_main};
+
+# ✅ PASS — 심볼 이름만 grep
+- "grep -c 'criterion_group' file.rs > 0"
+
+# ❌ FAIL — Python from import에서 매칭 안됨
+- "grep -c 'os.path.join' file.py > 0"
+# 실제 코드: from os.path import join
+
+# ✅ PASS
+- "grep -c 'join' file.py > 0"  # 너무 일반적이면 패턴 확장
+- "grep -c 'from os.path import' file.py > 0"
+```
+
+### 핵심: 구조체/함수/매크로 존재 확인 시
+
+- `grep -c '심볼이름'` 으로 심볼 자체만 확인
+- `use`, `import`, `require` 경로는 fully-qualified 대신 **마지막 세그먼트만** 매칭
+- 임포트 방식이 아닌 **사용 여부**를 기준으로 작성
+
+> **근거**: gen-044 Sprint 4에서 `criterion::criterion_group` 패턴이 `criterion::{..., criterion_group, ...}` 그룹 import를 커버하지 못해 false-negative 발생 (score 0.86, 기능은 정상)
+
+---
+
 ## 스프린트 설계 원칙
 
 1. **단일 책임**: 스프린트 하나 = 목표 하나
