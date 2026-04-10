@@ -7,7 +7,7 @@ episode_output:
   completed_at: "2026-04-10T21:10:00Z"
   summary: "RCA 완료: category=criteria_specification_gap, action_items 2건 자동 적용"
   artifacts:
-    - path: "data/reflections/reflection-20260410.yaml"
+    - path: ".autohone/data/reflections/reflection-20260410.yaml"
       description: "반성 기록 + RCA + action_items (auto_applied)"
   payload:
     reflection:
