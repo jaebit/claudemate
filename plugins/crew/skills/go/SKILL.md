@@ -55,6 +55,7 @@ Execute the complete CW workflow in a single command with a 9-stage pipeline.
 | `--verbose` | Show detailed progress |
 | `--no-questions` | Minimize interactive questions |
 | `--worktree` | Isolate each build step in a git worktree (create → build → merge back) |
+| `--no-advisor` | Disable Opus advisor consultation at decision points (see [Advisor Protocol](../../_shared/advisor-protocol.md)) |
 
 ## Signal-Based Phase Transitions
 
@@ -96,7 +97,15 @@ for each pending step in task_plan:
     3. Update state, proceed to next step
 ```
 
-On error: 5-level recovery: retry → Fixer-Haiku → Planner-Haiku alternative → skip non-blocking → abort. Exit on completion promise, all steps complete, max iterations, 3+ consecutive failures, or critical error.
+On error — 6-level recovery:
+1. **Retry** — Retry the step once
+2. **Fixer-Haiku** — Spawn Fixer agent to patch the failure
+3. **Advisor-Opus** — If `config.advisor_enabled` AND `advisor.calls_made < 3`: consult Opus advisor for diagnosis. See [Advisor Protocol](../../_shared/advisor-protocol.md). Pass advisor's decision (RETRY_WITH_HINT / REPLAN / SKIP / ESCALATE) to the next recovery level. If advisor disabled or budget exhausted, skip to level 4.
+4. **Planner-Haiku alternative** — Replan the step (incorporating advisor hint if available)
+5. **Skip non-blocking** — Skip if step is non-blocking
+6. **Abort** — Halt execution
+
+Exit on: completion promise, all steps complete, max iterations, 3+ consecutive failures, or critical error.
 
 #### Step Execution: Codex Mode (`--codex`)
 
@@ -206,6 +215,16 @@ Spawn 3 Reviewer agents in parallel:
 
 Aggregate verdicts. If any REJECTED, proceed to Fix (max 3 rounds).
 
+#### Contested Review Advisor Check
+
+IF verdicts are split (not unanimous — e.g., one APPROVED and one REJECTED on overlapping files) AND `config.advisor_enabled` AND `advisor.calls_made < 3`:
+1. Consult Advisor-Opus with the conflicting verdicts and file context. See [Advisor Protocol](../../_shared/advisor-protocol.md).
+2. Advisor triages which issues are genuine vs false positives.
+3. Only genuine issues are forwarded to the Fix stage.
+4. False positives are logged in `advisor.decisions[]` but not acted on.
+
+This prevents unnecessary fix cycles caused by reviewer disagreement.
+
 ### Stage 7: Fix
 Parse review issues. Auto-fix via Fixer Agent (Haiku tier). Track in validation-results.json.
 
@@ -223,7 +242,8 @@ State saved in `.caw/auto-state.json`:
   "schema_version": "2.0",
   "phase": "execution",
   "task_description": "Add logout button",
-  "config": { "skip_qa": false, "parallel_validation": true, "team_mode": false, "team_size": 2, "codex_mode": false, "max_iterations": 20 },
+  "config": { "skip_qa": false, "parallel_validation": true, "team_mode": false, "team_size": 2, "codex_mode": false, "max_iterations": 20, "advisor_enabled": true },
+  "advisor": { "calls_made": 0, "max_calls": 3, "decisions": [] },
   "execution": { "current_step": "2.1", "tasks_completed": 3, "consecutive_failures": 0 },
   "signals": { "detected_signals": [] }
 }
@@ -286,3 +306,4 @@ On error, state is saved to `.caw/auto-state.json`.
 - [Signal Detection](../../_shared/signal-detection.md)
 - [Parallel Validation](../../_shared/parallel-validation.md)
 - [Auto State Schema](../../_shared/schemas/auto-state.schema.json)
+- [Advisor Protocol](../../_shared/advisor-protocol.md)

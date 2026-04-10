@@ -112,6 +112,11 @@
           "type": "boolean",
           "default": false,
           "description": "Enable reviewer debate pattern (cross-validation via SendMessage)"
+        },
+        "advisor_enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable Opus advisor consultation at failure/conflict decision points. Disable with --no-advisor flag."
         }
       }
     },
@@ -462,6 +467,43 @@
         "user_cancelled"
       ],
       "description": "Reason for workflow termination"
+    },
+    "advisor": {
+      "type": "object",
+      "description": "Advisor consultation tracking. See _shared/advisor-protocol.md",
+      "properties": {
+        "calls_made": {
+          "type": "integer",
+          "default": 0,
+          "minimum": 0,
+          "maximum": 3,
+          "description": "Number of advisor consultations in this workflow"
+        },
+        "max_calls": {
+          "type": "integer",
+          "default": 3,
+          "description": "Maximum advisor consultations per workflow (cost control)"
+        },
+        "decisions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "trigger": {
+                "type": "string",
+                "enum": ["execution_recovery", "contested_review", "qa_stall"]
+              },
+              "decision": {
+                "type": "string",
+                "enum": ["RETRY_WITH_HINT", "REPLAN", "SKIP", "ESCALATE"]
+              },
+              "step": { "type": "string" },
+              "reasoning_summary": { "type": "string" },
+              "timestamp": { "type": "string", "format": "date-time" }
+            }
+          }
+        }
+      }
     },
     "last_error": {
       "type": ["object", "null"],
