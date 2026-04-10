@@ -1,0 +1,83 @@
+generation:
+  id: "gen-047"
+  parent_id: "gen-046"
+  timestamp: "2026-04-11T00:04:00Z"
+  task_type: "multi-model-debate"
+  outcome: "PASS"
+  score: 0.92
+
+  metrics:
+    task_success_rate: 1.0
+    avg_quality_score: 0.92
+    skill_count: 8
+    golden_example_count: 6
+
+  score_breakdown:
+    completeness: 1.00
+    skill_adherence: 0.95
+    debate_dynamics: 0.95
+    actionability: 0.90
+    quality: 0.88
+
+  delta_vs_previous:
+    overall_score: +0.02
+    completeness: 0.00
+    skill_adherence: 0.00
+    debate_dynamics: +0.08
+    actionability: +0.02
+    quality: +0.05
+
+  trend_vs_baseline:
+    generation_span: 47
+    cumulative_improvement: +0.06
+    trend_judgment: "improving"
+
+  model_config:
+    planner: "claude-sonnet-4-6"
+    worker: "claude-sonnet-4-6"
+    evaluator: "claude-sonnet-4-6"
+    reflector: "claude-sonnet-4-6"
+
+  skills_used:
+    - name: "multi-model-debate"
+      version: "1.2.0"
+      status: "active"
+      contribution: "primary"
+
+  promotion_review:
+    - skill_name: "multi-model-debate"
+      decision: "maintain"
+      reason: "이미 active 상태, 높은 성공률 유지"
+
+  addressed_gaps:
+    - gap_id: "knowledge-vault-integration"
+      resolution: "Apeiron vault Obsidian MCP 통합 패턴 확립"
+
+  auto_applied_items:
+    - type: "UPDATE_SKILL"
+      target: "skills/multi-model-debate/SKILL.md"
+      version: "1.2.0"
+      applied_by: "autohone:reflect --auto"
+      applied_at: "2026-04-11T00:39:00Z"
+      changes:
+        - "Codex CLI 필수 플래그: codex exec -s read-only (3회 실패 방지)"
+        - "Gemini 프롬프트 분량 강제: 300단어/DP + 5개 섹션 전부 필수"
+        - "synthesis-round-2.md 강제 생성: 단일 DP 집중 시에도 별도 파일"
+        - "P0/P1/P2 우선순위 레이블 기준 명확화 (gen-046 DEFERRED 해소)"
+      auto_applied: true
+      guard_rails_check: "PASS (3/3 updates ≤ max_auto_updates_per_reflection:3)"
+
+  key_insights:
+    - "외부 지식 vault pre-loading이 3:0 합의 달성에 결정적"
+    - "Round 2 단일 DP 집중도 synthesis 파일 생성 규칙 적용 필요"
+    - "Codex CLI 올바른 플래그 문서화 시급"
+
+  risk_assessment:
+    regression_risk: "LOW"
+    skill_stability: "HIGH"
+    knowledge_gaps: 1
+
+  next_generation_recommendations:
+    - "multi-model-debate v1.2.0 업데이트 인간 검토 후 적용"
+    - "validate_golden_gate 충돌 해결 메커니즘 개선"
+    - "DEFERRED 항목 자동 추적 시스템 강화"

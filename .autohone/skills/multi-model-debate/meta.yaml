@@ -1,14 +1,14 @@
 name: "multi-model-debate"
-version: "1.1.0"
+version: "1.2.0"
 status: "active"
 created_at: "2026-04-10T22:30:00Z"
-updated_at: "2026-04-10T23:07:00Z"
+updated_at: "2026-04-11T00:39:00Z"
 created_by: "reflector"
 description: "multi-model-debate 플러그인 사용 시 출력 아티팩트 규격, Codex CLI fallback 절차, macOS 호환 acceptance criteria 패턴 정의"
 
-utility_score: 0.75
-usage_count: 1
-success_count: 1
+utility_score: 0.82
+usage_count: 2
+success_count: 2
 success_rate: 1.0
 
 domains:
@@ -21,6 +21,16 @@ tags:
   - "macos-compat"
 
 changelog:
+  - version: "1.2.0"
+    date: "2026-04-11T00:39:00Z"
+    changes: |
+      [AUTO --auto reflect] 3개 자동 적용:
+      1. Codex CLI 필수 플래그 문서화: `codex exec -s read-only` (-q/-a full-auto 금지 명시)
+      2. Gemini 프롬프트 분량 강제: DP당 300단어, 5개 섹션(Position/Confidence/Key Argument/Trade-offs/Evidence) 전부 필수
+      3. synthesis-round-2.md 강제 생성 규칙: 단일 DP 집중 시에도 별도 파일 필수
+      [RESOLVE gen-046 DEFERRED] P0/P1/P2 레이블 우선순위 기준 명확화
+    auto_applied: true
+    trigger: "autohone:reflect --auto | gen-047 | RCA: pattern_missing | Codex CLI 3회 실패 + Gemini 분량 재발"
   - version: "1.1.0"
     date: "2026-04-10T23:10:00Z"
     changes: "DP당 최소 150단어 분량 기준 추가, Recommended Actions P0/P1/P2 우선순위+의존성 패턴 추가, 골든 예제 gen-002 추가, 적용시점 섹션 플러그인 참조 명확화 (validate_golden_gate 오탐 해결)"
