@@ -302,7 +302,7 @@ class TestRequiredSkills(unittest.TestCase):
         "pattern-learner",
         "knowledge-engine", "session-manager", "learning-loop",
         "structured-research",
-        "go", "status", "review", "parallel", "explore", "manage",
+        "go", "dashboard", "review", "parallel", "explore", "manage",
     ]
 
     def test_required_skills_exist(self):
@@ -315,7 +315,7 @@ class TestRequiredSkills(unittest.TestCase):
         """Skills removed/merged in v3.0 should not exist."""
         removed = [
             "knowledge-base", "decision-logger", "review-assistant",
-            "session-persister", "context-helper", "hud", "dashboard",
+            "session-persister", "context-helper", "hud",
             "reflect", "evolve", "research", "serena-sync",
             "quick-fix", "dependency-analyzer",
         ]
@@ -451,7 +451,7 @@ class TestCrossPlatformCompatibility(unittest.TestCase):
 class TestSkillFrontmatterFields(unittest.TestCase):
     """Test that SKILL.md frontmatter only uses recognized fields."""
 
-    RECOGNIZED_FIELDS = {"name", "description", "allowed-tools", "context", "disable-model-invocation", "user-invocable", "agent", "argument-hint"}
+    RECOGNIZED_FIELDS = {"name", "description", "allowed-tools", "context", "disable-model-invocation", "user-invocable", "user_invocable", "agent", "argument-hint"}
 
     def get_skill_frontmatters(self):
         """Parse frontmatter from all SKILL.md files."""
