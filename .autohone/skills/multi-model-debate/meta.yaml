@@ -1,15 +1,15 @@
 name: "multi-model-debate"
-version: "1.0.0"
-status: "provisional"
+version: "1.1.0"
+status: "active"
 created_at: "2026-04-10T22:30:00Z"
-updated_at: "2026-04-10T22:30:00Z"
+updated_at: "2026-04-10T23:07:00Z"
 created_by: "reflector"
 description: "multi-model-debate 플러그인 사용 시 출력 아티팩트 규격, Codex CLI fallback 절차, macOS 호환 acceptance criteria 패턴 정의"
 
-utility_score: 0.65
-usage_count: 0
-success_count: 0
-success_rate: 0.0
+utility_score: 0.75
+usage_count: 1
+success_count: 1
+success_rate: 1.0
 
 domains:
   - "claudemate"
@@ -21,6 +21,12 @@ tags:
   - "macos-compat"
 
 changelog:
+  - version: "1.1.0"
+    date: "2026-04-10T23:10:00Z"
+    changes: "DP당 최소 150단어 분량 기준 추가, Recommended Actions P0/P1/P2 우선순위+의존성 패턴 추가, 골든 예제 gen-002 추가, 적용시점 섹션 플러그인 참조 명확화 (validate_golden_gate 오탐 해결)"
+    adaptation: true
+  - date: "2026-04-10"
+    change: "status: provisional → active — plan-20260410-obsidian-vault-debate PASS score 0.90 (>=0.70). skill_adherence 0.75→0.95(+0.20). gen-001 4개 감점 요인 전부 해소 확인."
   - version: "1.0.0"
     date: "2026-04-10T22:30:00Z"
     changes: "초기 생성. ref-20260410T223000 RCA(pattern_missing)에서 도출. synthesis-round-N.md 분리 규칙, unresolved_items 필수, Codex CLI fallback, macOS wc -l 공백 패턴 포함."
