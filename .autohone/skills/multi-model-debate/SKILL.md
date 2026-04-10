@@ -139,6 +139,5 @@ Codex CLI가 Bash로 실행되므로 Agent 도구와 완전한 병렬은 아닐 
 
 ## 골든 예제 참조
 
-- `multi-model-debate-gen-001.yaml` (score: 0.86)
-- 성공 요인: synthesis-round-1.md의 명확한 의결 구조(2:1/3:0), Round 2 MODIFY의 증거 기반 수렴
-- 개선 필요: synthesis-round-2.md 별도 생성, unresolved_items 섹션 추가
+- `multi-model-debate-gen-001.yaml` (score: 0.86) — 첫 실행, synthesis 분리/unresolved 누락으로 skill_adherence 0.75
+- `multi-model-debate-gen-002.yaml` (score: 0.90) — v1.0.0 적용, skill_adherence 0.95. Gemini R1 분량 부족(84줄)이 quality 감점 요인.
