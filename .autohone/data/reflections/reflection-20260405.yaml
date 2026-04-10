@@ -51,7 +51,7 @@ episode_output:
           priority: "MEDIUM"
 
         - type: "CREATE_SKILL"
-          target: "skills/planner-qa-gate/"
+          target: ".autohone/skills/planner-qa-gate/"
           description: "계획 수립 후 품질 게이트 스킬 - acceptance_criteria 자동 검증 및 개선 제안"
           priority: "MEDIUM"
 
