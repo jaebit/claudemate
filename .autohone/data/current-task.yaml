@@ -9,11 +9,24 @@ plan:
       title: "debate-start 스킬 실행 — 3-모델 토론 완주"
       status: "planned"
       acceptance_criteria:
+        # [존재 확인] state.json 파일 존재
         - "ls /Users/urd_book/Projects/claudemate/.debate/20260410-*/state.json 2>/dev/null | wc -l | grep -qE '^[1-9]'"
-        - "jq -r '.status' /Users/urd_book/Projects/claudemate/.debate/20260410-*/state.json 2>/dev/null | grep -q 'completed'"
+        # [상태 검증 - Minor 강화] jq -e로 status 완전 일치 검증
+        - "jq -e '.status == \"completed\"' /Users/urd_book/Projects/claudemate/.debate/20260410-*/state.json 2>/dev/null | grep -q 'true'"
+        # [존재 확인] 3개 round 파일 모두 존재
         - "ls /Users/urd_book/Projects/claudemate/.debate/20260410-*/round-1-claude.md /Users/urd_book/Projects/claudemate/.debate/20260410-*/round-1-codex.md /Users/urd_book/Projects/claudemate/.debate/20260410-*/round-1-gemini.md 2>/dev/null | wc -l | grep -qE '^3'"
+        # [존재 확인] synthesis-round-1.md 존재
         - "ls /Users/urd_book/Projects/claudemate/.debate/20260410-*/synthesis-round-1.md 2>/dev/null | wc -l | grep -qE '^[1-9]'"
+        # [존재 확인] report.md 존재
         - "ls /Users/urd_book/Projects/claudemate/.debate/20260410-*/report.md 2>/dev/null | wc -l | grep -qE '^[1-9]'"
+        # [콘텐츠 검증 - Critical] report.md에 4개 결정 포인트 키워드(Wiki, 증분, Agent, 토큰) 포함
+        - "grep -qE '(Wiki|wiki|증분|incremental|Agent|agent|토큰|token)' /Users/urd_book/Projects/claudemate/.debate/20260410-*/report.md"
+        # [크기 검증 - Major] round 파일 각각 최소 10줄 이상 (빈 파일 방지)
+        - "for f in /Users/urd_book/Projects/claudemate/.debate/20260410-*/round-1-claude.md /Users/urd_book/Projects/claudemate/.debate/20260410-*/round-1-codex.md /Users/urd_book/Projects/claudemate/.debate/20260410-*/round-1-gemini.md; do [ $(wc -l < \"$f\") -ge 10 ] || exit 1; done"
+        # [커버리지 검증 - Major] synthesis에 결정 포인트 키워드 2개 이상 언급
+        - "grep -cE '(Wiki|wiki|증분|incremental|Agent|agent|토큰|token)' /Users/urd_book/Projects/claudemate/.debate/20260410-*/synthesis-round-1.md | grep -qE '^[2-9]'"
+        # [구조 검증] report.md에 결론/합의 섹션 존재
+        - "grep -qiE '(결론|합의|conclusion|recommendation|consensus)' /Users/urd_book/Projects/claudemate/.debate/20260410-*/report.md"
       skills_needed:
         - "debate-start"
         - "debate-orchestration"
