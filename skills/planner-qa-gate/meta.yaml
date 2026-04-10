@@ -6,10 +6,10 @@ updated_at: "2026-04-05T14:00:00Z"
 created_by: "reflector"
 description: "계획 수립 후 acceptance_criteria 품질 검증 — contract-criteria-validator 기능 통합"
 
-utility_score: 0.5
-usage_count: 0
-success_count: 0
-success_rate: 0.0
+utility_score: 0.6
+usage_count: 1
+success_count: 1
+success_rate: 1.0
 
 absorbs:
   - "contract-criteria-validator"
