@@ -1,0 +1,55 @@
+generation:
+  id: "gen-042"
+  parent_id: null
+  timestamp: "2026-04-05T12:45:00Z"
+  changes:
+    - type: "skill_update"
+      target: "task-planner"
+      description: "acceptance_criteria 품질 기준 추가, Contract Validation 대응"
+    - type: "skill_create"
+      target: "contract-criteria-validator"
+      description: "주관적 기준 탐지 및 객관적 대안 제시 스킬"
+    - type: "skill_create"
+      target: "planner-qa-gate"
+      description: "계획 수립 후 자동 품질 검증 스킬"
+    - type: "knowledge_gap"
+      target: "gaps.md"
+      description: "Contract Validation 품질 기준 갭 기록 및 해결"
+
+  metrics:
+    task_success_rate: 1.0  # 2/2 태스크 PASS
+    avg_quality_score: 0.865  # (0.88 + 0.85) / 2
+    skill_count: 11  # 기존 8 + 신규 3
+    golden_example_count: 2
+    contract_validation_success_rate: 0.0  # 두 태스크 모두 REVISION_NEEDED
+
+  trend:
+    vs_previous: "baseline"
+    deltas: null
+    warnings: []
+
+  imp_at_k:
+    vs_baseline: "gen-042"
+    cumulative_deltas:
+      task_success_rate: 1.0
+      skill_count: 11
+      golden_example_count: 2
+    generations_elapsed: 1
+
+  status: "active"
+
+  reflection_summary:
+    root_cause: "prompt_insufficient - task-planner 스킬의 acceptance_criteria 품질 기준 부족"
+    key_improvements:
+      - "주관적 기준 금지 가이드라인 추가"
+      - "자동 품질 검증 체계 구축"
+      - "사전 검증 게이트 도입"
+    lessons:
+      - "Contract Validation 패턴 반복 시 즉시 스킬 개선 필요"
+      - "acceptance_criteria는 grep/파일존재 등 이진 검증 필수"
+
+  model_config:
+    planner: "claude-sonnet-4-6"
+    worker: "claude-sonnet-4-6"
+    evaluator: "claude-sonnet-4-6"
+    reflector: "claude-sonnet-4-6"
