@@ -68,3 +68,16 @@ episode_output:
       - "Rust 프로젝트에서 criterion 매크로 import 방식이 버전별로 다를 수 있어 acceptance_criteria에 유연한 패턴 필요"
       - "BTreeMap은 range scan, HashMap은 exact lookup — 인덱스 설계 시 쿼리 패턴에 맞는 자료구조 선택이 핵심"
       - "복합 필터 쿼리에서 교집합 알고리즘으로 후보 축소가 효과적"
+
+    post_improve:
+      timestamp: "2026-04-10T21:15:00Z"
+      skills_updated:
+        - skill: "planner-qa-gate"
+          from_version: "1.1.0"
+          to_version: "1.2.0"
+          change: "import 패턴 안전성 검증 단계 추가"
+      knowledge_gaps_resolved:
+        - "GAP-002: 언어별 import 패턴 도메인 지식 갭 → resolved"
+      docs_updated:
+        - "domain/knowledge-base/AGENTS.md — 활성 스킬 목록 추가"
+        - "domain/knowledge-base/gaps.md — GAP-002 기록 + resolved"
