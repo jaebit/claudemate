@@ -1,103 +1,103 @@
 plan:
-  id: "plan-20260410-debate-codebase-wiki"
-  title: "multi-model-debate: AI Agent Memory (Karpathy LLM Wiki 응용) 설계 토론"
-  status: "in_progress"
-  created_at: "2026-04-10T00:00:00Z"
-
-  sprints:
-    - id: "sprint-1"
-      title: "debate-start 스킬 실행 — 3-모델 토론 완주"
-      status: "planned"
-      acceptance_criteria:
-        # [존재 확인] state.json 파일 존재
-        - "ls /Users/urd_book/Projects/claudemate/.debate/20260410-*/state.json 2>/dev/null | wc -l | grep -qE '^[1-9]'"
-        # [상태 검증 - Minor 강화] jq -e로 status 완전 일치 검증
-        - "jq -e '.status == \"completed\"' /Users/urd_book/Projects/claudemate/.debate/20260410-*/state.json 2>/dev/null | grep -q 'true'"
-        # [존재 확인] 3개 round 파일 모두 존재
-        - "ls /Users/urd_book/Projects/claudemate/.debate/20260410-*/round-1-claude.md /Users/urd_book/Projects/claudemate/.debate/20260410-*/round-1-codex.md /Users/urd_book/Projects/claudemate/.debate/20260410-*/round-1-gemini.md 2>/dev/null | wc -l | grep -qE '^3'"
-        # [존재 확인] synthesis-round-1.md 존재
-        - "ls /Users/urd_book/Projects/claudemate/.debate/20260410-*/synthesis-round-1.md 2>/dev/null | wc -l | grep -qE '^[1-9]'"
-        # [존재 확인] report.md 존재
-        - "ls /Users/urd_book/Projects/claudemate/.debate/20260410-*/report.md 2>/dev/null | wc -l | grep -qE '^[1-9]'"
-        # [콘텐츠 검증 - Critical] report.md에 4개 결정 포인트 키워드(Wiki, 증분, Agent, 토큰) 포함
-        - "grep -qE '(Wiki|wiki|증분|incremental|Agent|agent|토큰|token)' /Users/urd_book/Projects/claudemate/.debate/20260410-*/report.md"
-        # [크기 검증 - Major] round 파일 각각 최소 10줄 이상 (빈 파일 방지)
-        - "for f in /Users/urd_book/Projects/claudemate/.debate/20260410-*/round-1-claude.md /Users/urd_book/Projects/claudemate/.debate/20260410-*/round-1-codex.md /Users/urd_book/Projects/claudemate/.debate/20260410-*/round-1-gemini.md; do [ $(wc -l < \"$f\") -ge 10 ] || exit 1; done"
-        # [커버리지 검증 - Major] synthesis에 결정 포인트 키워드 2개 이상 언급
-        - "grep -cE '(Wiki|wiki|증분|incremental|Agent|agent|토큰|token)' /Users/urd_book/Projects/claudemate/.debate/20260410-*/synthesis-round-1.md | grep -qE '^[2-9]'"
-        # [구조 검증] report.md에 결론/합의 섹션 존재
-        - "grep -qiE '(결론|합의|conclusion|recommendation|consensus)' /Users/urd_book/Projects/claudemate/.debate/20260410-*/report.md"
-      skills_needed:
-        - "debate-start"
-        - "debate-orchestration"
-        - "agent-contract"
-        - "pipeline-orchestrator"
-      dependencies: []
-
   context:
-    domain_type: "ai-agent"
-    model_used: "claude-sonnet-4-6"
-    handoff_style: "structured_handoff"
-
     debate_spec:
-      topic: "카파시(Karpathy) LLM Wiki 개념을 응용한 AI Agent Memory 구현 설계: 코드베이스를 wiki화하여 Agent 탐색 토큰을 절약하는 아키텍처"
-      topic_slug: "codebase-wiki-agent-memory"
-      debate_id_pattern: "20260410-HHMMSS-codebase-wiki-agent-memory"
-      output_dir: ".debate/<debate-id>/"
-      rounds: 2
-      perspectives:
-        claude: "Scalability + Architecture"
-        codex: "Developer Experience + Practical Implementation"
-        gemini: "Cost Realism + Production Feasibility"
-      decision_points:
-        - "Wiki 구조 설계: 어떤 코드 정보를 wiki 페이지로 추출할 것인가? (함수 시그니처, 모듈 의존성, 아키텍처 패턴, 비즈니스 로직 요약)"
-        - "증분 업데이트 메커니즘: 코드 변경 시 wiki를 어떻게 자동 업데이트할 것인가? (git hook, CI/CD, file watcher)"
-        - "Agent 통합 인터페이스: Agent가 wiki를 어떻게 참조할 것인가? (MCP 도구, 직접 파일 읽기, RAG, 전용 쿼리 API)"
-        - "토큰 절약 측정/검증: 실제 토큰 절약 효과를 어떻게 측정하고 검증할 것인가?"
-      codex_invocation: "codex -q \"<prompt>\""
-      gemini_invocation: "gemini -p \"<prompt>\""
-      codex_mcp_available: false
       codex_cli_available: true
+      codex_invocation: codex -q "<prompt>"
+      codex_mcp_available: false
+      debate_id_pattern: 20260410-HHMMSS-codebase-wiki-agent-memory
+      decision_points:
+      - 'Wiki 구조 설계: 어떤 코드 정보를 wiki 페이지로 추출할 것인가? (함수 시그니처, 모듈 의존성, 아키텍처 패턴, 비즈니스
+        로직 요약)'
+      - '증분 업데이트 메커니즘: 코드 변경 시 wiki를 어떻게 자동 업데이트할 것인가? (git hook, CI/CD, file watcher)'
+      - 'Agent 통합 인터페이스: Agent가 wiki를 어떻게 참조할 것인가? (MCP 도구, 직접 파일 읽기, RAG, 전용 쿼리 API)'
+      - '토큰 절약 측정/검증: 실제 토큰 절약 효과를 어떻게 측정하고 검증할 것인가?'
       gemini_cli_available: true
-
-    karpathy_wiki_background:
-      architecture: "3-레이어: Raw sources (불변) → Wiki (LLM 생성 마크다운) → Schema (구조/워크플로우)"
-      operations:
-        - "Ingest: 새 소스 처리, wiki 업데이트"
-        - "Query: wiki 검색, 답변 합성"
-        - "Lint: 모순/고아 페이지/교차 참조 누락 검사"
-      navigation: "index.md (콘텐츠 카탈로그) + log.md (시간순 작업 기록)"
-      key_insight: "합성은 한 번, LLM이 증분적으로 영속적 wiki 구축/유지"
-      expected_token_savings: "탐색 토큰 50~80% 절감"
-
-    worker_instructions:
-      step_1_prerequisite_check:
-        - "which gemini → Gemini CLI 존재 확인"
-        - "codex --version → Codex CLI v0.118.0 확인"
-        - "Codex MCP 도구 mcp__plugin_codex-cli_codex__codex 사용 불가 → CLI fallback 사용"
-      step_2_debate_id:
-        - "date +%Y%m%d-%H%M%S 실행하여 실제 타임스탬프 취득"
-        - "debate-id = <timestamp>-codebase-wiki-agent-memory"
-      step_3_directory:
-        - "mkdir -p .debate/<debate-id>/"
-      step_4_skill:
-        - "debate-orchestration 스킬 실행 (5단계 전체: SETUP → ROUND1 → SYNTHESIS → ROUND2 → FINAL)"
-      parallel_dispatch_rule: "ROUND 1 및 ROUND 2에서 Claude/Codex/Gemini를 단일 메시지의 3개 도구 호출로 동시 디스패치"
-      codex_cli_pattern: "Bash 도구로 codex -q \"<debate-prompt>\" 실행 → 결과를 round-N-codex.md에 저장"
-      gemini_cli_pattern: "Agent subagent가 Bash 도구로 gemini -p \"<debate-prompt>\" 실행 → 결과를 round-N-gemini.md에 저장"
-
-    skill_rotation_applied: true
-    rotation_reason: "agent-contract(usage_count=0)은 3-모델 에이전트 호출 경계 정의에 관련성 있음. pipeline-orchestrator(usage_count=0)는 SETUP→ROUND1→SYNTHESIS→ROUND2→FINAL 5단계 오케스트레이션과 직접 관련."
-
-    relevant_reflections:
-      - id: "ref-20260405T120000"
-        lesson: "acceptance_criteria는 반드시 grep/ls/jq 명령어로 이진(pass/fail) 검증 가능해야 함"
-      - id: "ref-20260405T120000"
-        lesson: "주관적 문구('적절히', '완전히', '정확히') 사용 금지 — 구체적 조건으로 치환"
-
+      gemini_invocation: gemini -p "<prompt>"
+      output_dir: .debate/<debate-id>/
+      perspectives:
+        claude: Scalability + Architecture
+        codex: Developer Experience + Practical Implementation
+        gemini: Cost Realism + Production Feasibility
+      rounds: 2
+      topic: '카파시(Karpathy) LLM Wiki 개념을 응용한 AI Agent Memory 구현 설계: 코드베이스를 wiki화하여
+        Agent 탐색 토큰을 절약하는 아키텍처'
+      topic_slug: codebase-wiki-agent-memory
     domain_constraints:
-      - "Codex MCP 도구(mcp__plugin_codex-cli_codex__codex) 사용 불가 → CLI(codex -q) fallback 필수"
-      - "모든 토론 아티팩트는 .debate/<debate-id>/ 디렉토리 내 저장"
-      - "병렬 디스패치: 단일 메시지에서 3개 에이전트 도구 호출 동시 실행"
-      - "state.json으로 진행 상태 추적 (resume 지원)"
-      - "report.md에 모든 결정 포인트에 대한 3-모델 관점 포함"
+    - Codex MCP 도구(mcp__plugin_codex-cli_codex__codex) 사용 불가 → CLI(codex -q) fallback
+      필수
+    - 모든 토론 아티팩트는 .debate/<debate-id>/ 디렉토리 내 저장
+    - '병렬 디스패치: 단일 메시지에서 3개 에이전트 도구 호출 동시 실행'
+    - state.json으로 진행 상태 추적 (resume 지원)
+    - report.md에 모든 결정 포인트에 대한 3-모델 관점 포함
+    domain_type: ai-agent
+    handoff_style: structured_handoff
+    karpathy_wiki_background:
+      architecture: '3-레이어: Raw sources (불변) → Wiki (LLM 생성 마크다운) → Schema (구조/워크플로우)'
+      expected_token_savings: 탐색 토큰 50~80% 절감
+      key_insight: 합성은 한 번, LLM이 증분적으로 영속적 wiki 구축/유지
+      navigation: index.md (콘텐츠 카탈로그) + log.md (시간순 작업 기록)
+      operations:
+      - 'Ingest: 새 소스 처리, wiki 업데이트'
+      - 'Query: wiki 검색, 답변 합성'
+      - 'Lint: 모순/고아 페이지/교차 참조 누락 검사'
+    model_used: claude-sonnet-4-6
+    relevant_reflections:
+    - id: ref-20260405T120000
+      lesson: acceptance_criteria는 반드시 grep/ls/jq 명령어로 이진(pass/fail) 검증 가능해야 함
+    - id: ref-20260405T120000
+      lesson: 주관적 문구('적절히', '완전히', '정확히') 사용 금지 — 구체적 조건으로 치환
+    rotation_reason: agent-contract(usage_count=0)은 3-모델 에이전트 호출 경계 정의에 관련성 있음. pipeline-orchestrator(usage_count=0)는
+      SETUP→ROUND1→SYNTHESIS→ROUND2→FINAL 5단계 오케스트레이션과 직접 관련.
+    skill_rotation_applied: true
+    worker_instructions:
+      codex_cli_pattern: Bash 도구로 codex -q "<debate-prompt>" 실행 → 결과를 round-N-codex.md에
+        저장
+      gemini_cli_pattern: Agent subagent가 Bash 도구로 gemini -p "<debate-prompt>" 실행
+        → 결과를 round-N-gemini.md에 저장
+      parallel_dispatch_rule: ROUND 1 및 ROUND 2에서 Claude/Codex/Gemini를 단일 메시지의 3개
+        도구 호출로 동시 디스패치
+      step_1_prerequisite_check:
+      - which gemini → Gemini CLI 존재 확인
+      - codex --version → Codex CLI v0.118.0 확인
+      - Codex MCP 도구 mcp__plugin_codex-cli_codex__codex 사용 불가 → CLI fallback 사용
+      step_2_debate_id:
+      - date +%Y%m%d-%H%M%S 실행하여 실제 타임스탬프 취득
+      - debate-id = <timestamp>-codebase-wiki-agent-memory
+      step_3_directory:
+      - mkdir -p .debate/<debate-id>/
+      step_4_skill:
+      - 'debate-orchestration 스킬 실행 (5단계 전체: SETUP → ROUND1 → SYNTHESIS → ROUND2 →
+        FINAL)'
+  created_at: '2026-04-10T00:00:00Z'
+  id: plan-20260410-debate-codebase-wiki
+  sprints:
+  - acceptance_criteria:
+    - ls /Users/urd_book/Projects/claudemate/.debate/20260410-*/state.json 2>/dev/null
+      | wc -l | grep -qE '^[1-9]'
+    - jq -e '.status == "completed"' /Users/urd_book/Projects/claudemate/.debate/20260410-*/state.json
+      2>/dev/null | grep -q 'true'
+    - ls /Users/urd_book/Projects/claudemate/.debate/20260410-*/round-1-claude.md
+      /Users/urd_book/Projects/claudemate/.debate/20260410-*/round-1-codex.md /Users/urd_book/Projects/claudemate/.debate/20260410-*/round-1-gemini.md
+      2>/dev/null | wc -l | grep -qE '^3'
+    - ls /Users/urd_book/Projects/claudemate/.debate/20260410-*/synthesis-round-1.md
+      2>/dev/null | wc -l | grep -qE '^[1-9]'
+    - ls /Users/urd_book/Projects/claudemate/.debate/20260410-*/report.md 2>/dev/null
+      | wc -l | grep -qE '^[1-9]'
+    - grep -qE '(Wiki|wiki|증분|incremental|Agent|agent|토큰|token)' /Users/urd_book/Projects/claudemate/.debate/20260410-*/report.md
+    - for f in /Users/urd_book/Projects/claudemate/.debate/20260410-*/round-1-claude.md
+      /Users/urd_book/Projects/claudemate/.debate/20260410-*/round-1-codex.md /Users/urd_book/Projects/claudemate/.debate/20260410-*/round-1-gemini.md;
+      do [ $(wc -l < "$f") -ge 10 ] || exit 1; done
+    - grep -cE '(Wiki|wiki|증분|incremental|Agent|agent|토큰|token)' /Users/urd_book/Projects/claudemate/.debate/20260410-*/synthesis-round-1.md
+      | grep -qE '^[2-9]'
+    - grep -qiE '(결론|합의|conclusion|recommendation|consensus)' /Users/urd_book/Projects/claudemate/.debate/20260410-*/report.md
+    dependencies: []
+    id: sprint-1
+    skills_needed:
+    - debate-start
+    - debate-orchestration
+    - agent-contract
+    - pipeline-orchestrator
+    status: planned
+    title: debate-start 스킬 실행 — 3-모델 토론 완주
+  status: evaluating
+  title: 'multi-model-debate: AI Agent Memory (Karpathy LLM Wiki 응용) 설계 토론'
