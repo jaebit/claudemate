@@ -1,72 +1,73 @@
 plan:
-  id: "plan-20260410-obsidian-vault-debate"
-  title: "multi-model-debate: Obsidian Vault 구조 + LLM Wiki 통합 설계 토론"
-  status: "in_progress"
-  created_at: "2026-04-10T22:43:00Z"
-
-  sprints:
-    - id: "sprint-1"
-      title: "debate-start 스킬 실행 — Obsidian x LLM Wiki 3-모델 토론"
-      status: "planned"
-      acceptance_criteria:
-        # AC-1: state.json 존재 + codex_mode 필드 포함
-        - "test -f .debate/20260410-224300-obsidian-vault-llm-wiki/state.json && grep -q 'codex_mode' .debate/20260410-224300-obsidian-vault-llm-wiki/state.json"
-        # AC-2: synthesis-round-1.md 존재 + 100바이트 초과
-        - "test -f .debate/20260410-224300-obsidian-vault-llm-wiki/synthesis-round-1.md && [ $(wc -c < .debate/20260410-224300-obsidian-vault-llm-wiki/synthesis-round-1.md | tr -d ' ') -gt 100 ]"
-        # AC-3: synthesis-round-2.md 존재 + 100바이트 초과 (report.md와 분리 규칙)
-        - "test -f .debate/20260410-224300-obsidian-vault-llm-wiki/synthesis-round-2.md && [ $(wc -c < .debate/20260410-224300-obsidian-vault-llm-wiki/synthesis-round-2.md | tr -d ' ') -gt 100 ]"
-        # AC-4: report.md에 unresolved 키워드 포함
-        - "grep -qi 'unresolved' .debate/20260410-224300-obsidian-vault-llm-wiki/report.md"
-        # AC-5: report.md에 4개 결정 포인트 키워드 포함
-        - "grep -qiE '(vault|obsidian)' .debate/20260410-224300-obsidian-vault-llm-wiki/report.md && grep -qiE '(plugin|플러그인)' .debate/20260410-224300-obsidian-vault-llm-wiki/report.md && grep -qiE '(sync|동기화)' .debate/20260410-224300-obsidian-vault-llm-wiki/report.md && grep -qiE '(agent|MCP)' .debate/20260410-224300-obsidian-vault-llm-wiki/report.md"
-        # AC-6: round-1 3개 파일 각 10줄 이상
-        - "for f in .debate/20260410-224300-obsidian-vault-llm-wiki/round-1-claude.md .debate/20260410-224300-obsidian-vault-llm-wiki/round-1-codex.md .debate/20260410-224300-obsidian-vault-llm-wiki/round-1-gemini.md; do [ $(wc -l < \"$f\" | tr -d ' ') -ge 10 ] || exit 1; done"
-        # AC-7: state.json status == completed
-        - "jq -e '.status == \"completed\"' .debate/20260410-224300-obsidian-vault-llm-wiki/state.json >/dev/null 2>&1"
-      skills_needed:
-        - "multi-model-debate"
-        - "debate-start"
-        - "debate-orchestration"
-      dependencies: []
-
   context:
-    domain_type: "ai-agent"
-    model_used: "claude-sonnet-4-6"
-    handoff_style: "structured_handoff"
-
     debate_spec:
-      topic: "LLM Wiki에서 마크다운 관리자로 Obsidian을 사용할 경우 최적의 시스템 구성과 Vault 구조"
-      topic_slug: "obsidian-vault-llm-wiki"
-      debate_id: "20260410-224300-obsidian-vault-llm-wiki"
-      output_dir: ".debate/20260410-224300-obsidian-vault-llm-wiki/"
-      rounds: 2
-      perspectives:
-        claude: "Knowledge Management Architecture"
-        codex: "Obsidian Power User + Plugin Ecosystem"
-        gemini: "Workflow Integration + Scalability"
-      decision_points:
-        - "Obsidian Vault 구조: 코드베이스 Wiki를 Obsidian vault로 구성할 때 최적의 폴더/태그/링크 구조"
-        - "Obsidian 플러그인 구성: Dataview, Templater, Git sync 등 필수 플러그인과 설정"
-        - "LLM 자동 업데이트 + Obsidian 동기화: tree-sitter AST diff 파이프라인 출력을 Obsidian vault에 통합하는 방법"
-        - "Agent ↔ Obsidian 인터페이스: AI Agent가 Obsidian vault를 읽고/쓰는 방법 (MCP, REST API, direct file, URI protocol)"
-      codex_invocation: "codex exec \"<prompt>\""
-      gemini_invocation: "gemini -p \"<prompt>\""
-      codex_mcp_available: false
       codex_cli_available: true
-
+      codex_invocation: codex exec "<prompt>"
+      codex_mcp_available: false
+      debate_id: 20260410-224300-obsidian-vault-llm-wiki
+      decision_points:
+      - 'Obsidian Vault 구조: 코드베이스 Wiki를 Obsidian vault로 구성할 때 최적의 폴더/태그/링크 구조'
+      - 'Obsidian 플러그인 구성: Dataview, Templater, Git sync 등 필수 플러그인과 설정'
+      - 'LLM 자동 업데이트 + Obsidian 동기화: tree-sitter AST diff 파이프라인 출력을 Obsidian vault에
+        통합하는 방법'
+      - 'Agent ↔ Obsidian 인터페이스: AI Agent가 Obsidian vault를 읽고/쓰는 방법 (MCP, REST API,
+        direct file, URI protocol)'
+      gemini_invocation: gemini -p "<prompt>"
+      output_dir: .debate/20260410-224300-obsidian-vault-llm-wiki/
+      perspectives:
+        claude: Knowledge Management Architecture
+        codex: Obsidian Power User + Plugin Ecosystem
+        gemini: Workflow Integration + Scalability
+      rounds: 2
+      topic: LLM Wiki에서 마크다운 관리자로 Obsidian을 사용할 경우 최적의 시스템 구성과 Vault 구조
+      topic_slug: obsidian-vault-llm-wiki
+    domain_type: ai-agent
+    handoff_style: structured_handoff
+    model_used: claude-sonnet-4-6
     previous_debate_context:
-      debate_id: "20260410-220154-codebase-wiki-agent-memory"
       consensus:
-        - "모듈 중심 wiki 계층 (Tier 1: Overview + Symbol Index, Tier 2: Module, Tier 3: Cross-cutting)"
-        - "tree-sitter AST diff + wiki update CLI + 비동기 CI 재생성"
-        - "마크다운 파일 + MCP 서버 듀얼 인터페이스"
-        - "태스크 유형별 토큰 절약: explore 35-80%, edit 0-25%"
-
+      - '모듈 중심 wiki 계층 (Tier 1: Overview + Symbol Index, Tier 2: Module, Tier 3: Cross-cutting)'
+      - tree-sitter AST diff + wiki update CLI + 비동기 CI 재생성
+      - 마크다운 파일 + MCP 서버 듀얼 인터페이스
+      - '태스크 유형별 토큰 절약: explore 35-80%, edit 0-25%'
+      debate_id: 20260410-220154-codebase-wiki-agent-memory
     skill_applied:
-      name: "multi-model-debate"
-      version: "1.0.0"
+      name: multi-model-debate
       rules_applied:
-        - "synthesis-round-N.md는 report.md와 반드시 분리"
-        - "report.md에 unresolved_items 섹션 필수"
-        - "Codex: codex exec (not -q)"
-        - "macOS wc 호환: tr -d ' '"
+      - synthesis-round-N.md는 report.md와 반드시 분리
+      - report.md에 unresolved_items 섹션 필수
+      - 'Codex: codex exec (not -q)'
+      - 'macOS wc 호환: tr -d '' '''
+      version: 1.0.0
+  created_at: '2026-04-10T22:43:00Z'
+  id: plan-20260410-obsidian-vault-debate
+  sprints:
+  - acceptance_criteria:
+    - test -f .debate/20260410-224300-obsidian-vault-llm-wiki/state.json && grep -q
+      'codex_mode' .debate/20260410-224300-obsidian-vault-llm-wiki/state.json
+    - test -f .debate/20260410-224300-obsidian-vault-llm-wiki/synthesis-round-1.md
+      && [ $(wc -c < .debate/20260410-224300-obsidian-vault-llm-wiki/synthesis-round-1.md
+      | tr -d ' ') -gt 100 ]
+    - test -f .debate/20260410-224300-obsidian-vault-llm-wiki/synthesis-round-2.md
+      && [ $(wc -c < .debate/20260410-224300-obsidian-vault-llm-wiki/synthesis-round-2.md
+      | tr -d ' ') -gt 100 ]
+    - grep -qi 'unresolved' .debate/20260410-224300-obsidian-vault-llm-wiki/report.md
+    - grep -qiE '(vault|obsidian)' .debate/20260410-224300-obsidian-vault-llm-wiki/report.md
+      && grep -qiE '(plugin|플러그인)' .debate/20260410-224300-obsidian-vault-llm-wiki/report.md
+      && grep -qiE '(sync|동기화)' .debate/20260410-224300-obsidian-vault-llm-wiki/report.md
+      && grep -qiE '(agent|MCP)' .debate/20260410-224300-obsidian-vault-llm-wiki/report.md
+    - for f in .debate/20260410-224300-obsidian-vault-llm-wiki/round-1-claude.md .debate/20260410-224300-obsidian-vault-llm-wiki/round-1-codex.md
+      .debate/20260410-224300-obsidian-vault-llm-wiki/round-1-gemini.md; do [ $(wc
+      -l < "$f" | tr -d ' ') -ge 10 ] || exit 1; done
+    - jq -e '.status == "completed"' .debate/20260410-224300-obsidian-vault-llm-wiki/state.json
+      >/dev/null 2>&1
+    dependencies: []
+    id: sprint-1
+    skills_needed:
+    - multi-model-debate
+    - debate-start
+    - debate-orchestration
+    status: planned
+    title: debate-start 스킬 실행 — Obsidian x LLM Wiki 3-모델 토론
+  status: evaluating
+  title: 'multi-model-debate: Obsidian Vault 구조 + LLM Wiki 통합 설계 토론'
