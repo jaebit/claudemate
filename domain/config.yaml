@@ -106,7 +106,7 @@ domain:
     trust_level: "full"
     worker_restrictions:
       blocked_tools: ["verify_swarm_results", "harden_skill", "apply_meta_modification", "rollback_meta_modification"]
-      blocked_paths: ["domain/evaluator/", "domain/rules/", "data/archive/"]
+      blocked_paths: ["domain/evaluator/", "domain/rules/", ".autohone/data/archive/"]
     verification:
       require_independent_eval: true
       score_deviation_threshold: 0.15
