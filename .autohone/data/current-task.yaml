@@ -69,5 +69,5 @@ plan:
     - debate-orchestration
     status: planned
     title: debate-start 스킬 실행 — Obsidian x LLM Wiki 3-모델 토론
-  status: evaluating
+  status: completed
   title: 'multi-model-debate: Obsidian Vault 구조 + LLM Wiki 통합 설계 토론'
