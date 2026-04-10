@@ -48,5 +48,5 @@
 
 ## 활성 스킬
 
-- `skills/task-planner/` (v1.6.0, utility=0.84) — 태스크 계획 수립 + acceptance_criteria 품질 + import 패턴 가이드
-- `skills/planner-qa-gate/` (v1.2.0, utility=0.65) — 계획 후 QA 게이트 (주관적 문구 + import 안전성 + 범위 검증)
+- `.autohone/skills/task-planner/` (v1.6.0, utility=0.84) — 태스크 계획 수립 + acceptance_criteria 품질 + import 패턴 가이드
+- `.autohone/skills/planner-qa-gate/` (v1.2.0, utility=0.65) — 계획 후 QA 게이트 (주관적 문구 + import 안전성 + 범위 검증)
