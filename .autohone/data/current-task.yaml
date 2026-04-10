@@ -1,0 +1,121 @@
+plan:
+  id: "plan-20260410-s3-indexer"
+  title: "S3 오브젝트 스토리지 Rust 초고성능 인덱싱 엔진"
+  status: "completed"
+  created_at: "2026-04-10T00:00:00Z"
+
+  sprints:
+    - id: "sprint-1"
+      title: "프로젝트 초기화 및 핵심 데이터 구조 정의"
+      status: "planned"
+      acceptance_criteria:
+        - "test -f .skills-workspace/s3-indexer/Cargo.toml"
+        - "grep -c 'name = \"s3-indexer\"' .skills-workspace/s3-indexer/Cargo.toml = 1"
+        - "test -f .skills-workspace/s3-indexer/src/lib.rs"
+        - "grep -c 'pub struct ObjectMetadata' .skills-workspace/s3-indexer/src/lib.rs > 0"
+        - "grep -c 'pub key: String' .skills-workspace/s3-indexer/src/lib.rs > 0"
+        - "grep -c 'pub size: u64' .skills-workspace/s3-indexer/src/lib.rs > 0"
+        - "grep -c 'pub last_modified: DateTime' .skills-workspace/s3-indexer/src/lib.rs > 0"
+        - "cargo check --manifest-path .skills-workspace/s3-indexer/Cargo.toml 2>&1 | grep -c 'error' = 0"
+      files:
+        - ".skills-workspace/s3-indexer/Cargo.toml"
+        - ".skills-workspace/s3-indexer/src/lib.rs"
+        - ".skills-workspace/s3-indexer/src/models.rs"
+      skills_needed: ["rust-project-init", "data-modeling"]
+      dependencies: []
+
+    - id: "sprint-2"
+      title: "다중 필드 인덱싱 엔진 구현"
+      status: "planned"
+      acceptance_criteria:
+        - "test -f .skills-workspace/s3-indexer/src/index_engine.rs"
+        - "grep -c 'pub struct IndexEngine' .skills-workspace/s3-indexer/src/index_engine.rs > 0"
+        - "grep -c 'pub fn add_object' .skills-workspace/s3-indexer/src/index_engine.rs > 0"
+        - "grep -c 'prefix_index' .skills-workspace/s3-indexer/src/index_engine.rs > 0"
+        - "grep -c 'size_index' .skills-workspace/s3-indexer/src/index_engine.rs > 0"
+        - "grep -c 'time_index' .skills-workspace/s3-indexer/src/index_engine.rs > 0"
+        - "grep -c 'storage_class_index' .skills-workspace/s3-indexer/src/index_engine.rs > 0"
+        - "cargo check --manifest-path .skills-workspace/s3-indexer/Cargo.toml 2>&1 | grep -c 'error' = 0"
+      files:
+        - ".skills-workspace/s3-indexer/src/index_engine.rs"
+        - ".skills-workspace/s3-indexer/src/lib.rs"
+      skills_needed: ["rust-data-structures", "indexing-algorithms"]
+      dependencies: ["sprint-1"]
+
+    - id: "sprint-3"
+      title: "복합 필터 쿼리 엔진 구현"
+      status: "planned"
+      acceptance_criteria:
+        - "test -f .skills-workspace/s3-indexer/src/query_engine.rs"
+        - "grep -c 'pub struct QueryEngine' .skills-workspace/s3-indexer/src/query_engine.rs > 0"
+        - "grep -c 'pub fn query' .skills-workspace/s3-indexer/src/query_engine.rs > 0"
+        - "grep -c 'prefix_filter' .skills-workspace/s3-indexer/src/query_engine.rs > 0"
+        - "grep -c 'size_range_filter' .skills-workspace/s3-indexer/src/query_engine.rs > 0"
+        - "grep -c 'time_range_filter' .skills-workspace/s3-indexer/src/query_engine.rs > 0"
+        - "grep -c 'pub struct QueryFilter' .skills-workspace/s3-indexer/src/query_engine.rs > 0"
+        - "cargo check --manifest-path .skills-workspace/s3-indexer/Cargo.toml 2>&1 | grep -c 'error' = 0"
+      files:
+        - ".skills-workspace/s3-indexer/src/query_engine.rs"
+        - ".skills-workspace/s3-indexer/src/lib.rs"
+      skills_needed: ["rust-query-optimization", "filter-algorithms"]
+      dependencies: ["sprint-2"]
+
+    - id: "sprint-4"
+      title: "성능 벤치마크 시스템 구현"
+      status: "planned"
+      acceptance_criteria:
+        - "test -f .skills-workspace/s3-indexer/benches/indexing_benchmark.rs"
+        - "grep -c 'criterion::criterion_group' .skills-workspace/s3-indexer/benches/indexing_benchmark.rs > 0"
+        - "grep -c 'bench_index_million_objects' .skills-workspace/s3-indexer/benches/indexing_benchmark.rs > 0"
+        - "grep -c 'bench_query_performance' .skills-workspace/s3-indexer/benches/indexing_benchmark.rs > 0"
+        - "grep -c '1_000_000' .skills-workspace/s3-indexer/benches/indexing_benchmark.rs > 0"
+        - "grep -c 'criterion = ' .skills-workspace/s3-indexer/Cargo.toml > 0"
+        - "cargo check --manifest-path .skills-workspace/s3-indexer/Cargo.toml 2>&1 | grep -c 'error' = 0"
+      files:
+        - ".skills-workspace/s3-indexer/benches/indexing_benchmark.rs"
+        - ".skills-workspace/s3-indexer/Cargo.toml"
+      skills_needed: ["rust-benchmarking", "performance-testing"]
+      dependencies: ["sprint-3"]
+
+    - id: "sprint-5"
+      title: "테스트 구현 및 최종 검증"
+      status: "planned"
+      acceptance_criteria:
+        - "test -f .skills-workspace/s3-indexer/src/lib.rs"
+        - "grep -c '#\\[test\\]' .skills-workspace/s3-indexer/src/lib.rs > 0"
+        - "test -f .skills-workspace/s3-indexer/tests/integration_tests.rs"
+        - "grep -c 'test_index_and_query' .skills-workspace/s3-indexer/tests/integration_tests.rs > 0"
+        - "grep -c 'test_complex_query' .skills-workspace/s3-indexer/tests/integration_tests.rs > 0"
+        - "grep -c 'test_performance' .skills-workspace/s3-indexer/tests/integration_tests.rs > 0"
+        - "cd .skills-workspace/s3-indexer && cargo test 2>&1 | grep -c 'test result: ok' > 0"
+        - "cd .skills-workspace/s3-indexer && cargo build --release 2>&1 | grep -c 'error' = 0"
+      files:
+        - ".skills-workspace/s3-indexer/src/lib.rs"
+        - ".skills-workspace/s3-indexer/tests/integration_tests.rs"
+        - ".skills-workspace/s3-indexer/src/models.rs"
+        - ".skills-workspace/s3-indexer/src/index_engine.rs"
+        - ".skills-workspace/s3-indexer/src/query_engine.rs"
+      skills_needed: ["rust-testing", "integration-testing"]
+      dependencies: ["sprint-4"]
+
+  context:
+    domain_type: "backend"
+    model_used: "claude-sonnet-4"
+    relevant_reflections:
+      - "acceptance_criteria는 반드시 grep/test/wc 명령어로 확인 가능"
+      - "주관적 문구 절대 금지"
+      - "Rust 프로젝트는 cargo check로 컴파일 에러 확인 필수"
+    relevant_skills: ["rust-project-init", "data-modeling", "indexing-algorithms", "performance-testing"]
+    domain_constraints:
+      - "no unsafe Rust"
+      - "외부 크레이트 최소화 (chrono, serde, criterion만 허용)"
+      - ".skills-workspace/ 디렉토리 내 작업"
+      - "100만건 오브젝트 성능 테스트 필수"
+    files_to_modify:
+      - ".skills-workspace/s3-indexer/Cargo.toml"
+      - ".skills-workspace/s3-indexer/src/lib.rs"
+      - ".skills-workspace/s3-indexer/src/models.rs"
+      - ".skills-workspace/s3-indexer/src/index_engine.rs"
+      - ".skills-workspace/s3-indexer/src/query_engine.rs"
+      - ".skills-workspace/s3-indexer/benches/indexing_benchmark.rs"
+      - ".skills-workspace/s3-indexer/tests/integration_tests.rs"
