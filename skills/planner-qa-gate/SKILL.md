@@ -34,7 +34,27 @@ correctly | properly | accurately | completely
 
 형식 불일치 → **구체적 명령어로 재작성**.
 
-### 3. 범위 명확성 확인
+### 3. Import 패턴 안전성 확인
+
+acceptance_criteria에 fully-qualified import 경로가 사용되었는지 스캔:
+
+```
+criterion::criterion_group
+os.path.join
+React.useState
+```
+
+발견되면 → **심볼 이름만 남기도록 수정**.
+
+| Before (위험) | After (안전) | 이유 |
+|---------------|-------------|------|
+| `criterion::criterion_group` | `criterion_group` | Rust grouped use import |
+| `os.path.join` | `from os.path import` 또는 `join(` | Python from import |
+| `React.useState` | `useState` | JS destructured import |
+
+> **근거**: gen-044 Sprint 4에서 `criterion::criterion_group` grep이 `use criterion::{..., criterion_group}` 패턴과 미매칭
+
+### 4. 범위 명확성 확인
 
 - "제거됨" → 어느 파일에서? 파일 경로 명시
 - "추가됨" → 어느 파일에? 패턴은 무엇?
