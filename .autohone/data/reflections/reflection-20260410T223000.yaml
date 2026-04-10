@@ -1,0 +1,98 @@
+episode_output:
+  episode_id: "reflector-20260410T223000"
+  agent: "reflector"
+  pipeline_step: "reflector"
+  status: "ok"
+  started_at: "2026-04-10T22:30:00Z"
+  completed_at: "2026-04-10T22:45:00Z"
+  summary: "RCA 완료: category=pattern_missing, action_items 2건 권장사항 기록 (meta_improvement=false)"
+  artifacts:
+    - path: ".autohone/data/reflections/reflection-20260410T223000.yaml"
+      description: "반성 기록 + RCA + action_items (권장사항)"
+  payload:
+    reflection:
+      id: "ref-20260410T223000"
+      task_id: "plan-20260410-debate-codebase-wiki"
+      sprint_id: "n/a"
+      timestamp: "2026-04-10T22:30:00Z"
+      outcome: "PASS"
+      score: 0.86
+
+      root_cause_analysis:
+        category: "pattern_missing"
+        description: >
+          multi-model-debate 스킬이 autohone 스킬 라이브러리에 없어 출력 아티팩트
+          스펙(synthesis-round-2.md 별도 생성 필수)이 워커에게 전달되지 않음.
+          codex 플러그인의 debate-start 스킬에는 규격이 있으나, autohone 평가자가
+          요구하는 파일 분리 패턴이 명시되지 않아 skill_adherence 0.75 발생.
+        evidence:
+          - "synthesis-round-2.md 미분리 — report.md에 통합 → SKILL.md 규격 편차"
+          - "autohone .autohone/skills/ 에 multi-model-debate 스킬 없음"
+          - "skill_adherence 0.75 (최저 점수) vs 기타 항목 0.85~0.90"
+          - "golden example lessons: synthesis-round-2.md 분리 권장 명시됨"
+
+      self_critique: >
+        놓친 것: debate 도메인용 autohone 스킬 부재 상태에서 실행. 출력 파일 스펙
+        불명확으로 워커가 report.md에 통합. Codex CLI -q 플래그 미지원 사전 확인 미흡.
+
+      action_items:
+        - type: "CREATE_SKILL"
+          target: ".autohone/skills/multi-model-debate/"
+          description: >
+            debate 출력 아티팩트 스펙 정의: round-{n}-{model}.md, synthesis-round-{n}.md
+            (report.md와 반드시 분리), unresolved_items 섹션 필수, Codex MCP 가용성
+            체크 + CLI fallback 경고 로그 절차 포함.
+          priority: "HIGH"
+          auto_applied: false
+          pre_execution_note: >
+            실행 전 validate_golden_gate(skill_name='multi-model-debate',
+            proposed_changes='...')를 반드시 호출할 것.
+
+        - type: "UPDATE_KNOWLEDGE"
+          target: ".autohone/domain/knowledge-base/gaps.md"
+          description: >
+            GAP-003 추가: Codex CLI exec 서브커맨드 필수 + -q 미지원 패턴.
+            GAP-004 추가: macOS wc -l 출력 앞 공백 → acceptance_criteria grep 실패
+            방지를 위한 tr -d ' ' 파이프 적용 규칙.
+          priority: "MEDIUM"
+          auto_applied: false
+
+      deferred_items: []
+
+      provisional_review: []
+
+      lessons_learned:
+        - "debate 도메인 스킬이 autohone에 없으면 출력 파일 스펙이 워커에게 전달 안 됨"
+        - "synthesis-round-N.md는 report.md와 별도 파일로 생성해야 SKILL.md 규격 준수"
+        - "Codex CLI: codex exec -p <prompt> 사용, -q 플래그 미지원 (exec 서브커맨드로 재시도)"
+        - "macOS wc -l 출력: 앞 공백 포함 → acceptance_criteria에서 tr -d ' ' 필수"
+        - "과도한 합의 방지: unresolved_items 섹션 추가로 Round 2 만장일치 편향 방지 가능"
+        - "Codex CLI fallback이 MCP보다 웹 리서치 결과 우수 (20+ 소스)"
+
+      generation_metrics:
+        golden_example_saved: true
+        golden_example_skip_reason: ""
+        golden_example_details:
+          score: 0.86
+          type: "multi-model-debate"
+          generation_id: "gen-001"
+          note: "이미 저장됨 (multi-model-debate-gen-001.yaml)"
+
+      compound_learning:
+        previous_reflection: "ref-20260410T210500"
+        improvement_confirmed:
+          - "debate 태스크에서 Codex CLI fallback 성공 (13분 지연이나 결과 우수)"
+          - "score 0.86 유지 — 신규 도메인에서도 품질 기준 충족"
+        new_gap_identified:
+          - "multi-model-debate 출력 파일 스펙 미정의 (GAP-003 수준)"
+          - "macOS wc -l 공백 처리 패턴 (GAP-004)"
+
+      model_config:
+        planner: "claude-sonnet-4-6"
+        worker: "claude-sonnet-4-6"
+        evaluator: "claude-sonnet-4-6"
+        reflector: "claude-sonnet-4-6"
+
+  next_input_hint: >
+    action_items 2건 권장사항 기록 완료. 인간 검토 후 multi-model-debate 스킬 생성
+    및 gaps.md 업데이트 수행 권장. CREATE_SKILL 실행 전 validate_golden_gate 필수.
