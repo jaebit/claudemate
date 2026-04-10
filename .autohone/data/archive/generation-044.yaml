@@ -79,5 +79,5 @@ episode_output:
       knowledge_gaps_resolved:
         - "GAP-002: 언어별 import 패턴 도메인 지식 갭 → resolved"
       docs_updated:
-        - "domain/knowledge-base/AGENTS.md — 활성 스킬 목록 추가"
-        - "domain/knowledge-base/gaps.md — GAP-002 기록 + resolved"
+        - ".autohone/domain/knowledge-base/AGENTS.md — 활성 스킬 목록 추가"
+        - ".autohone/domain/knowledge-base/gaps.md — GAP-002 기록 + resolved"
