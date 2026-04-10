@@ -78,7 +78,7 @@ domain:
       - "domain/rules/"
       - "domain/evaluator/validators/"
     append_only_paths:
-      - "data/archive/"
+      - ".autohone/data/archive/"
     human_approval_required:
       - "domain/evaluator/criteria.yaml"
       - "agents/*.md"
