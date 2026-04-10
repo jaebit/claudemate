@@ -25,6 +25,10 @@ tags:
   - "prevention"
 
 changelog:
+  - version: "1.2.0"
+    date: "2026-04-10T21:15:00Z"
+    changes: "import 패턴 안전성 검증 단계 추가 (Step 3), gen-044 false-negative 근거 포함"
+    adaptation: true
   - version: "1.1.0"
     date: "2026-04-05T14:00:00Z"
     changes: "contract-criteria-validator 기능 흡수, JavaScript 의사코드 제거, 실행 가능한 체크리스트 형식으로 단순화, 변환 규칙 표 추가"
