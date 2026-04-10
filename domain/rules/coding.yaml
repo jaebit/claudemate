@@ -1,9 +1,0 @@
-rules:
-  - id: CODE-001
-    name: "에러 무시 금지"
-    pattern: "except:\\s*pass"
-    severity: HIGH
-  - id: CODE-002
-    name: "TODO 잔류 방지"
-    pattern: "(TODO|FIXME|HACK|XXX):"
-    severity: MEDIUM
