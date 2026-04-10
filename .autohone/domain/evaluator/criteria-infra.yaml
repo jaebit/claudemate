@@ -1,0 +1,37 @@
+criteria:
+  reliability:
+    weight: 0.30
+    description: "장애 복구와 가용성이 보장되는가?"
+    checklist:
+      - "장애 복구 절차가 있는가?"
+      - "헬스 체크가 구현되었는가?"
+      - "자동 스케일링이 설정되었는가?"
+  security:
+    weight: 0.25
+    description: "인프라 보안 요구사항을 충족하는가?"
+    checklist:
+      - "네트워크 격리가 적절한가?"
+      - "시크릿 관리가 안전한가?"
+      - "최소 권한 원칙을 따르는가?"
+  monitoring:
+    weight: 0.20
+    description: "운영 가시성이 확보되었는가?"
+    checklist:
+      - "로깅이 구조화되었는가?"
+      - "알람이 설정되었는가?"
+      - "대시보드가 있는가?"
+  code_quality:
+    weight: 0.15
+    description: "IaC 코드가 표준을 준수하는가?"
+    checklist:
+      - "IaC 모듈화가 적절한가?"
+      - "환경별 변수가 분리되었는가?"
+      - "드리프트 감지가 가능한가?"
+  documentation:
+    weight: 0.10
+    checklist:
+      - "인프라 아키텍처 다이어그램이 있는가?"
+      - "운영 런북이 있는가?"
+passing_threshold: 0.7
+golden_example_threshold: 0.85
+domain_type: "infra"
