@@ -1,0 +1,27 @@
+name: "multi-model-debate"
+version: "1.0.0"
+status: "provisional"
+created_at: "2026-04-10T22:30:00Z"
+updated_at: "2026-04-10T22:30:00Z"
+created_by: "reflector"
+description: "multi-model-debate 플러그인 사용 시 출력 아티팩트 규격, Codex CLI fallback 절차, macOS 호환 acceptance criteria 패턴 정의"
+
+utility_score: 0.65
+usage_count: 0
+success_count: 0
+success_rate: 0.0
+
+domains:
+  - "claudemate"
+
+tags:
+  - "multi-model-debate"
+  - "artifact-spec"
+  - "codex-cli"
+  - "macos-compat"
+
+changelog:
+  - version: "1.0.0"
+    date: "2026-04-10T22:30:00Z"
+    changes: "초기 생성. ref-20260410T223000 RCA(pattern_missing)에서 도출. synthesis-round-N.md 분리 규칙, unresolved_items 필수, Codex CLI fallback, macOS wc -l 공백 패턴 포함."
+    adaptation: true
