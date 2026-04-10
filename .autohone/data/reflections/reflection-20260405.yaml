@@ -7,7 +7,7 @@ episode_output:
   completed_at: "2026-04-05T12:30:00Z"
   summary: "RCA 완료: category=prompt_insufficient, action_items 3건"
   artifacts:
-    - path: "data/reflections/reflection-20260405.yaml"
+    - path: ".autohone/data/reflections/reflection-20260405.yaml"
       description: "반성 기록 + RCA + action_items"
   payload:
     reflection:
