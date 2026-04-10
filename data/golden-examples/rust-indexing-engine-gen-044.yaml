@@ -1,0 +1,32 @@
+golden_example:
+  id: "golden-rust-indexing-engine-gen-044"
+  generation_id: "gen-044"
+  score: 0.86
+  type: "rust-backend-indexing-engine"
+  task: "S3 오브젝트 스토리지 Rust 초고성능 인덱싱 엔진 빌드"
+  timestamp: "2026-04-10T21:04:00Z"
+
+  summary: |
+    S3 호환 오브젝트 스토리지의 메타데이터를 초고속으로 인덱싱하는 Rust 엔진.
+    5개 스프린트 (프로젝트 초기화 → 인덱싱 엔진 → 쿼리 엔진 → 벤치마크 → 테스트)로
+    구성된 완전한 파이프라인 실행, 38/39 acceptance_criteria 통과.
+
+  key_patterns:
+    project_structure:
+      - "lib.rs에 핵심 타입(ObjectMetadata) 직접 정의 → 모듈 단순화"
+      - "index_engine.rs / query_engine.rs 분리 → 단일 책임"
+      - "benches/ + tests/ 별도 디렉토리 구성"
+    index_design:
+      - "BTreeMap<String, Vec<usize>> — prefix 인덱스 (범위 scan 최적)"
+      - "BTreeMap<u64, Vec<usize>> — size 인덱스 (범위 쿼리)"
+      - "BTreeMap<i64, Vec<usize>> — time 인덱스 (시간 범위)"
+      - "HashMap<StorageClass, Vec<usize>> — storage class (정확 매칭)"
+    query_optimization:
+      - "복합 필터 교집합(intersection) 알고리즘으로 후보 축소"
+      - "QueryFilter 빌더 패턴으로 유연한 쿼리 조합"
+    acceptance_criteria:
+      - "모든 기준이 grep -c / test -f / cargo check 형식"
+      - "주관적 문구 없음"
+
+  artifacts:
+    - ".skills-workspace/s3-indexer/"
