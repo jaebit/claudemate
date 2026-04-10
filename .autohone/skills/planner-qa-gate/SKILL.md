@@ -10,7 +10,7 @@ Planner가 계획을 완성한 직후, Worker 실행 전에 acceptance_criteria 
 
 ### 1. 주관적 문구 스캔
 
-`data/current-task.yaml`을 열고 모든 `acceptance_criteria` 항목에서 다음 패턴을 검색:
+`.autohone/data/current-task.yaml`을 열고 모든 `acceptance_criteria` 항목에서 다음 패턴을 검색:
 
 ```
 정확히 | 완전히 | 적절히 | 올바르게 | 제대로 | 충분히
