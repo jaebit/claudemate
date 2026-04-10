@@ -1,0 +1,74 @@
+generation:
+  id: "gen-046"
+  parent_id: "gen-045"
+  timestamp: "2026-04-10T23:07:00Z"
+  trigger: "autohone:run (Legacy Fallback) — plan-20260410-obsidian-vault-debate"
+
+  task:
+    id: "plan-20260410-obsidian-vault-debate"
+    title: "Obsidian Vault + LLM Wiki 통합 설계 토론 (2차 debate)"
+    domain_type: "ai-agent"
+    pipeline: "Legacy Fallback"
+
+  evaluation:
+    verdict: "PASS"
+    score: 0.90
+    scores:
+      completeness: 1.00
+      quality: 0.83
+      debate_dynamics: 0.87
+      actionability: 0.88
+      skill_adherence: 0.95
+    weakest_dimension: "quality"
+    weakest_reason: "round-1-gemini.md 84줄 — peers(356/212줄) 대비 절반 이하, DP별 분량 기준 부재"
+
+  changes:
+    - type: "PROMOTE_SKILL"
+      target: ".autohone/skills/multi-model-debate/meta.yaml"
+      description: "provisional → active 승격. utility_score 0.65→0.75, usage_count 0→1, success_rate 0.0→1.0"
+      auto_applied: true
+    - type: "UPDATE_SKILL_META"
+      target: ".autohone/skills/multi-model-debate/meta.yaml"
+      description: "usage_count, success_count, success_rate, utility_score, updated_at 갱신"
+      auto_applied: true
+    - type: "UPDATE_SKILL (DEFERRED)"
+      target: ".autohone/skills/multi-model-debate/SKILL.md"
+      description: "v1.1.0: 최소 분량 기준 + priority 레이블 — validate_golden_gate FAIL 2회로 인간 에스컬레이션"
+      auto_applied: false
+
+  reflection:
+    id: "ref-20260410T230700"
+    rca_category: "prompt_insufficient"
+    action_items_count: 2
+    auto_applied_count: 1
+    escalated_count: 1
+    new_gaps_recorded: []
+
+  metrics:
+    active_skill_count: 8
+    provisional_skill_count: 0
+    deprecated_skill_count: 1
+    golden_examples_total: 5
+    golden_example_saved_this_gen: false
+    golden_example_skip_reason: "duplicate — multi-model-debate-gen-002.yaml"
+
+  trend:
+    vs_gen045:
+      score: "0.86 → 0.90 (+0.04)"
+      skill_adherence: "0.75 → 0.95 (+0.20)"
+      quality: "0.88 → 0.83 (-0.05)"
+      completeness: "0.90 → 1.00 (+0.10)"
+      active_skills: "7 → 8 (+1, multi-model-debate 승격)"
+    trend_judgment: "improving"
+    notes: >
+      전체 점수 +0.04 개선. skill_adherence +0.20으로 복리 학습 효과 확인.
+      quality -0.05 하락(Gemini 분량 편차)이 유일 약점. UPDATE_SKILL v1.1.0이
+      완료되면 다음 세대에서 quality 반등 예상.
+
+  model_config:
+    planner: "claude-sonnet-4-6"
+    worker: "claude-sonnet-4-6"
+    evaluator: "claude-sonnet-4-6"
+    reflector: "claude-sonnet-4-6"
+
+  status: "active"
