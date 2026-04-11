@@ -134,5 +134,44 @@ acceptance_criteria에서 fully-qualified 경로를 grep하면 false-negative가
 - [ ] 삭제 확인 기준에 `= 0`이 명시되어 있는가?
 - [ ] 유지 확인 기준에 `> 0`이 명시되어 있는가?
 - [ ] 각 스프린트의 `files:` 필드가 채워져 있는가?
+- [ ] 이전 세대 아카이브에 `deferred_items`가 있는가? 있다면 이번 계획에 흡수했는가?
 
 체크리스트 하나라도 미통과 시 기준 수정 후 저장.
+
+---
+
+## DEFERRED 항목 전달 패턴
+
+Reflector가 스킬 업데이트를 "DEFERRED"로 기록하면 다음 세대로 자동 전달되지 않습니다.
+계획 생성 시 이전 세대 아카이브를 확인하고 미적용 항목을 sprint에 명시적으로 포함해야 합니다.
+
+### 실패 패턴 (gen-046 → gen-047)
+
+gen-046에서 DEFERRED된 2개 항목(Codex CLI 플래그, Gemini 분량 기준)이 gen-047에서 동일하게 재발.
+원인: 이전 세대 deferred_items를 sprint contract에 연결하는 절차가 없었음.
+
+### 절차
+
+계획 생성 시 `.autohone/data/archive/generation-{latest}.yaml`의 `deferred_items` 블록을 확인:
+
+```yaml
+# sprint contract 예시 — DEFERRED 항목 흡수
+plan:
+  id: "plan-..."
+  prior_deferred_items:
+    - source_gen: "gen-046"
+      type: "UPDATE_SKILL"
+      target: "skills/multi-model-debate/SKILL.md"
+      description: "Codex CLI -q 플래그 → exec -s read-only 교체"
+      status: "pending"  # Worker가 이번 sprint에서 반드시 처리
+  sprints:
+    - id: "sprint-1"
+      # deferred 항목을 첫 sprint에 흡수하거나 별도 sprint로 분리
+```
+
+### deferred_items 없으면 생략 가능
+
+아카이브에 `deferred_items` 블록이 없거나 비어 있으면 이 절차를 건너뜁니다.
+`auto_applied_items`만 있는 경우(이미 적용됨)도 건너뜁니다.
+
+> **근거**: gen-047 reflection에서 "DEFERRED 항목 지속 추적과 적용이 반복 실패 방지의 핵심"으로 도출
