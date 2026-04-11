@@ -1,0 +1,138 @@
+generation_id: "gen-050"
+timestamp: "2026-04-11T18:15:00+09:00"
+parent_id: "gen-049"
+task_type: "technical-analysis"
+execution_mode: "second_attempt"
+
+# Core Metrics
+score: 0.78
+verdict: "PASS"
+golden_example_saved: false
+golden_example_skip_reason: "score_below_threshold"
+
+# Sprint Execution Summary
+sprints_completed: 2
+total_iterations: 2
+artifacts_created:
+  - ".analysis/gen-050/structure-map.md"
+  - ".analysis/gen-050/risk-report.md"
+
+# Skill Performance
+skills_used:
+  - name: "domain-expert"
+    version: "1.2.0"
+    utility_score: 0.82
+    contribution: "primary analyzer"
+  - name: "quality-gate"
+    version: "1.1.0"
+    utility_score: 0.75
+    contribution: "verification and validation"
+
+# Dimension Analysis
+evaluation_dimensions:
+  completeness:
+    score: 0.85
+    delta_vs_gen_049: 0.00
+    status: "maintained"
+  accuracy:
+    score: 0.80
+    delta_vs_gen_049: +0.15
+    status: "significantly_improved"
+    improvement_source: "fd -H patch for hidden directory scanning"
+  actionability:
+    score: 0.85
+    delta_vs_gen_049: +0.05
+    status: "improved"
+  structure_quality:
+    score: 0.65
+    delta_vs_gen_049: -0.20
+    status: "declined"
+    bottleneck: true
+    failure_reason: "incremental append causing document duplication"
+  coverage:
+    score: 0.90
+    delta_vs_gen_049: +0.05
+    status: "improved"
+
+# Root Cause Analysis
+failure_category: "document_structure_duplication"
+failure_attribution: "pattern_missing"
+root_cause: |
+  Worker generated documents using incremental append approach rather than single-pass Write tool,
+  leading to structural duplication (autopilot rows). Acceptance criteria only validates keyword
+  presence, not structural integrity.
+
+# Previous Fix Verification
+previous_fix_verification:
+  gen_049_issue: "Hidden directory scanning with fd command"
+  patch_applied: "fd -H flag for hidden directory inclusion"
+  verification_result: "SUCCESS"
+  evidence:
+    - "accuracy dimension improved from 0.65 to 0.80 (+0.15)"
+    - "All 7 plugin.json files correctly discovered"
+    - "Critical claims validated against ground truth"
+
+# Improvement Trajectory
+improvement_at_k:
+  vs_baseline_gen_001:
+    score_delta: "+0.28"
+    trend: "improving"
+    note: "Sustained positive trajectory from baseline"
+  vs_previous_gen_049:
+    score_delta: "+0.03"
+    accuracy_improvement: "+0.15"
+    structure_quality_decline: "-0.20"
+    net_assessment: "mixed - accuracy fix successful, new bottleneck emerged"
+
+# Generation Metrics
+generation_metrics:
+  total_tasks_attempted: 1
+  total_tasks_passed: 1
+  cumulative_score: 0.78
+  skill_count: 8
+  golden_example_count: 3
+  knowledge_gaps_addressed: 2
+  knowledge_gaps_new: 1
+
+# Key Lessons and Action Items
+lessons_learned:
+  - lesson: "Single-pass document writing prevents structural duplication"
+    category: "process_improvement"
+    severity: "high"
+  - lesson: "Acceptance criteria must include structure quality validation"
+    category: "contract_design"
+    severity: "high"
+  - lesson: "fd -H patch demonstrates effective targeted fixes"
+    category: "validation"
+    severity: "medium"
+
+action_items_recorded:
+  - type: "UPDATE_SKILL"
+    target: "domain-expert"
+    description: "Add single-pass document writing rule to checklist"
+    priority: "HIGH"
+    auto_applied: false
+  - type: "UPDATE_SKILL"
+    target: "domain-expert"
+    description: "Add post-generation structure validation step"
+    priority: "HIGH"
+    auto_applied: false
+  - type: "RECORD_GAP"
+    target: "knowledge-base/gaps.md"
+    description: "Sprint Contract AC design patterns for structure quality"
+    priority: "MEDIUM"
+    auto_applied: false
+
+# Next Generation Targets
+next_generation_targets:
+  target_score: 0.85
+  primary_focus: "structure_quality improvement to 0.85+"
+  key_interventions:
+    - "Single-pass Write tool usage enforcement"
+    - "AC enhancement for structural validation"
+  expected_outcome: "Golden example threshold achievement"
+
+# Meta Configuration
+meta_improvement_enabled: false
+auto_updates_applied: 0
+manual_review_required: true
