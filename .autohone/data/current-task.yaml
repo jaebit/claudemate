@@ -1,89 +1,63 @@
-plan:
-  context:
-    criteria_file: criteria-harness.yaml
-    domain_type: infra
-    generation: gen-052
-    improvement_over: gen-051
-    key_fix: AC ^## [^#] 패턴 + post-write 중복 탐지 의무화
-    model_used: claude-sonnet-4-6
-    output_dir: .analysis/gen-052/
-    scope:
-      agents:
-      - analyst
-      - architect
-      - bootstrapper
-      - builder
-      - compliance-checker
-      - fixer
-      - planner
-      - reviewer
-      fixtures:
-      - sample_context_manifest.json
-      - sample_task_plan.md
-      schemas:
-      - last_review.schema.json
-      - metrics.schema.json
-      - mode.schema.json
-      tests:
-      - test_insight_collector.py
-      - test_plugin_structure.py
-    skill_version: domain-expert@1.4.0
-    skills_needed:
-    - domain-expert
-    - quality-gate
-    task_type: technical-analysis
-  created_at: '2026-04-11T19:10:00+09:00'
-  id: plan-20260411-gen-052-crew-analysis
-  sprints:
-  - acceptance_criteria:
-    - test -f .analysis/gen-052/agent-matrix.md && [ "$(wc -l < .analysis/gen-052/agent-matrix.md
-      | tr -d ' ')" -ge 20 ]
-    - grep -qi 'analyst\|architect\|builder\|planner' .analysis/gen-052/agent-matrix.md
-    - grep -qi 'schema\|스키마' .analysis/gen-052/agent-matrix.md
-    - grep -qi 'role\|역할\|responsibility\|책임' .analysis/gen-052/agent-matrix.md
-    - '[ "$(grep -c ''^## [^#]'' .analysis/gen-052/agent-matrix.md)" -ge 2 ] && [
-      "$(grep -c ''^## [^#]'' .analysis/gen-052/agent-matrix.md)" -le 6 ]'
-    - fd -H -t f . plugins/crew/agents/ | wc -l | awk '{if($1==8) exit 0; else exit
-      1}'
-    dependencies: []
-    description: '8개 에이전트의 역할·책임·도구를 fd -H로 탐색 후 읽어 집계.
+---
+agent: "planner"
+episode_id: "plan-20260411-gen-053-gemini-analysis"
+timestamp: "2026-04-11T19:45:00+09:00"
 
-      3개 JSON 스키마를 jq로 파싱하여 필드·타입 확인.
+payload:
+  plan:
+    id: "plan-20260411-gen-053-gemini-analysis"
+    title: "gemini-cli 플러그인 커맨드·훅 심층 분석"
+    status: "in_progress"
+    created_at: "2026-04-11T19:45:00+09:00"
 
-      agent-matrix.md를 single-pass Write로 생성.
+    sprints:
+      - id: "sprint-1"
+        title: "커맨드 역할 매트릭스 + 훅 분석"
+        status: "planned"
+        description: "gemini-cli의 6개 커맨드(ask, commit, docs, release, review, search)의 목적·트리거·도구를 매트릭스로 분석하고, hooks.json + session-init.mjs의 아키텍처 패턴을 문서화"
+        acceptance_criteria:
+          - "`fd -H -t f . plugins/gemini-cli/commands/` 실행하여 6개 .md 파일 존재 확인"
+          - "`wc -l < .analysis/gen-053/command-matrix.md | tr -d ' '` 결과가 80 이상"
+          - "`grep -c '^## [^#]' .analysis/gen-053/command-matrix.md` 결과가 4개"
+          - "`grep -c '|.*|.*|.*|' .analysis/gen-053/command-matrix.md` 결과가 7 이상 (테이블 헤더+6개 커맨드)"
+          - "`grep -c 'hooks.json\\|session-init.mjs' .analysis/gen-053/command-matrix.md` 결과가 2 이상"
+          - "`grep -c 'PreToolUse\\|PostToolUse\\|session-init' .analysis/gen-053/command-matrix.md` 결과가 1 이상"
+        skills_needed: ["domain-expert", "quality-gate"]
+        dependencies: []
 
-      '
-    id: sprint-1
-    skills_needed:
-    - domain-expert
-    status: planned
-    title: 에이전트 역할 매트릭스 + 스키마 파싱 분석
-  - acceptance_criteria:
-    - test -f .analysis/gen-052/crew-report.md && [ "$(wc -l < .analysis/gen-052/crew-report.md
-      | tr -d ' ')" -ge 30 ]
-    - grep -E '\[P0\]|\[P1\]|\[P2\]' .analysis/gen-052/crew-report.md | wc -l | awk
-      '{if($1>=3) exit 0; else exit 1}'
-    - grep -qi 'test\|커버리지\|coverage' .analysis/gen-052/crew-report.md
-    - grep -qi '개선\|improve\|recommend' .analysis/gen-052/crew-report.md
-    - '[ "$(grep -c ''^## [^#]'' .analysis/gen-052/crew-report.md)" -ge 3 ] && [ "$(grep
-      -c ''^## [^#]'' .analysis/gen-052/crew-report.md)" -le 8 ]'
-    - grep -qi 'schema\|스키마\|json' .analysis/gen-052/crew-report.md
-    dependencies:
-    - sprint-1
-    description: '2개 테스트 파일의 커버리지 범위 분석.
+      - id: "sprint-2"
+        title: "아키텍처 비교 보고서 + 리스크·개선 권고"
+        status: "planned"
+        description: "crew vs gemini-cli 아키텍처 패턴 비교, P0/P1/P2 리스크 식별, 개선 로드맵 작성. crew 플러그인을 골든 예제로 참조하여 gemini-cli의 구조적 차이점과 개선 포인트를 도출"
+        acceptance_criteria:
+          - "`wc -l < .analysis/gen-053/gemini-report.md | tr -d ' '` 결과가 120 이상"
+          - "`grep -c '^## [^#]' .analysis/gen-053/gemini-report.md` 결과가 5개"
+          - "`grep -c '\\[P0\\]\\|\\[P1\\]\\|\\[P2\\]' .analysis/gen-053/gemini-report.md` 결과가 3 이상"
+          - "`grep -c 'crew.*vs.*gemini-cli\\|gemini-cli.*vs.*crew' .analysis/gen-053/gemini-report.md` 결과가 1 이상"
+          - "`grep -c 'MCP.*server\\|mcp.*integration' .analysis/gen-053/gemini-report.md` 결과가 2 이상"
+          - "`grep -c 'roadmap\\|improvement\\|recommendation' .analysis/gen-053/gemini-report.md` 결과가 2 이상"
+        skills_needed: ["domain-expert", "quality-gate"]
+        dependencies: ["sprint-1"]
 
-      에이전트-스키마-테스트 의존성 매핑.
-
-      P0/P1/P2 리스크(jq 근거 명시) + 개선 로드맵.
-
-      crew-report.md를 single-pass Write로 생성.
-
-      '
-    id: sprint-2
-    skills_needed:
-    - domain-expert
-    - quality-gate
-    status: planned
-    title: 테스트 커버리지 분석 + 리스크·개선 보고서
-  status: completed
-  title: crew 플러그인 에이전트·스키마·테스트 심층 분석
+    context:
+      domain_type: "general"
+      task_type: "technical-analysis"
+      generation: "gen-053"
+      output_dir: ".analysis/gen-053/"
+      model_used: "claude-sonnet-4-6"
+      handoff_style: "structured_handoff"
+      golden_pattern_source: "gen-052"
+      target_files:
+        commands: ["ask.md", "commit.md", "docs.md", "release.md", "review.md", "search.md"]
+        hooks: ["hooks.json", "session-init.mjs"]
+        config: [".claude-plugin/plugin.json"]
+      analysis_constraints:
+        ac_pattern: "'^## [^#]'"
+        file_discovery: "fd -H -t f"
+        single_pass_write: true
+        duplicate_detection: "grep -c"
+        line_count: "wc -l < file | tr -d ' '"
+      relevant_reflections: []
+      relevant_skills: ["domain-expert", "quality-gate"]
+      skill_rotation_applied: true
+      rotation_reason: "domain-expert와 quality-gate는 미사용 스킬이므로 로테이션 정책에 따라 우선 배정"
