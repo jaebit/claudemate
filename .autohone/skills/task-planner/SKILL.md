@@ -135,6 +135,36 @@ acceptance_criteria에서 fully-qualified 경로를 grep하면 false-negative가
 
 ---
 
+## technical-analysis 태스크 복잡도 기준 (ref-20260411T195800)
+
+`technical-analysis` task_type에서 `insight_depth` 점수는 **분석 대상의 구조적 복잡도**에 직접 의존한다.
+태스크 선택 전 복잡도 점수를 계산하여 최소 기준을 충족하는 대상을 선택할 것.
+
+### 복잡도 점수 계산
+
+| 요소 | 배점 |
+|------|------|
+| 에이전트 파일 수 (agents/*.md) | +2점/개 |
+| JSON 스키마 파일 수 (*.schema.json) | +3점/개 |
+| 테스트 파일 수 (test_*.py, *.test.ts) | +2점/개 |
+| 훅 구현 파일 수 (hooks/*.mjs, hooks/*.py) | +1점/개 |
+| 커맨드 파일 수 (commands/*.md) | +1점/개 |
+| MCP 서버 파일 수 (servers/*.py) | +3점/개 |
+
+**최소 권장 복잡도**: 10점 이상 (insight_depth 0.85+ 달성 목표 시)
+
+### 실제 사례
+
+| 플러그인 | 복잡도 점수 | insight_depth | 참고 |
+|---------|------------|--------------|------|
+| crew | 8×2 + 3×3 + 2×2 = **29점** | 0.88 | gen-052, 골든 예제 |
+| gemini-cli | 0 + 0 + 0 + 1×1 + 6×1 = **7점** | 0.82 | gen-053, 미달 |
+
+**규칙**: 복잡도 점수 < 10점인 단일 플러그인은 `technical-analysis` 대상으로 단독 선택하지 말 것.
+대안: 복수 플러그인 비교 분석 또는 복잡도 높은 플러그인(arch-guard, autopilot) 선택.
+
+---
+
 ## 자체 검토 체크리스트 (계획 완성 후)
 
 계획을 저장하기 전 반드시 확인:
@@ -145,6 +175,7 @@ acceptance_criteria에서 fully-qualified 경로를 grep하면 false-negative가
 - [ ] 유지 확인 기준에 `> 0`이 명시되어 있는가?
 - [ ] 각 스프린트의 `files:` 필드가 채워져 있는가?
 - [ ] 이전 세대 아카이브에 `deferred_items`가 있는가? 있다면 이번 계획에 흡수했는가?
+- [ ] **[technical-analysis]** 분석 대상의 복잡도 점수가 10점 이상인가? (복잡도 기준 섹션 참조)
 
 체크리스트 하나라도 미통과 시 기준 수정 후 저장.
 
