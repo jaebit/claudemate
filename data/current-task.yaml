@@ -1,4 +1,117 @@
+agent: planner
+generation: gen-057
 plan:
+  id: plan-20260412-gen-057-memfactory-rl
+  title: "Phase 4 MemFactory RL MVP"
+  task_type: implementation
+  status: in_progress
+  created_at: '2026-04-12T04:36:00+09:00'
+
+  context:
+    domain_type: backend
+    model_used: claude-sonnet-4-6
+    skill_rotation_applied: true
+    rotation_reason: "agent-contract (usage_count=0) and context-budget (usage_count=0) included for skill diversification"
+    domain_constraints:
+      - "Single Python file ≤300 lines — split modules if exceeded"
+      - "Write/Edit후 python3 syntax validation required"
+      - "Documentation Write 1회 completion only"
+    existing_infrastructure:
+      - "memory_cli.py (611줄) — needs modularization"
+      - "knowledge_mcp.py (228줄) — compliant, minor extension planned"
+      - "wiki_cli.py (615줄) — exceeds limit but out of scope"
+      - "knowledge/30-memory/facts/ and experiences/ — empty, ready for population"
+    relevant_reflections: []
+    relevant_skills:
+      - "domain-expert (composite_score: 0.694)"
+      - "multi-model-debate (composite_score: 0.628)"
+
+  complexity_score: 17
+  complexity_breakdown:
+    new_files: 9  # 3 new files × 3pt each
+    backend_system: 4  # Backend infrastructure implementation
+    mcp_extension: 2   # Minor knowledge_mcp.py extension
+    cli_interface: 2   # CLI implementation for memory_distill.py
+
+  sprints:
+    - id: sprint-1
+      title: "Memory Distillation Engine"
+      goal: "Implement atomic memory compression and cleanup system for knowledge/30-memory/ directories"
+      deliverables:
+        - path: "knowledge/00-meta/tools/memory_distill.py"
+          description: "Memory distillation engine with group_by_topic, merge_notes, prune_stale, distill functions"
+          constraints:
+            - "≤300 lines total"
+            - "CLI interface with --dry-run, --min-confidence, --max-age-days options"
+            - "Targets knowledge/30-memory/experiences/ and facts/ compression"
+      skills_needed: ["domain-expert", "agent-contract"]
+      dependencies: []
+      acceptance_criteria:
+        - id: AC1
+          description: "File exists and syntax is valid"
+          command: "test -f knowledge/00-meta/tools/memory_distill.py && python3 -c \"import ast; ast.parse(open('knowledge/00-meta/tools/memory_distill.py').read())\""
+          expected: "No output (exit code 0)"
+        - id: AC2
+          description: "File size within 300-line constraint"
+          command: "test $(wc -l < knowledge/00-meta/tools/memory_distill.py) -le 300 && echo PASS"
+          expected: "PASS"
+        - id: AC3
+          description: "CLI help displays required options"
+          command: "cd knowledge/00-meta/tools && python3 memory_distill.py --help | grep -E '(dry-run|min-confidence|max-age-days)' | wc -l"
+          expected: "3"
+        - id: AC4
+          description: "All required functions present in code"
+          command: "grep -E '^def (group_by_topic|merge_notes|prune_stale|distill)' knowledge/00-meta/tools/memory_distill.py | wc -l"
+          expected: "4"
+        - id: AC5
+          description: "Dry-run mode executes without errors"
+          command: "cd knowledge/00-meta/tools && python3 memory_distill.py --dry-run --min-confidence 0.5 --max-age-days 30 && echo PASS"
+          expected: "PASS"
+        - id: AC6
+          description: "Memory directories are correctly targeted"
+          command: "grep -E 'knowledge/30-memory/(facts|experiences)' knowledge/00-meta/tools/memory_distill.py | wc -l"
+          expected: "2"
+
+    - id: sprint-2
+      title: "PageIndex + Trajectory Framework"
+      goal: "Implement tree-search PageIndex and JSONL trajectory logging framework for MemFactory RL foundation"
+      deliverables:
+        - path: "knowledge/00-meta/tools/page_index.py"
+          description: "PageIndex tree-search implementation with build_index, search_tree functions"
+          constraints: ["≤200 lines"]
+        - path: "knowledge/00-meta/tools/trajectory_log.py"
+          description: "JSONL trajectory logging with accumulation and statistics"
+          constraints: ["≤200 lines"]
+        - path: "knowledge/00-meta/tools/knowledge_mcp.py"
+          description: "Extended with page_index_search tool (maintain ≤300 lines total)"
+          constraints: ["Total file ≤300 lines after extension"]
+      skills_needed: ["context-budget", "multi-model-debate"]
+      dependencies: []
+      acceptance_criteria:
+        - id: AC1
+          description: "page_index.py exists and syntax is valid"
+          command: "test -f knowledge/00-meta/tools/page_index.py && python3 -c \"import ast; ast.parse(open('knowledge/00-meta/tools/page_index.py').read())\""
+          expected: "No output (exit code 0)"
+        - id: AC2
+          description: "page_index.py within 200-line constraint"
+          command: "test $(wc -l < knowledge/00-meta/tools/page_index.py) -le 200 && echo PASS"
+          expected: "PASS"
+        - id: AC3
+          description: "trajectory_log.py exists and syntax is valid"
+          command: "test -f knowledge/00-meta/tools/trajectory_log.py && python3 -c \"import ast; ast.parse(open('knowledge/00-meta/tools/trajectory_log.py').read())\""
+          expected: "No output (exit code 0)"
+        - id: AC4
+          description: "trajectory_log.py within 200-line constraint"
+          command: "test $(wc -l < knowledge/00-meta/tools/trajectory_log.py) -le 200 && echo PASS"
+          expected: "PASS"
+        - id: AC5
+          description: "knowledge_mcp.py maintains size constraint after extension"
+          command: "test $(wc -l < knowledge/00-meta/tools/knowledge_mcp.py) -le 300 && echo PASS"
+          expected: "PASS"
+        - id: AC6
+          description: "Required functions present across new modules"
+          command: "grep -E '^def (build_index|search_tree)' knowledge/00-meta/tools/page_index.py | wc -l && grep -E 'page_index_search' knowledge/00-meta/tools/knowledge_mcp.py | wc -l"
+          expected: "2\n1"
   id: "plan-20260411-160000"
   title: "claudemate 플러그인 아키텍처 기술 도메인 분석"
   status: "in_progress"

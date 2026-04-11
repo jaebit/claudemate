@@ -1,67 +1,107 @@
 agent: planner
-generation: gen-056
+generation: gen-057
 plan:
+  id: plan-20260412-gen-057-memfactory-rl
+  title: "Phase 4 MemFactory RL MVP"
+  task_type: implementation
+  status: in_progress
+  created_at: '2026-04-12T04:36:00+09:00'
+
   context:
-    domain_constraints:
-    - '300줄 상한 규칙: 단일 파일 300줄 초과 시 모듈 분리 필수'
-    - 'Python syntax 검증: python3 -c ''import ast; ast.parse(...)'' 통과 필수'
-    - 'MCP 서버 표준: 라우팅과 핸들러 분리, 에러 처리 포함'
-    - 'gen-055 교훈 적용: 611줄 memory_cli.py의 모듈화 문제 해결'
     domain_type: backend
-    handoff_details:
-      handoff_style: structured_handoff
-      key_files:
-      - /Users/urd_book/Projects/claudemate/knowledge/00-meta/tools/memory_cli.py
-        (611줄, 모듈화 필요)
-      - /Users/urd_book/Projects/claudemate/knowledge/10-wiki/graph.json (의존성 그래프)
-      - /Users/urd_book/Projects/claudemate/knowledge/00-meta/retrieval-budget.yaml
-        (토큰 예산)
-      - /Users/urd_book/Projects/claudemate/knowledge/00-meta/dashboard.md (업데이트 대상)
-      sprint_context_limit: 5
     model_used: claude-sonnet-4-6
-    relevant_reflections: []
-    relevant_skills:
-    - domain-expert
-    - agent-contract
-    - context-budget
-    - quality-gate
-    - pipeline-orchestrator
-    rotation_reason: agent-contract, context-budget, pipeline-orchestrator have usage_count=0,
-      applying diversity policy
-    skill_rotation_applied: true
-  created_at: '2026-04-11T21:04:00Z'
-  id: plan-20260411-gen-056-mcp-wrapper
+    domain_constraints:
+      - "Single Python file ≤300 lines — split modules if exceeded"
+      - "Write/Edit후 python3 syntax validation required"
+      - "Documentation Write 1회 completion only"
+      - "fd -H: 파일시스템 탐색 시 숨김 디렉토리 포함 필수"
+    existing_infrastructure:
+      - "memory_cli.py (611줄) — needs modularization (out of scope this sprint)"
+      - "knowledge_mcp.py (228줄) — compliant, minor extension planned"
+      - "knowledge/30-memory/facts/ and experiences/ — empty, ready for population"
+    design_source: ".debate/20260411-000400-final-design-consolidation/report.md"
+    phase_scope:
+      note: "MemFactory full RL requires 100+ trajectories; MVP = distillation + trajectory format + PageIndex"
+
+  complexity_score: 17
+  complexity_breakdown:
+    new_python_files: "3 files × 3pt = 9pt"
+    mcp_extension: "MCP서버 확장 +3pt"
+    cli_interface: "2 CLI tools +2pt"
+    integration: "existing infra 연동 +3pt"
+
   sprints:
-  - acceptance_criteria:
-    - MCP 서버 메인 파일 knowledge/00-meta/tools/knowledge_mcp.py 존재
-    - graph_query 도구가 MCP 서버에 정의됨 (graph.json 관계 조회)
-    - memory_search 도구가 MCP 서버에 정의됨 (30-memory/ 키워드 검색)
-    - wiki_lookup 도구가 MCP 서버에 정의됨 (10-wiki/ 모듈 페이지 조회)
-    - retrieve_context 도구가 MCP 서버에 정의됨 (토큰 예산 내 컨텍스트 조합)
-    - 메인 파일이 300줄 이하로 유지됨 (모듈화 규칙 적용)
-    dependencies: []
-    id: sprint-1
-    skills_needed:
-    - domain-expert
-    - agent-contract
-    - context-budget
-    status: completed
-    title: MCP Thin Wrapper Server Implementation
-  - acceptance_criteria:
-    - dashboard.md에 Dataview 쿼리 포함 (vault 건강 지표)
-    - 통합 테스트 파일 knowledge/00-meta/tools/integration_test.py 존재
-    - MCP 서버 Python syntax 유효성 검증 통과
-    - 통합 테스트 Python syntax 유효성 검증 통과
-    - dashboard에 memory/wiki/module 통계 포함
-    - 통합 테스트에 assert 또는 검증 로직 포함
-    dependencies:
-    - sprint-1
-    id: sprint-2
-    skills_needed:
-    - quality-gate
-    - pipeline-orchestrator
-    status: completed
-    title: Obsidian Dataview 대시보드 + 통합 검증
-  status: completed
-  title: 'Phase 3: Knowledge Vault MCP Thin Wrapper + Obsidian Integration'
-timestamp: 2026-04-11 21:04:00+00:00
+    - id: sprint-1
+      title: "Memory Distillation Engine"
+      goal: "Implement atomic memory compression and cleanup system for knowledge/30-memory/"
+      deliverables:
+        - path: "knowledge/00-meta/tools/memory_distill.py"
+          description: "Memory distillation engine (≤300줄)"
+          constraints:
+            - "≤300 lines total"
+            - "CLI: --dry-run, --min-confidence, --max-age-days"
+            - "Targets knowledge/30-memory/experiences/ and facts/"
+      acceptance_criteria:
+        - id: AC1
+          description: "파일 존재 및 syntax 유효"
+          command: "test -f knowledge/00-meta/tools/memory_distill.py && python3 -c \"import ast; ast.parse(open('knowledge/00-meta/tools/memory_distill.py').read())\" && echo PASS"
+          expected: "PASS"
+        - id: AC2
+          description: "300줄 상한 준수"
+          command: "test $(wc -l < knowledge/00-meta/tools/memory_distill.py) -le 300 && echo PASS"
+          expected: "PASS"
+        - id: AC3
+          description: "CLI --help에 3개 옵션 모두 표시"
+          command: "python3 knowledge/00-meta/tools/memory_distill.py --help | grep -cE '(dry-run|min-confidence|max-age-days)'"
+          expected: "3"
+        - id: AC4
+          description: "핵심 함수 4개 포함"
+          command: "grep -cE '^def (group_by_topic|merge_notes|prune_stale|distill)' knowledge/00-meta/tools/memory_distill.py"
+          expected: "4"
+        - id: AC5
+          description: "dry-run 모드 오류 없음"
+          command: "python3 knowledge/00-meta/tools/memory_distill.py --dry-run --min-confidence 0.5 --max-age-days 30 && echo PASS"
+          expected: "PASS"
+        - id: AC6
+          description: "30-memory 디렉토리 경로 참조 포함"
+          command: "grep -c '30-memory' knowledge/00-meta/tools/memory_distill.py"
+          expected: "≥2"
+
+    - id: sprint-2
+      title: "PageIndex + Trajectory Framework"
+      goal: "Tree-search PageIndex + JSONL trajectory logging for MemFactory RL foundation"
+      deliverables:
+        - path: "knowledge/00-meta/tools/page_index.py"
+          description: "PageIndex tree-search (≤200줄)"
+          constraints: ["≤200 lines", "build_index + search_tree functions"]
+        - path: "knowledge/00-meta/tools/trajectory_log.py"
+          description: "JSONL trajectory logging (≤200줄)"
+          constraints: ["≤200 lines", "log + query + stats subcommands"]
+        - path: "knowledge/00-meta/tools/knowledge_mcp.py"
+          description: "page_index_search tool 추가 (≤300줄 유지)"
+          constraints: ["Total ≤300 lines after extension"]
+      acceptance_criteria:
+        - id: AC1
+          description: "page_index.py 존재 및 syntax 유효"
+          command: "test -f knowledge/00-meta/tools/page_index.py && python3 -c \"import ast; ast.parse(open('knowledge/00-meta/tools/page_index.py').read())\" && echo PASS"
+          expected: "PASS"
+        - id: AC2
+          description: "page_index.py ≤200줄"
+          command: "test $(wc -l < knowledge/00-meta/tools/page_index.py) -le 200 && echo PASS"
+          expected: "PASS"
+        - id: AC3
+          description: "trajectory_log.py 존재 및 syntax 유효"
+          command: "test -f knowledge/00-meta/tools/trajectory_log.py && python3 -c \"import ast; ast.parse(open('knowledge/00-meta/tools/trajectory_log.py').read())\" && echo PASS"
+          expected: "PASS"
+        - id: AC4
+          description: "trajectory_log.py ≤200줄"
+          command: "test $(wc -l < knowledge/00-meta/tools/trajectory_log.py) -le 200 && echo PASS"
+          expected: "PASS"
+        - id: AC5
+          description: "knowledge_mcp.py ≤300줄 유지"
+          command: "test $(wc -l < knowledge/00-meta/tools/knowledge_mcp.py) -le 300 && echo PASS"
+          expected: "PASS"
+        - id: AC6
+          description: "build_index/search_tree 함수 및 page_index_search MCP tool 존재"
+          command: "grep -cE '^def (build_index|search_tree)' knowledge/00-meta/tools/page_index.py && grep -c 'page_index_search' knowledge/00-meta/tools/knowledge_mcp.py"
+          expected: "2\n1"
