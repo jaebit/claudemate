@@ -7,12 +7,11 @@ Provides capture, query, promote, and status operations.
 """
 
 import argparse
-import json
 import re
 import sys
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict
 
 # Memory directories
 MEMORY_BASE = Path("knowledge/30-memory")
@@ -373,6 +372,165 @@ def cmd_status(args: argparse.Namespace) -> int:
 
     return 0
 
+
+def cmd_retrieve(args: argparse.Namespace) -> int:
+    """Retrieve memories based on task type and budget constraints."""
+    import yaml
+
+    # Load retrieval budget configuration
+    budget_file = Path(__file__).parent / "retrieval-budget.yaml"
+    if not budget_file.exists():
+        print(f"Error: Budget configuration not found at {budget_file}", file=sys.stderr)
+        return 1
+
+    try:
+        with open(budget_file, 'r') as f:
+            config = yaml.safe_load(f)
+        budget = config['retrieval_budget'][args.task_type]
+    except Exception as e:
+        print(f"Error loading budget configuration: {e}", file=sys.stderr)
+        return 1
+
+    # Token estimation ratio (4 chars ≈ 1 token)
+    token_ratio = config.get('token_estimation_ratio', 4)
+
+    memory_root = Path.home() / ".claudemate" / "memory"
+    wiki_root = Path(__file__).parents[2] / "10-wiki"  # knowledge/10-wiki/
+
+    results = []
+    total_tokens = 0
+
+    # 1. Wiki memory (highest priority)
+    if wiki_root.exists() and budget['wiki_tokens'] > 0:
+        wiki_files = list(wiki_root.rglob("*.md"))
+        for wiki_file in wiki_files:
+            if total_tokens >= budget['total_budget']:
+                break
+
+            # Module filter
+            if args.module and args.module.lower() not in str(wiki_file).lower():
+                continue
+
+            try:
+                content = wiki_file.read_text()
+                estimated_tokens = len(content) // token_ratio
+
+                if total_tokens + estimated_tokens <= budget['wiki_tokens']:
+                    results.append({
+                        'type': 'wiki',
+                        'path': wiki_file,
+                        'tokens': estimated_tokens,
+                        'content': content
+                    })
+                    total_tokens += estimated_tokens
+            except:
+                continue
+
+    # 2. Factual memory
+    facts_dir = memory_root / "facts"
+    if facts_dir.exists() and budget['factual_tokens'] > 0:
+        fact_files = list(facts_dir.glob("*.md"))
+        for fact_file in fact_files:
+            if total_tokens >= budget['total_budget']:
+                break
+
+            # Module filter
+            if args.module:
+                try:
+                    content = fact_file.read_text()
+                    frontmatter, _ = parse_simple_yaml_frontmatter(content)
+                    modules = frontmatter.get('modules', [])
+                    if isinstance(modules, str):
+                        modules = [modules]
+                    if args.module not in modules:
+                        continue
+                except:
+                    continue
+
+            try:
+                content = fact_file.read_text()
+                estimated_tokens = len(content) // token_ratio
+
+                if total_tokens + estimated_tokens <= budget['factual_tokens']:
+                    results.append({
+                        'type': 'factual',
+                        'path': fact_file,
+                        'tokens': estimated_tokens,
+                        'content': content
+                    })
+                    total_tokens += estimated_tokens
+            except:
+                continue
+
+    # 3. Experiential memory (top-k by confidence/recency)
+    experiences_dir = memory_root / "experiences"
+    if experiences_dir.exists() and budget['experiential_tokens'] > 0:
+        exp_candidates = []
+        exp_files = list(experiences_dir.glob("*.md"))
+
+        for exp_file in exp_files:
+            # Module filter
+            if args.module:
+                try:
+                    content = exp_file.read_text()
+                    frontmatter, _ = parse_simple_yaml_frontmatter(content)
+                    modules = frontmatter.get('modules', [])
+                    if isinstance(modules, str):
+                        modules = [modules]
+                    if args.module not in modules:
+                        continue
+                except:
+                    continue
+
+            try:
+                content = exp_file.read_text()
+                frontmatter, _ = parse_simple_yaml_frontmatter(content)
+                confidence = frontmatter.get('confidence', 0.5)
+                estimated_tokens = len(content) // token_ratio
+
+                exp_candidates.append({
+                    'path': exp_file,
+                    'confidence': confidence,
+                    'tokens': estimated_tokens,
+                    'content': content,
+                    'mtime': exp_file.stat().st_mtime
+                })
+            except:
+                continue
+
+        # Sort by confidence desc, then recency desc
+        exp_candidates.sort(key=lambda x: (x['confidence'], x['mtime']), reverse=True)
+
+        exp_tokens_used = 0
+        for candidate in exp_candidates:
+            if total_tokens >= budget['total_budget']:
+                break
+            if exp_tokens_used + candidate['tokens'] <= budget['experiential_tokens']:
+                results.append({
+                    'type': 'experiential',
+                    'path': candidate['path'],
+                    'tokens': candidate['tokens'],
+                    'content': candidate['content']
+                })
+                total_tokens += candidate['tokens']
+                exp_tokens_used += candidate['tokens']
+
+    # Output results
+    print(f"Retrieval Results for task-type: {args.task_type}")
+    print(f"Budget: {budget['total_budget']} tokens, Used: {total_tokens} tokens")
+    print("=" * 50)
+
+    for result in results:
+        print(f"\n[{result['type'].upper()}] {result['path'].name} ({result['tokens']} tokens)")
+        print("-" * 40)
+        print(result['content'])
+
+    if not results:
+        print("No memories found matching criteria.")
+
+    return 0
+
+
 def main() -> int:
     """Main CLI entry point."""
     parser = argparse.ArgumentParser(
@@ -418,6 +576,12 @@ Examples:
     # Status command
     subparsers.add_parser('status', help='Show memory vault status')
 
+    # Retrieve command
+    retrieve_parser = subparsers.add_parser('retrieve', help='Retrieve memories by task type with budget constraints')
+    retrieve_parser.add_argument('task_type', choices=['explore', 'locate', 'edit', 'validate'],
+                                help='Task type for retrieval budget')
+    retrieve_parser.add_argument('--module', help='Filter by specific module')
+
     # Parse arguments
     args = parser.parse_args()
 
@@ -438,6 +602,8 @@ Examples:
         return cmd_promote(args)
     elif args.command == 'status':
         return cmd_status(args)
+    elif args.command == 'retrieve':
+        return cmd_retrieve(args)
     else:
         print(f"Unknown command: {args.command}", file=sys.stderr)
         return 1
