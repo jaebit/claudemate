@@ -1,4 +1,58 @@
 agent: planner
+payload:
+  plan:
+    id: plan-20260411-gen-055-memory-pipeline
+    title: Phase 2 — memory pipeline (capture/query/promote/retrieve + hook)
+    status: in_progress
+    created_at: '2026-04-11T20:41:00+09:00'
+    context:
+      task_type: implementation
+      generation: gen-055
+      domain_type: infra
+      model_used: claude-sonnet-4-6
+      design_source: .debate/20260411-000400-final-design-consolidation/report.md
+      phase: 2
+      improvement_over: gen-054
+      key_improvement: "Phase 2 memory pipeline 구현 (gen-054 Phase 1 knowledge vault 확장)"
+      skill_rotation_applied: true
+      rotation_reason: "agent-contract(usage=0), context-budget(usage=0) 미사용 스킬 우선 배정"
+      skills_needed:
+        - domain-expert
+        - agent-contract
+        - context-budget
+      scope:
+        new_files:
+          - knowledge/00-meta/tools/memory_cli.py
+          - knowledge/00-meta/retrieval-budget.yaml
+          - knowledge/00-meta/tools/memory_hook.py
+        modified_files: []
+
+    sprints:
+      - id: sprint-1
+        title: memory_cli.py 핵심 서브커맨드 구현
+        status: planned
+        acceptance_criteria:
+          - "test -f knowledge/00-meta/tools/memory_cli.py"
+          - "grep -q 'capture' knowledge/00-meta/tools/memory_cli.py"
+          - "grep -q 'query' knowledge/00-meta/tools/memory_cli.py"
+          - "grep -q 'promote' knowledge/00-meta/tools/memory_cli.py"
+          - "grep -q 'status' knowledge/00-meta/tools/memory_cli.py"
+          - "grep -q 'argparse\\|click\\|typer' knowledge/00-meta/tools/memory_cli.py"
+        skills_needed: ["domain-expert"]
+        dependencies: []
+
+      - id: sprint-2
+        title: retrieval budget + Stop hook 통합
+        status: planned
+        acceptance_criteria:
+          - "test -f knowledge/00-meta/retrieval-budget.yaml"
+          - "grep -q 'explore\\|locate\\|edit\\|validate' knowledge/00-meta/retrieval-budget.yaml"
+          - "grep -q 'retrieve' knowledge/00-meta/tools/memory_cli.py"
+          - "test -f knowledge/00-meta/tools/memory_hook.py"
+          - "grep -qi 'capture\\|memory\\|save' knowledge/00-meta/tools/memory_hook.py"
+          - "grep -qi 'token\\|budget\\|limit' knowledge/00-meta/retrieval-budget.yaml"
+        skills_needed: ["agent-contract", "context-budget"]
+        dependencies: ["sprint-1"]
 task: autopilot으로 knowledge vault 최종 설계 구현
 generation: gen-054
 timestamp: 2026-04-11T20:13:00+09:00
