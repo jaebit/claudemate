@@ -90,6 +90,23 @@ domain/knowledge-base/
 
 > **배경**: gen-054(scaffold, 0.88)와 gen-055(tool-impl, 0.73)의 15포인트 차이는 파일 크기/모듈화 차이가 주된 원인. scaffold 태스크는 자연히 높은 structure_quality를 얻지만, tool 구현은 의식적 모듈화가 필요하다.
 
+### Python 에러 핸들링 가이드 (implementation task_type용, ref-20260412T045500)
+
+코드를 생성하는 태스크에서 `failure_handling` 및 `resumability` 점수를 유지하기 위한 규칙:
+
+1. **bare except 금지**: `except: pass` / `except: continue` 대신 구체적 예외 타입 명시
+   - 허용: `except (OSError, UnicodeDecodeError): continue`
+   - 금지: `except: continue` — 모든 예외를 무음으로 삼킴 (디버깅 불가)
+2. **CLI 입력 경계 검증 필수**: argparse 인자에 타입·범위·경로 검증 추가
+   - 예: `if not 0.0 <= args.min_confidence <= 1.0: parser.error("min-confidence must be 0~1")`
+3. **파일시스템 graceful degradation**: 디렉토리/파일 부재 시 stderr 경고 후 계속
+   - 예: `if not d.exists(): print(f"[skip] {d} — not found", file=sys.stderr); continue`
+4. **누적 데이터 도구 (JSONL 로거 등): idempotent 재실행 설계**
+   - append-only 금지 — 동일 session_id 재기록 시 덮어쓰기 또는 skip 처리
+   - 체크포인트 저장: 중간 결과를 별도 `.checkpoint` 파일에 기록하여 재시작 지원
+
+> **배경**: gen-057(0.83, Phase 4 MemFactory) — failure_handling 0.70 + resumability 0.75가 golden 0.85 미달 원인. 12/12 AC 전부 통과했지만 방어 코딩 패턴 부재가 NFR 평가 항목 감점.
+
 ### 규칙 적용 우선순위
 
 1. 안전 규칙 (security rules) — 최우선
