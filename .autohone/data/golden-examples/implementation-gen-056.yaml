@@ -2,11 +2,11 @@ golden_example:
   task_type: "implementation"
   generation: "gen-056"
   score: 0.88
-  timestamp: "2026-04-11T12:16:12.302259+00:00"
+  timestamp: "2026-04-11T12:21:15.563170+00:00"
   summary: |
-    Phase 3 MCP thin wrapper + Obsidian Dataview dashboard + 통합 테스트. knowledge_mcp.py 228줄(300줄 상한 준수), 4개 MCP 도구(graph_query, memory_search, wiki_lookup, retrieve_context), integration_test.py 257줄(9개 테스트 함수). 12/12 AC 완벽 통과.
-  skills_used: [domain-expert@1.5.0,quality-gate]
+    v1.5.0 300줄 규칙이 conciseness +0.20, structure_quality +0.17 개선. MCP thin wrapper + 통합 테스트로 Phase 3 완성.
+  skills_used: [domain-expert, quality-gate]
   key_decisions: |
-    300줄 상한 규칙 적용으로 gen-055의 conciseness 병목 해소; JSON-RPC 2.0 MCP 패턴; filesystem-first 원칙(MCP는 그래프 쿼리+검색만); 통합 테스트 동반으로 functionality 확보
+    300줄 상한 규칙 적용, filesystem-first MCP wrapper 설계, 통합 테스트를 Sprint 2에 포함
   lessons: |
-    1) 300줄 상한 규칙은 tool-impl 태스크의 conciseness/structure_quality를 0.15+ 개선한다. 2) MCP 서버는 thin wrapper로 구현하고 복잡한 로직은 기존 CLI 도구를 import하여 재사용하면 코드 중복을 피할 수 있다. 3) 통합 테스트를 스프린트 2에 포함시키면 functionality 점수가 상승한다.
+    모듈화 가이드는 implementation 태스크의 가장 효과적인 품질 레버. 통합 테스트를 별도 스프린트로 분리하지 않고 포함하면 functionality 향상.

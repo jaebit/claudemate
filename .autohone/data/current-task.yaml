@@ -1,57 +1,67 @@
 agent: planner
 generation: gen-056
-timestamp: 2026-04-11T21:04:00Z
-
 plan:
-  id: "plan-20260411-gen-056-mcp-wrapper"
-  title: "Phase 3: Knowledge Vault MCP Thin Wrapper + Obsidian Integration"
-  status: "in_progress"
-  created_at: "2026-04-11T21:04:00Z"
-
-  sprints:
-    - id: "sprint-1"
-      title: "MCP Thin Wrapper Server Implementation"
-      status: "planned"
-      acceptance_criteria:
-        - "MCP 서버 메인 파일 knowledge/00-meta/tools/knowledge_mcp.py 존재"
-        - "graph_query 도구가 MCP 서버에 정의됨 (graph.json 관계 조회)"
-        - "memory_search 도구가 MCP 서버에 정의됨 (30-memory/ 키워드 검색)"
-        - "wiki_lookup 도구가 MCP 서버에 정의됨 (10-wiki/ 모듈 페이지 조회)"
-        - "retrieve_context 도구가 MCP 서버에 정의됨 (토큰 예산 내 컨텍스트 조합)"
-        - "메인 파일이 300줄 이하로 유지됨 (모듈화 규칙 적용)"
-      skills_needed: ["domain-expert", "agent-contract", "context-budget"]
-      dependencies: []
-
-    - id: "sprint-2"
-      title: "Obsidian Dataview 대시보드 + 통합 검증"
-      status: "planned"
-      acceptance_criteria:
-        - "dashboard.md에 Dataview 쿼리 포함 (vault 건강 지표)"
-        - "통합 테스트 파일 knowledge/00-meta/tools/integration_test.py 존재"
-        - "MCP 서버 Python syntax 유효성 검증 통과"
-        - "통합 테스트 Python syntax 유효성 검증 통과"
-        - "dashboard에 memory/wiki/module 통계 포함"
-        - "통합 테스트에 assert 또는 검증 로직 포함"
-      skills_needed: ["quality-gate", "pipeline-orchestrator"]
-      dependencies: ["sprint-1"]
-
   context:
-    domain_type: "backend"
-    model_used: "claude-sonnet-4-6"
-    skill_rotation_applied: true
-    rotation_reason: "agent-contract, context-budget, pipeline-orchestrator have usage_count=0, applying diversity policy"
-    relevant_reflections: []
-    relevant_skills: ["domain-expert", "agent-contract", "context-budget", "quality-gate", "pipeline-orchestrator"]
     domain_constraints:
-      - "300줄 상한 규칙: 단일 파일 300줄 초과 시 모듈 분리 필수"
-      - "Python syntax 검증: python3 -c 'import ast; ast.parse(...)' 통과 필수"
-      - "MCP 서버 표준: 라우팅과 핸들러 분리, 에러 처리 포함"
-      - "gen-055 교훈 적용: 611줄 memory_cli.py의 모듈화 문제 해결"
+    - '300줄 상한 규칙: 단일 파일 300줄 초과 시 모듈 분리 필수'
+    - 'Python syntax 검증: python3 -c ''import ast; ast.parse(...)'' 통과 필수'
+    - 'MCP 서버 표준: 라우팅과 핸들러 분리, 에러 처리 포함'
+    - 'gen-055 교훈 적용: 611줄 memory_cli.py의 모듈화 문제 해결'
+    domain_type: backend
     handoff_details:
-      sprint_context_limit: 5
-      handoff_style: "structured_handoff"
+      handoff_style: structured_handoff
       key_files:
-        - "/Users/urd_book/Projects/claudemate/knowledge/00-meta/tools/memory_cli.py (611줄, 모듈화 필요)"
-        - "/Users/urd_book/Projects/claudemate/knowledge/10-wiki/graph.json (의존성 그래프)"
-        - "/Users/urd_book/Projects/claudemate/knowledge/00-meta/retrieval-budget.yaml (토큰 예산)"
-        - "/Users/urd_book/Projects/claudemate/knowledge/00-meta/dashboard.md (업데이트 대상)"
+      - /Users/urd_book/Projects/claudemate/knowledge/00-meta/tools/memory_cli.py
+        (611줄, 모듈화 필요)
+      - /Users/urd_book/Projects/claudemate/knowledge/10-wiki/graph.json (의존성 그래프)
+      - /Users/urd_book/Projects/claudemate/knowledge/00-meta/retrieval-budget.yaml
+        (토큰 예산)
+      - /Users/urd_book/Projects/claudemate/knowledge/00-meta/dashboard.md (업데이트 대상)
+      sprint_context_limit: 5
+    model_used: claude-sonnet-4-6
+    relevant_reflections: []
+    relevant_skills:
+    - domain-expert
+    - agent-contract
+    - context-budget
+    - quality-gate
+    - pipeline-orchestrator
+    rotation_reason: agent-contract, context-budget, pipeline-orchestrator have usage_count=0,
+      applying diversity policy
+    skill_rotation_applied: true
+  created_at: '2026-04-11T21:04:00Z'
+  id: plan-20260411-gen-056-mcp-wrapper
+  sprints:
+  - acceptance_criteria:
+    - MCP 서버 메인 파일 knowledge/00-meta/tools/knowledge_mcp.py 존재
+    - graph_query 도구가 MCP 서버에 정의됨 (graph.json 관계 조회)
+    - memory_search 도구가 MCP 서버에 정의됨 (30-memory/ 키워드 검색)
+    - wiki_lookup 도구가 MCP 서버에 정의됨 (10-wiki/ 모듈 페이지 조회)
+    - retrieve_context 도구가 MCP 서버에 정의됨 (토큰 예산 내 컨텍스트 조합)
+    - 메인 파일이 300줄 이하로 유지됨 (모듈화 규칙 적용)
+    dependencies: []
+    id: sprint-1
+    skills_needed:
+    - domain-expert
+    - agent-contract
+    - context-budget
+    status: completed
+    title: MCP Thin Wrapper Server Implementation
+  - acceptance_criteria:
+    - dashboard.md에 Dataview 쿼리 포함 (vault 건강 지표)
+    - 통합 테스트 파일 knowledge/00-meta/tools/integration_test.py 존재
+    - MCP 서버 Python syntax 유효성 검증 통과
+    - 통합 테스트 Python syntax 유효성 검증 통과
+    - dashboard에 memory/wiki/module 통계 포함
+    - 통합 테스트에 assert 또는 검증 로직 포함
+    dependencies:
+    - sprint-1
+    id: sprint-2
+    skills_needed:
+    - quality-gate
+    - pipeline-orchestrator
+    status: completed
+    title: Obsidian Dataview 대시보드 + 통합 검증
+  status: completed
+  title: 'Phase 3: Knowledge Vault MCP Thin Wrapper + Obsidian Integration'
+timestamp: 2026-04-11 21:04:00+00:00
