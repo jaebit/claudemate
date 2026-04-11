@@ -1,0 +1,107 @@
+generation_archive:
+  generation_id: "gen-049"
+  timestamp: "2026-04-11T17:47:00+09:00"
+  parent_id: "gen-048"
+
+  task_execution:
+    task_type: "technical-analysis"
+    task_id: "plan-20260411-160000-deepfake-freedom"
+    score: 0.75
+    verdict: "PASS"
+    sprints_completed: 2
+    total_runtime_minutes: 45
+
+  artifacts_produced:
+    analysis_files:
+      - ".analysis/gen-049/structure-map.md"
+      - ".analysis/gen-049/risk-report.md"
+      - ".analysis/gen-049/plugin-compliance-summary.md"
+    deliverable_quality: "adequate"
+    completeness_score: 0.85
+
+  skills_performance:
+    skills_used:
+      - name: "domain-expert"
+        version: "1.1.0"
+        utility_score: 0.62
+        usage_count: 17
+        performance: "mixed"
+        issues: ["숨김 디렉토리 탐지 실패"]
+
+      - name: "quality-gate"
+        version: "1.5.0"
+        utility_score: 0.8
+        usage_count: 34
+        performance: "excellent"
+        status: "hardened"
+
+    skill_library_state:
+      active_skills: 8
+      hardened_skills: 1
+      total_skills: 9
+      avg_utility_score: 0.68
+
+  failure_analysis:
+    primary_failure_mode: "fact_verification_missed"
+    root_cause: "숨김 디렉토리(.claude-plugin/) 탐지 실패로 plugin.json 존재 사실 누락"
+    critical_impact: "P0 리스크 허위 양성 → accuracy 0.65로 하락"
+
+    accuracy_breakdown:
+      structural_analysis: 0.90  # 전체 구조 파악 우수
+      fact_verification: 0.40   # 핵심 사실 검증 실패
+      risk_assessment: 0.65     # 허위 양성으로 신뢰도 하락
+
+  improvement_trajectory:
+    current_generation_metrics:
+      task_success_rate: 1.0     # PASS
+      avg_quality_score: 0.75
+      skill_count: 9
+      golden_example_count: 0    # score < 0.85
+
+    vs_baseline_gen_001:
+      score_improvement: "+0.05"  # 가정: gen-001 = 0.70
+      skill_library_growth: "+7"
+      knowledge_base_expansion: "+15 gaps resolved"
+
+    vs_previous_gen_048:
+      score_delta: -0.18         # gen-048: 0.93 (multi-model-debate)
+      trend_note: "task_type 상이로 직접 비교 부적절"
+
+    trend_classification: "mixed"
+    trend_rationale: "score는 하락했으나 다른 task_type이므로 skill 일반화 능력으로 해석"
+
+  golden_examples:
+    saved_this_generation: false
+    skip_reason: "score 0.75 < threshold 0.85"
+    candidate_task_type: "technical-analysis"
+    next_threshold_target: 0.85
+
+  addressed_gaps:
+    # 이번 세대에서 해결된 지식 갭은 없음
+    count: 0
+    gaps_resolved: []
+
+  new_gaps_identified:
+    - gap_id: "GAP-024"
+      description: "숨김 디렉토리 탐지 패턴 부재"
+      severity: "high"
+      affects_skills: ["domain-expert"]
+
+  meta_learning:
+    key_insight: "파일 시스템 탐색에서 기본 명령어 옵션 누락이 fact verification에 치명적 영향"
+    pattern_discovered: "critical claim (0%/100%) 발표 전 교차 검증 필요성"
+
+  next_generation_priorities:
+    - priority: "HIGH"
+      action: "domain-expert 스킬에 숨김 파일 탐지 패턴 추가"
+    - priority: "HIGH"
+      action: "critical claim verification 단계 의무화"
+    - priority: "MEDIUM"
+      action: "technical-analysis task_type 전용 체크리스트 개발"
+
+  model_config:
+    planner: "claude-sonnet-4-6"
+    worker: "claude-sonnet-4-6"
+    evaluator: "claude-sonnet-4-6"
+    reflector: "claude-sonnet-4-6"
+    context_strategy: "structured_handoff"
