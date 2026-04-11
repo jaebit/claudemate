@@ -1,0 +1,128 @@
+generation_id: "gen-051"
+task_type: "technical-analysis"
+timestamp: "2026-04-11T18:50:00+09:00"
+parent_id: "gen-050"
+
+execution_summary:
+  outcome: "PASS"
+  score: 0.78
+  attempts: 2
+  hotfix_applied: true
+  sprint_count: 2
+  duration_minutes: 45
+  model_used: "sonnet"
+
+task_metadata:
+  description: "플러그인 훅 매트릭스 분석 (세 번째 실행)"
+  complexity: "medium"
+  domain: "plugin-architecture"
+  sprint_contracts:
+    - id: "sprint-051-1"
+      status: "failed"
+      acceptance_criteria: "level-2 헤딩 4개 확인"
+      failure_reason: "grep -c '^##' 패턴이 ### 서브섹션도 매칭하여 13 오탐"
+    - id: "sprint-051-2"
+      status: "passed"
+      acceptance_criteria: "level-2 헤딩 4개 확인 (수정된 패턴)"
+      hotfix_applied: "grep -c '^## [^#]' 패턴으로 수정"
+
+artifacts_created:
+  - path: ".analysis/gen-051/hooks-matrix.md"
+    type: "analysis_document"
+    size_lines: 87
+    quality_score: 0.75
+  - path: ".analysis/gen-051/hooks-report.md"
+    type: "report_document"
+    size_lines: 156
+    quality_score: 0.80
+
+performance_metrics:
+  dimension_scores:
+    completeness: 0.90
+    accuracy: 0.80
+    actionability: 0.85
+    structure_quality: 0.75
+    coverage: 0.85
+  primary_bottleneck: "structure_quality"
+  bottleneck_cause: "post-write 중복 탐지 스텝 미실행"
+
+skills_applied:
+  - name: "domain-expert"
+    version: "1.3.0"
+    contribution: "primary"
+    effectiveness: 0.75
+    issues: "post-write 중복 탐지 규칙이 Worker 실행까지 연결 안 됨"
+  - name: "quality-gate"
+    version: "1.0.0"
+    contribution: "secondary"
+    effectiveness: 0.85
+    issues: "없음"
+
+failure_analysis:
+  root_cause_primary: "AC 헤딩 카운트 패턴 오류"
+  root_cause_secondary: "post-write 중복 탐지 미실행"
+  pattern_failure: "grep -c '^##' → ### 서브섹션도 매칭"
+  pattern_fix: "grep -c '^## [^#]' 또는 grep -c '^## ' 사용"
+  skill_gap: "Worker가 SKILL.md 업데이트를 실행 단계에 반영하지 않음"
+
+golden_example:
+  saved: false
+  skip_reason: "score_below_threshold"
+  threshold_required: 0.85
+  actual_score: 0.78
+
+generation_trends:
+  three_gen_pattern: "정체"
+  score_progression:
+    gen_049: 0.75
+    gen_050: 0.78
+    gen_051: 0.78
+  dimension_deltas:
+    vs_gen_050:
+      completeness: +0.05
+      accuracy: 0.00
+      actionability: 0.00
+      structure_quality: +0.10
+      coverage: -0.05
+    vs_gen_049:
+      completeness: +0.05
+      accuracy: +0.15
+      actionability: +0.05
+      structure_quality: -0.10
+      coverage: 0.00
+
+improvement_indicators:
+  positive:
+    - "구조 품질 0.65→0.75 회복"
+    - "완성도 지속적 개선 (0.85→0.90)"
+    - "hotfix 적용으로 1차 실패 해결"
+  concerning:
+    - "3세대 연속 0.78 정체"
+    - "accuracy vs structure_quality trade-off 지속"
+    - "v1.3.0 스킬 업데이트의 Worker 실행 연결 미흡"
+
+next_generation_forecast:
+  target_score: 0.85
+  key_improvements_needed:
+    - "AC 패턴 정밀도: '^## [^#]' 의무화"
+    - "post-write 검증 자동화"
+    - "두 차원 동시 0.85+ 달성"
+  risk_factors:
+    - "4세대 연속 정체 시 롤백 고려 필요"
+    - "accuracy 개선이 structure_quality 희생으로 이어질 위험"
+
+cost_analysis:
+  total_tokens: 42150
+  cost_usd: 1.82
+  attempts_overhead: 0.45
+  hotfix_cost: 0.23
+
+knowledge_gaps_addressed:
+  - gap_id: "none"
+    status: "none identified"
+
+meta_insights:
+  session_efficiency: 0.70
+  pattern_recognition: "AC 설계 패턴 문제 식별 성공"
+  adaptation_speed: "hotfix 1회로 신속 해결"
+  learning_consolidation: "v1.3.0 스킬 실행 연결 개선 필요"

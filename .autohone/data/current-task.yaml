@@ -76,5 +76,5 @@ plan:
     - quality-gate
     status: planned
     title: 패턴 분석 + 미구현 원인 + 리스크·개선 보고서
-  status: evaluating
+  status: completed
   title: claudemate Hooks 아키텍처 전수 분석

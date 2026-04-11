@@ -1,0 +1,75 @@
+reflection:
+  id: "ref-20260411T185000"
+  task_id: "gen-051"
+  sprint_id: "sprint-051-2"
+  timestamp: "2026-04-11T18:50:00+09:00"
+  outcome: "PASS"
+  score: 0.78
+  attempts: 2
+  hotfix_used: true
+  task_type: "technical-analysis"
+
+  root_cause_analysis:
+    category: "pattern_missing"
+    description: "AC 헤딩 카운트 패턴 오류와 post-write 중복 탐지 미실행"
+    evidence:
+      - "1차 시도에서 grep -c '^##' 패턴이 ### 서브섹션도 매칭하여 13 오탐"
+      - "hotfix로 수정 후 정확한 4개 헤딩 확인하여 PASS 달성"
+      - "structure_quality 0.75로 v1.3.0 post-write 중복 탐지 스텝 미실행"
+      - "3세대 연속 0.78 정체: accuracy 회복했으나 structure_quality 병목"
+
+  detailed_analysis:
+    root_causes:
+      - id: "RC-051-1"
+        description: "AC grep -c '^##' 패턴이 ### 서브섹션도 매칭하여 오탐 → 1차 FAIL"
+        fix: "'^## [^#]' 또는 '^## ' 패턴으로 level-2 헤딩만 정확히 카운트"
+        applies_to: "sprint-contract-design"
+        severity: "high"
+      - id: "RC-051-2"
+        description: "single-pass Write 후 post-write 중복 탐지 스텝 미실행 → structure_quality 0.75"
+        fix: "SKILL.md의 '중복 탐지' 스텝을 Worker 프롬프트에 강제 포함"
+        applies_to: "domain-expert"
+        severity: "medium"
+
+  self_critique: "AC 패턴 설계에서 마크다운 레벨별 구분 미고려, v1.3.0 스킬 업데이트가 Worker 실행까지 연결 안 됨"
+
+  action_items:
+    - type: "UPDATE_SKILL"
+      target: "skills/domain-expert/"
+      description: "문서 생성 패턴 섹션에 AC 헤딩 카운트 패턴 설계 규칙 추가: '^## [^#]' 사용 의무화"
+      priority: "HIGH"
+    - type: "UPDATE_SKILL"
+      target: "skills/domain-expert/"
+      description: "post-write 중복 탐지를 의무 스텝으로 격상: Write 후 반드시 grep -c '<key_item>' 실행"
+      priority: "HIGH"
+    - type: "UPDATE_KNOWLEDGE"
+      target: "gaps.md"
+      description: "Sprint Contract AC 설계 가이드라인: 마크다운 헤딩 카운트 시 레벨별 패턴 명시"
+      priority: "MEDIUM"
+
+  lessons_learned:
+    - "AC에서 마크다운 헤딩 수 검증 시 '^## [^#]' 패턴 사용 — '^##'는 ### 포함"
+    - "v1.3.0 post-write 중복 탐지 스텝이 Worker에 명시적으로 전달되어야 실행됨"
+    - "3세대 연속 0.78 정체: accuracy-structure_quality trade-off 해결이 0.85 돌파 핵심"
+
+  three_generation_trend:
+    pattern: "정체"
+    scores:
+      gen_049: 0.75
+      gen_050: 0.78
+      gen_051: 0.78
+    bottleneck: "두 차원 동시 0.85+ 달성 미완 (accuracy vs structure_quality)"
+    next_target: "gen-052: 0.85+ (AC 패턴 + post-write 검증 동시 적용)"
+
+  performance_deltas:
+    vs_gen_050:
+      total_score: 0.00
+      completeness: +0.05
+      accuracy: 0.00
+      actionability: 0.00
+      structure_quality: +0.10
+      coverage: -0.05
+    vs_gen_049:
+      total_score: +0.03
+      accuracy: +0.15
+      structure_quality: -0.10
