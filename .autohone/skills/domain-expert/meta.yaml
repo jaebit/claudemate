@@ -1,0 +1,16 @@
+name: "domain-expert"
+version: "1.2.0"
+created_at: "2026-03-28T04:33:58Z"
+updated_at: "2026-04-11T08:59:43.454216+00:00"
+utility_score: 0.68
+usage_count: 15
+success_count: 15
+success_rate: 1.0
+status: "active"
+changelog:
+  - version: 2
+    date: "2026-03-28T19:20:00Z"
+    change: "Level 2에 '문서 작성 완결성 체크리스트' 섹션 추가 (ref-20260328-192000)"
+  - version: 3
+    date: "2026-04-11T08:59:00Z"
+    change: "P0 패치(ref-20260411T174700): 체크리스트 항목 1에 숨김 디렉토리 탐색 의무화(fd -H/eza -a) 추가, 항목 6 'Critical Claim 교차 검증' 신규 추가 — gen-049 accuracy 0.65 원인 해소"
