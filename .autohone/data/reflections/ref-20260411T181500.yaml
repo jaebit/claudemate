@@ -1,0 +1,51 @@
+reflection:
+  id: "ref-20260411T181500"
+  task_id: "plan-20260411-gen-050-plugin-analysis-v2"
+  sprint_id: "sprint-2"
+  timestamp: "2026-04-11T18:15:00+09:00"
+  outcome: "PASS"
+  score: 0.78
+  root_cause_analysis:
+    category: "pattern_missing"
+    description: "Worker가 문서를 incremental append로 작성하여 구조적 중복 발생. AC가 키워드만 검증하고 중복 구조를 검출하지 못함"
+    evidence:
+      - "structure-map.md에서 autopilot 행 등 중복 내용 발견"
+      - "structure_quality 점수가 0.85→0.65로 -0.20 하락"
+      - "Worker가 single-pass Write 대신 incremental append 사용"
+  self_critique: "gen-049 accuracy 패치는 성공했으나, 문서 생성 방식의 구조적 문제를 놓침. AC 설계 시 구조 품질 검증 누락"
+  action_items:
+    - type: "UPDATE_SKILL"
+      target: "skills/domain-expert/"
+      description: "체크리스트에 'single-pass 문서 작성' 규칙 추가 — incremental append 금지, Write 도구 1회 사용"
+      priority: "HIGH"
+    - type: "UPDATE_SKILL"
+      target: "skills/domain-expert/"
+      description: "문서 생성 후 중복 검증 스텝 추가: wc -l과 실제 섹션 수 비교로 구조 무결성 확인"
+      priority: "HIGH"
+    - type: "RECORD_GAP"
+      target: "domain/knowledge-base/gaps.md"
+      description: "Sprint Contract AC 설계 패턴 — 구조 품질(중복 행, 섹션 완결성) 검증 AC 예시 부족"
+      priority: "MEDIUM"
+  lessons_learned:
+    - "문서 생성 시 단일 패스(single-pass) Write 도구 사용 필수 — append는 구조적 중복 유발"
+    - "AC에 구조 품질 검증 패턴 추가 필요 (중복 행 검출, 섹션 완결성)"
+    - "gen-049 fd -H 패치 효과 확인됨 — accuracy 0.65→0.80 개선"
+  previous_fix_verification:
+    gen_049_patch: "fd -H 숨김 디렉토리 탐색"
+    verification_result: "성공"
+    evidence: "accuracy 점수 0.65→0.80 (+0.15 개선), plugin.json 7개 모두 정확히 발견"
+  dimension_analysis:
+    improved:
+      - dimension: "accuracy"
+        delta: +0.15
+        reason: "fd -H 패치로 숨김 파일 탐색 개선"
+      - dimension: "actionability"
+        delta: +0.05
+        reason: "분석 결과의 실행 가능성 향상"
+    declined:
+      - dimension: "structure_quality"
+        delta: -0.20
+        reason: "incremental append로 인한 문서 중복 구조"
+        bottleneck: true
+  golden_example_saved: false
+  golden_example_skip_reason: "score_below_threshold"
