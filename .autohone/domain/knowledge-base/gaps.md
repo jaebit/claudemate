@@ -1,5 +1,19 @@
 # 도메인 지식 갭 기록
 
+## GAP-001 — 숨김 디렉토리 탐색 패턴 (2026-04-11, gen-049)
+
+**발견 경위**: technical-analysis 태스크에서 Worker가 `.claude-plugin/` 숨김 디렉토리를
+미탐색하여 plugin.json 전면 누락이라는 허위 양성 생성 → accuracy 0.65
+
+**갭 내용**: 파일시스템 분석 태스크에서 dot-prefix 디렉토리(`.claude-plugin/`, `.autohone/` 등)를
+포함한 완전 탐색 패턴이 Worker 프롬프트에 명시되지 않음
+
+**해결 상태**: ✅ domain-expert SKILL.md v1.2.0에 반영 (2026-04-11)
+- 체크리스트 항목 1: `fd -H` / `eza -a` 의무화
+- 체크리스트 항목 6: Critical Claim 교차 검증 추가
+
+**재발 방지**: Sprint Contract AC에 `fd -H -t f` 기반 검증 명령 포함 권장
+
 Reflector가 태스크 실패 시 도메인 지식 부족을 감지하면 이 파일에 기록합니다.
 
 ## 형식
