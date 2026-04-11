@@ -85,5 +85,5 @@ plan:
     - quality-gate
     status: planned
     title: 테스트 커버리지 분석 + 리스크·개선 보고서
-  status: evaluating
+  status: completed
   title: crew 플러그인 에이전트·스키마·테스트 심층 분석

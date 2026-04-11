@@ -1,0 +1,12 @@
+golden_example:
+  task_type: "technical-analysis"
+  generation: "gen-052"
+  score: 0.89
+  timestamp: "2026-04-11T10:32:18.360476+00:00"
+  summary: |
+    crew 플러그인 8개 에이전트·3개 스키마·테스트 심층 분석. 12/12 AC 완벽 통과. agent-matrix.md(103줄) + crew-report.md(117줄) single-pass Write로 생성. P0/P1/P2 리스크 11개 식별.
+  skills_used: [domain-expert@1.4.0,quality-gate]
+  key_decisions: |
+    '^## [^#]' AC 패턴으로 서브섹션 오탐 방지; fd -H로 숨김 디렉토리 포함 탐색; Write 1회 후 즉시 중복 탐지 실행(건너뛰기 금지); ### 서브헤딩 전면 금지로 구조 명확화
+  lessons: |
+    1) Sprint Contract AC를 '^## [^#]' 패턴으로 설계하면 Worker가 서브섹션을 최상위 섹션으로 오인하는 구조 오류를 원천 차단한다. 2) 8개 에이전트처럼 개수가 고정된 분석 대상은 AC에 count 검증을 추가하면 누락을 자동 감지할 수 있다. 3) 중복 탐지를 Write 직후 의무 스텝으로 삽입하면 중복행 발생률이 0으로 수렴한다.

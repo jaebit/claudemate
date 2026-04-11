@@ -1,0 +1,57 @@
+generation: gen-052
+plan_id: plan-20260411-gen-052-crew-analysis
+task_type: technical-analysis
+topic: crew 플러그인 에이전트·스키마·테스트 심층 분석
+created_at: '2026-04-11T19:10:00+09:00'
+completed_at: '2026-04-11T19:32:00+09:00'
+
+score: 0.89
+verdict: PASS
+golden_example_saved: true
+
+dimensions:
+  ac_pass_rate: 1.00
+  accuracy: 0.92
+  structure_quality: 0.95
+  coverage: 0.90
+  insight_depth: 0.88
+  rule_compliance: 1.00
+  format_consistency: 0.90
+  actionability: 0.88
+  conciseness: 0.85
+  timeliness: 1.00
+
+sprints:
+  - id: sprint-1
+    title: 에이전트 역할 매트릭스 + 스키마 파싱 분석
+    output: .analysis/gen-052/agent-matrix.md
+    lines: 103
+    ac_pass_rate: 6/6
+    status: PASS
+
+  - id: sprint-2
+    title: 테스트 커버리지 분석 + 리스크·개선 보고서
+    output: .analysis/gen-052/crew-report.md
+    lines: 117
+    ac_pass_rate: 6/6
+    status: PASS
+
+skill_versions:
+  domain-expert: 1.4.0
+
+key_improvements_over_gen051:
+  - '^## [^#]' AC 패턴 적용으로 서브섹션 오탐 0건
+  - 중복 탐지 의무화로 중복행 0건
+  - 12/12 AC 완벽 통과 (gen-051: 부분 FAIL → hotfix 필요)
+  - 첫 technical-analysis 골든 예제 등록
+
+score_progression:
+  gen-049: 0.75
+  gen-050: 0.78
+  gen-051: 0.78
+  gen-052: 0.89
+
+next_gen_targets:
+  - score >= 0.90 유지
+  - technical-analysis 다른 플러그인(gemini-cli, worktree)으로 확장
+  - 골든 예제 참조 자동화 검증
