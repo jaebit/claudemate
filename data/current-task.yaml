@@ -1,0 +1,44 @@
+plan:
+  id: "plan-20260411-160000"
+  title: "claudemate 플러그인 아키텍처 기술 도메인 분석"
+  status: "in_progress"
+  created_at: "2026-04-11T16:00:00Z"
+
+  sprints:
+    - id: "sprint-1"
+      title: "플러그인 구조 스캔 + 아키텍처 패턴 식별"
+      status: "planned"
+      acceptance_criteria:
+        - "test -f /Users/urd_book/Projects/claudemate/.analysis/gen-049/structure-map.md && wc -l < /Users/urd_book/Projects/claudemate/.analysis/gen-049/structure-map.md | test $(cat) -gt 20"
+        - "grep -q 'Plugin×구성요소 매트릭스' /Users/urd_book/Projects/claudemate/.analysis/gen-049/structure-map.md"
+        - "grep -c 'plugin.json.*valid\\|invalid' /Users/urd_book/Projects/claudemate/.analysis/gen-049/structure-map.md | test $(cat) -eq 7"
+        - "grep -q '공통 패턴\\|이상치' /Users/urd_book/Projects/claudemate/.analysis/gen-049/structure-map.md"
+      skills_needed: ["domain-expert", "context-budget"]
+      dependencies: []
+
+    - id: "sprint-2"
+      title: "의존성 분석 + 리스크 보고서 생성"
+      status: "planned"
+      acceptance_criteria:
+        - "test -f /Users/urd_book/Projects/claudemate/.analysis/gen-049/risk-report.md && wc -l < /Users/urd_book/Projects/claudemate/.analysis/gen-049/risk-report.md | test $(cat) -gt 30"
+        - "grep -c 'P0\\|P1\\|P2' /Users/urd_book/Projects/claudemate/.analysis/gen-049/risk-report.md | test $(cat) -ge 3"
+        - "grep -q '_shared.*분석\\|공유 리소스' /Users/urd_book/Projects/claudemate/.analysis/gen-049/risk-report.md"
+        - "grep -q '단일 장애점\\|테스트 미비\\|스키마 누락' /Users/urd_book/Projects/claudemate/.analysis/gen-049/risk-report.md"
+        - "grep -q '개선 우선순위' /Users/urd_book/Projects/claudemate/.analysis/gen-049/risk-report.md"
+      skills_needed: ["quality-gate", "agent-contract"]
+      dependencies: ["sprint-1"]
+
+  context:
+    domain_type: "infra"
+    model_used: "claude-sonnet-4-6"
+    skill_rotation_applied: true
+    rotation_reason: "미사용 스킬 우선 배정: agent-contract(0회), context-budget(0회) 포함"
+    relevant_reflections: []
+    relevant_skills: ["domain-expert", "quality-gate", "context-budget", "agent-contract"]
+    domain_constraints:
+      - "결과물은 .analysis/gen-049/ 디렉토리에 저장"
+      - "평가 기준: criteria-harness.yaml 사용"
+      - "passing threshold: 0.70, golden example threshold: 0.85"
+    generation: "gen-049"
+    task_type: "technical-analysis"
+    topic: "claudemate 플러그인 아키텍처 기술 도메인 분석"
