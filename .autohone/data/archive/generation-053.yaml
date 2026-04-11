@@ -1,0 +1,64 @@
+generation: gen-053
+plan_id: plan-20260411-gen-053-gemini-analysis
+task_type: technical-analysis
+topic: gemini-cli 플러그인 커맨드·훅 심층 분석
+created_at: '2026-04-11T19:45:00+09:00'
+completed_at: '2026-04-11T19:55:00+09:00'
+
+score: 0.83
+verdict: PASS
+golden_example_saved: false  # 0.85 미달 (0.83)
+
+dimensions:
+  ac_pass_rate: 1.00
+  accuracy: 0.95
+  structure_quality: 0.90
+  coverage: 0.88
+  insight_depth: 0.82
+  rule_compliance: 1.00
+  format_consistency: 0.88
+  actionability: 0.85
+  conciseness: 0.85
+  timeliness: 1.00
+
+sprints:
+  - id: sprint-1
+    title: 커맨드 역할 매트릭스 + 훅 분석
+    output: .analysis/gen-053/command-matrix.md
+    lines: 69
+    ac_pass_rate: 6/6
+    status: PASS
+
+  - id: sprint-2
+    title: 아키텍처 비교 보고서 + 리스크·개선 권고
+    output: .analysis/gen-053/gemini-report.md
+    lines: 80
+    ac_pass_rate: 6/6
+    status: PASS
+
+skill_versions:
+  domain-expert: 1.4.0
+
+gap_to_golden: 0.02  # 0.85 - 0.83
+
+evaluator_recommendations:
+  - 리스크 영향도(impact) 정량화 강화 (현재 정성적 기술)
+  - 성능 분석 심도 확대
+  - 에코시스템 통합 컨텍스트 보강
+
+score_progression:
+  gen-049: 0.75
+  gen-050: 0.78
+  gen-051: 0.78
+  gen-052: 0.89
+  gen-053: 0.83
+
+note: >
+  gemini-cli는 crew보다 구조가 단순(커맨드 전용, 에이전트·스키마 없음)하여
+  분석 대상의 복잡도가 낮았음. insight_depth 0.82가 가장 낮은 차원 —
+  단순 플러그인에서는 crew 수준의 심층 인사이트 생성이 어려움.
+  다음 태스크에서는 복잡도가 높은 플러그인(arch-guard, autopilot)을 선택 권고.
+
+next_gen_targets:
+  - 복잡도 높은 플러그인 선택으로 insight_depth 0.88+ 달성
+  - score 0.85+ 재달성 → technical-analysis 골든 예제 2번째 등록
