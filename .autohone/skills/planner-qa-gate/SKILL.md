@@ -31,6 +31,12 @@ correctly | properly | accurately | completely
 | 파일 부재 | `test ! -f path` |
 | 심볼 부재 | `grep -c 'function foo' file = 0` |
 | 임포트 확인 | `grep -c 'import.*X' file = 1` |
+| Boolean grep | `test -f path && grep -q 'X' path` |
+| 대소문자 무시 grep | `test -f path && grep -qi 'X' path` |
+| 최소 줄 수 (macOS) | `[ "$(wc -l < file \| tr -d ' ')" -ge N ]` |
+| 최소 바이트 수 (macOS) | `[ "$(wc -c < file \| tr -d ' ')" -gt N ]` |
+
+> **macOS 주의**: `wc` 출력에 앞뒤 공백 포함. `| tr -d ' '` 없이 숫자 비교하면 false-negative 발생.
 
 형식 불일치 → **구체적 명령어로 재작성**.
 

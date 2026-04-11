@@ -1,8 +1,8 @@
 name: "task-planner"
-version: "1.7.0"
+version: "1.8.0"
 status: "active"
 created_at: "2026-04-05T12:30:00Z"
-updated_at: "2026-04-11T06:10:00Z"
+updated_at: "2026-04-11T08:15:00Z"
 created_by: "reflector"
 description: "사용자 요청을 구조화된 태스크 계획으로 변환, Contract Validation 품질 기준 준수, 언어별 import 패턴 가이드 포함"
 
@@ -21,6 +21,11 @@ tags:
   - "sprint-design"
 
 changelog:
+  - version: "1.8.0"
+    date: "2026-04-11T08:15:00Z"
+    changes: "허용 AC 패턴 확장: grep -q/-qi (Boolean quiet grep), wc -c (바이트 수), wc -l | tr -d ' ' (macOS-safe 줄 수) 추가. gen-048 deepfake 토론에서 실증된 패턴."
+    adaptation: true
+    trigger: "autohone 동작 점검 | gen-048 AC 패턴 vs SKILL.md 커버리지 갭 발견"
   - version: "1.7.0"
     date: "2026-04-11T06:10:00Z"
     changes: "DEFERRED 항목 전달 패턴 추가: 계획 생성 시 이전 세대 deferred_items 확인 의무화, 자체 검토 체크리스트에 DEFERRED 확인 항목 추가"

@@ -1,8 +1,8 @@
 name: "planner-qa-gate"
-version: "1.2.0"
+version: "1.3.0"
 status: "active"
 created_at: "2026-04-05T12:40:00Z"
-updated_at: "2026-04-10T21:15:00Z"
+updated_at: "2026-04-11T08:15:00Z"
 created_by: "reflector"
 description: "계획 수립 후 acceptance_criteria 품질 검증 — 주관적 문구 + import 패턴 안전성 + 범위 명확성 검증"
 
@@ -25,6 +25,11 @@ tags:
   - "prevention"
 
 changelog:
+  - version: "1.3.0"
+    date: "2026-04-11T08:15:00Z"
+    changes: "Step 2 이진 검증 테이블에 4개 패턴 추가: grep -q/-qi (Boolean quiet grep), wc -l macOS-safe, wc -c (바이트 수). macOS wc 공백 주의 노트 추가. gen-048 AC 패턴 커버리지 갭 해소."
+    adaptation: true
+    trigger: "autohone 동작 점검 | gen-048 AC 패턴 vs QA Gate 인식 범위 갭 발견"
   - version: "1.2.0"
     date: "2026-04-10T21:15:00Z"
     changes: "import 패턴 안전성 검증 단계 추가 (Step 3), gen-044 false-negative 근거 포함"

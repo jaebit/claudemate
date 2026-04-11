@@ -34,7 +34,17 @@
 
 # 임포트 추가 확인
 - "grep -c 'import.*module' file = 1"
+
+# Boolean grep (&&-체인): 파일 존재 + 내용 확인 한 줄
+- "test -f path && grep -q 'pattern' path"
+- "test -f path && grep -qi 'pattern' path"  # 대소문자 무시
+
+# 용량/줄 수 검증 (macOS 호환, wc 공백 제거 필수)
+- "[ \"$(wc -l < file | tr -d ' ')\" -ge 10 ]"   # 최소 줄 수
+- "[ \"$(wc -c < file | tr -d ' ')\" -gt 100 ]"  # 최소 바이트 수
 ```
+
+> **macOS 주의**: `wc -l`/`wc -c` 출력에 앞뒤 공백 포함. 반드시 `| tr -d ' '` 파이프 후 비교.
 
 ---
 
