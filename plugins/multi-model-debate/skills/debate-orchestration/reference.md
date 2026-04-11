@@ -72,6 +72,18 @@ description: "Debate round {N} Gemini evaluation"
 ```
 The sub-agent runs: `gemini -p "<prompt with Gemini perspective>"`
 
+**Codex CLI Fallback** (MCP 미지원 세션):
+```bash
+# run_in_background=true 시 반드시 > file 리디렉션을 명령에 직접 포함
+# 미포함 시 round-N-codex.md 생성 실패 (gen-048 사례)
+codex exec -s read-only "<prompt>" > .debate/<id>/round-N-codex.md
+# 금지: -q 플래그, --full-auto 플래그
+# Round 2+: threadId 연속 불가 — 이전 컨텍스트를 프롬프트에 직접 포함
+```
+
+> **Gemini 품질 기준**: 줄 수가 짧아도 (예: 55줄) 바이트 기준으로 충분할 수 있음.
+> AC 설계 시 줄 수 대신 바이트 기준 권고: `[ $(wc -c < file | tr -d ' ') -ge 2000 ]`
+
 ## Synthesis Comparison Table Template
 
 ```markdown
@@ -113,10 +125,15 @@ The sub-agent runs: `gemini -p "<prompt with Gemini perspective>"`
 ## Consensus Items
 {List of decisions where all agents agreed, with brief rationale}
 
-## Contested Items
-{List of decisions where disagreement remained, with each position summarized}
+## Contested Items / Unresolved Items
+{List of decisions where disagreement remained, with each position summarized.
+모든 DP가 합의에 도달했더라도 이 섹션을 유지 — 가장 약한 합의 항목을 "잠재적 재검토 후보"로 기록.}
 
 ## Recommended Actions
-1. {Concrete next step}
-2. {Concrete next step}
+1. **[P0]** {즉시 실행 가능하거나 다른 액션의 선행 조건}
+2. **[P0]** {동시 진행 가능한 핵심 작업}
+3. **[P1]** {P0 완료 후 실행} (depends: #1)
+4. **[P2]** {선택적 개선·검증} (depends: #3)
+
+<!-- P0: 선행 조건·즉시 고임팩트 | P1: P0 후 핵심 기능 | P2: 선택적 개선 -->
 ```

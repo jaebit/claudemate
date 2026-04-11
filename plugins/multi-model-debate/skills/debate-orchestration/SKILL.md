@@ -55,6 +55,13 @@ Dispatch all 3 agents **in parallel** (single message, 3 tool calls) using the s
 - **Codex**: use the initial `codex` MCP tool call (see reference.md for params). After the call completes, save the returned `threadId` → `state.json workers.codex.thread_id`.
 - **Claude / Gemini**: Agent tool as usual.
 
+> **Codex CLI Fallback** (MCP 미지원 세션): ToolSearch로 `mcp__plugin_codex-cli_codex__codex` 미확인 시:
+> 1. `state.json`에 `"codex_mode": "cli_fallback"` 기록
+> 2. `codex exec -s read-only "<prompt>" > .debate/<id>/round-N-codex.md` 실행
+>    - `-s read-only` 필수 (미지정 시 실패), `-q` / `--full-auto` 금지
+>    - **`run_in_background: true` 시 반드시 `> <file>` 리디렉션을 명령에 직접 포함** — 미포함 시 파일 생성 실패 (gen-048 사례)
+>    - Round 2+에서는 이전 컨텍스트를 프롬프트에 직접 포함 (threadId 연속 불가)
+
 ### Save Results
 - `round-{N}-claude.md`, `round-{N}-codex.md`, `round-{N}-gemini.md`
 - Update `state.json`: `currentRound: 1`, `lastCompletedPhase: "round-1"`, `workers.codex.thread_id: <saved>`
@@ -70,6 +77,8 @@ The orchestrator performs this directly (no sub-agents).
    - **Majority (2:1)**: Two agree, one dissents — carry to next round
    - **Disagreement (1:1:1)**: No alignment — carry to next round
 4. **Save**: `synthesis-round-{N}.md`
+   - **분리 규칙**: `synthesis-round-{N}.md`는 반드시 `report.md`와 **별도 파일**로 저장. report.md에 synthesis 내용을 복사·통합 금지.
+   - Round 2가 단일 DP 집중이더라도 `synthesis-round-2.md` 별도 파일 필수.
 5. **Update `state.json`**: `lastCompletedPhase: "synthesis-{N}"`
 
 **Early exit**: If ALL decision points reach Agreement, skip remaining rounds and go directly to Phase 5.
@@ -91,6 +100,10 @@ Use cross-examination prompt template from [reference.md](reference.md). Dispatc
 ## Phase 5: FINAL CONSENSUS
 
 Generate the final report using the structure from [reference.md](reference.md).
+
+**필수 규칙**:
+- `report.md`에 **Contested Items / Unresolved Items 섹션 필수** — 모든 DP가 합의에 도달했더라도 가장 약한 합의 항목을 "잠재적 재검토 후보"로 명시
+- Recommended Actions에 **P0/P1/P2 우선순위 레이블**과 의존성 명시 필수
 
 ### Finalize
 - Save `report.md`
