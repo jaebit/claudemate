@@ -1,62 +1,89 @@
 plan:
-  id: plan-20260411-gen-052-crew-analysis
-  title: crew 플러그인 에이전트·스키마·테스트 심층 분석
-  status: in_progress
-  created_at: '2026-04-11T19:10:00+09:00'
   context:
-    task_type: technical-analysis
-    generation: gen-052
+    criteria_file: criteria-harness.yaml
     domain_type: infra
+    generation: gen-052
+    improvement_over: gen-051
+    key_fix: AC ^## [^#] 패턴 + post-write 중복 탐지 의무화
     model_used: claude-sonnet-4-6
     output_dir: .analysis/gen-052/
-    criteria_file: criteria-harness.yaml
-    skill_version: domain-expert@1.4.0
-    improvement_over: gen-051
-    key_fix: "AC ^## [^#] 패턴 + post-write 중복 탐지 의무화"
-    skills_needed:
-      - domain-expert
-      - quality-gate
     scope:
-      agents: [analyst, architect, bootstrapper, builder, compliance-checker, fixer, planner, reviewer]
-      schemas: [last_review.schema.json, metrics.schema.json, mode.schema.json]
-      tests: [test_insight_collector.py, test_plugin_structure.py]
-      fixtures: [sample_context_manifest.json, sample_task_plan.md]
+      agents:
+      - analyst
+      - architect
+      - bootstrapper
+      - builder
+      - compliance-checker
+      - fixer
+      - planner
+      - reviewer
+      fixtures:
+      - sample_context_manifest.json
+      - sample_task_plan.md
+      schemas:
+      - last_review.schema.json
+      - metrics.schema.json
+      - mode.schema.json
+      tests:
+      - test_insight_collector.py
+      - test_plugin_structure.py
+    skill_version: domain-expert@1.4.0
+    skills_needed:
+    - domain-expert
+    - quality-gate
+    task_type: technical-analysis
+  created_at: '2026-04-11T19:10:00+09:00'
+  id: plan-20260411-gen-052-crew-analysis
   sprints:
-    - id: sprint-1
-      title: 에이전트 역할 매트릭스 + 스키마 파싱 분석
-      status: planned
-      description: |
-        8개 에이전트의 역할·책임·도구를 fd -H로 탐색 후 읽어 집계.
-        3개 JSON 스키마를 jq로 파싱하여 필드·타입 확인.
-        agent-matrix.md를 single-pass Write로 생성.
-      skills_needed:
-        - domain-expert
-      acceptance_criteria:
-        - "test -f .analysis/gen-052/agent-matrix.md && [ \"$(wc -l < .analysis/gen-052/agent-matrix.md | tr -d ' ')\" -ge 20 ]"
-        - "grep -qi 'analyst\\|architect\\|builder\\|planner' .analysis/gen-052/agent-matrix.md"
-        - "grep -qi 'schema\\|스키마' .analysis/gen-052/agent-matrix.md"
-        - "grep -qi 'role\\|역할\\|responsibility\\|책임' .analysis/gen-052/agent-matrix.md"
-        - "[ \"$(grep -c '^## [^#]' .analysis/gen-052/agent-matrix.md)\" -ge 2 ] && [ \"$(grep -c '^## [^#]' .analysis/gen-052/agent-matrix.md)\" -le 6 ]"
-        - "fd -H -t f . plugins/crew/agents/ | wc -l | awk '{if($1==8) exit 0; else exit 1}'"
-      dependencies: []
+  - acceptance_criteria:
+    - test -f .analysis/gen-052/agent-matrix.md && [ "$(wc -l < .analysis/gen-052/agent-matrix.md
+      | tr -d ' ')" -ge 20 ]
+    - grep -qi 'analyst\|architect\|builder\|planner' .analysis/gen-052/agent-matrix.md
+    - grep -qi 'schema\|스키마' .analysis/gen-052/agent-matrix.md
+    - grep -qi 'role\|역할\|responsibility\|책임' .analysis/gen-052/agent-matrix.md
+    - '[ "$(grep -c ''^## [^#]'' .analysis/gen-052/agent-matrix.md)" -ge 2 ] && [
+      "$(grep -c ''^## [^#]'' .analysis/gen-052/agent-matrix.md)" -le 6 ]'
+    - fd -H -t f . plugins/crew/agents/ | wc -l | awk '{if($1==8) exit 0; else exit
+      1}'
+    dependencies: []
+    description: '8개 에이전트의 역할·책임·도구를 fd -H로 탐색 후 읽어 집계.
 
-    - id: sprint-2
-      title: 테스트 커버리지 분석 + 리스크·개선 보고서
-      status: planned
-      description: |
-        2개 테스트 파일의 커버리지 범위 분석.
-        에이전트-스키마-테스트 의존성 매핑.
-        P0/P1/P2 리스크(jq 근거 명시) + 개선 로드맵.
-        crew-report.md를 single-pass Write로 생성.
-      skills_needed:
-        - domain-expert
-        - quality-gate
-      acceptance_criteria:
-        - "test -f .analysis/gen-052/crew-report.md && [ \"$(wc -l < .analysis/gen-052/crew-report.md | tr -d ' ')\" -ge 30 ]"
-        - "grep -E '\\[P0\\]|\\[P1\\]|\\[P2\\]' .analysis/gen-052/crew-report.md | wc -l | awk '{if($1>=3) exit 0; else exit 1}'"
-        - "grep -qi 'test\\|커버리지\\|coverage' .analysis/gen-052/crew-report.md"
-        - "grep -qi '개선\\|improve\\|recommend' .analysis/gen-052/crew-report.md"
-        - "[ \"$(grep -c '^## [^#]' .analysis/gen-052/crew-report.md)\" -ge 3 ] && [ \"$(grep -c '^## [^#]' .analysis/gen-052/crew-report.md)\" -le 8 ]"
-        - "grep -qi 'schema\\|스키마\\|json' .analysis/gen-052/crew-report.md"
-      dependencies:
-        - sprint-1
+      3개 JSON 스키마를 jq로 파싱하여 필드·타입 확인.
+
+      agent-matrix.md를 single-pass Write로 생성.
+
+      '
+    id: sprint-1
+    skills_needed:
+    - domain-expert
+    status: planned
+    title: 에이전트 역할 매트릭스 + 스키마 파싱 분석
+  - acceptance_criteria:
+    - test -f .analysis/gen-052/crew-report.md && [ "$(wc -l < .analysis/gen-052/crew-report.md
+      | tr -d ' ')" -ge 30 ]
+    - grep -E '\[P0\]|\[P1\]|\[P2\]' .analysis/gen-052/crew-report.md | wc -l | awk
+      '{if($1>=3) exit 0; else exit 1}'
+    - grep -qi 'test\|커버리지\|coverage' .analysis/gen-052/crew-report.md
+    - grep -qi '개선\|improve\|recommend' .analysis/gen-052/crew-report.md
+    - '[ "$(grep -c ''^## [^#]'' .analysis/gen-052/crew-report.md)" -ge 3 ] && [ "$(grep
+      -c ''^## [^#]'' .analysis/gen-052/crew-report.md)" -le 8 ]'
+    - grep -qi 'schema\|스키마\|json' .analysis/gen-052/crew-report.md
+    dependencies:
+    - sprint-1
+    description: '2개 테스트 파일의 커버리지 범위 분석.
+
+      에이전트-스키마-테스트 의존성 매핑.
+
+      P0/P1/P2 리스크(jq 근거 명시) + 개선 로드맵.
+
+      crew-report.md를 single-pass Write로 생성.
+
+      '
+    id: sprint-2
+    skills_needed:
+    - domain-expert
+    - quality-gate
+    status: planned
+    title: 테스트 커버리지 분석 + 리스크·개선 보고서
+  status: evaluating
+  title: crew 플러그인 에이전트·스키마·테스트 심층 분석
