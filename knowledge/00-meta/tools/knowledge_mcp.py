@@ -113,6 +113,20 @@ def wiki_lookup(module_name: str) -> Dict[str, Any]:
     except Exception as e:
         return {"success": False, "error": f"Failed to read wiki page: {str(e)}", "path": str(wiki_file)}
 
+def page_index_search(query: str, max_results: int = 10) -> Dict[str, Any]:
+    """Search knowledge wiki using PageIndex tree-search (no vectors required)."""
+    try:
+        import importlib.util
+        spec = importlib.util.spec_from_file_location(
+            "page_index", Path(__file__).parent / "page_index.py")
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        index = mod.build_index(KNOWLEDGE_ROOT / "10-wiki")
+        results = mod.search_tree(index, query, max_results=max_results)
+        return {"success": True, "query": query, "results": results, "total_indexed": len(index)}
+    except Exception as e:
+        return {"success": False, "error": str(e), "query": query}
+
 def retrieve_context(task_type: str, module: Optional[str] = None) -> Dict[str, Any]:
     """Retrieve context within token budget for task type."""
     budgets = load_yaml_file(BUDGET_PATH).get("retrieval_budget", {})
@@ -173,7 +187,8 @@ def handle_list_tools(params):
         {"name": "graph_query", "description": "Query module relationships from dependency graph", "inputSchema": {"type": "object", "properties": {"module_name": {"type": "string", "description": "Module name to query"}, "relation_type": {"type": "string", "enum": ["dependsOn", "dependedBy", "all"], "default": "all"}}, "required": ["module_name"]}},
         {"name": "memory_search", "description": "Search memory notes by keyword", "inputSchema": {"type": "object", "properties": {"keyword": {"type": "string", "description": "Search keyword"}, "memory_type": {"type": "string", "enum": ["factual", "experiential", "all"], "default": "all"}, "min_confidence": {"type": "number", "minimum": 0, "maximum": 1, "default": 0}}, "required": ["keyword"]}},
         {"name": "wiki_lookup", "description": "Lookup module wiki page content", "inputSchema": {"type": "object", "properties": {"module_name": {"type": "string", "description": "Module name to lookup"}}, "required": ["module_name"]}},
-        {"name": "retrieve_context", "description": "Retrieve token-budget-aware context for task type", "inputSchema": {"type": "object", "properties": {"task_type": {"type": "string", "enum": ["explore", "locate", "edit", "validate"]}, "module": {"type": "string", "description": "Optional module focus"}}, "required": ["task_type"]}}
+        {"name": "retrieve_context", "description": "Retrieve token-budget-aware context for task type", "inputSchema": {"type": "object", "properties": {"task_type": {"type": "string", "enum": ["explore", "locate", "edit", "validate"]}, "module": {"type": "string", "description": "Optional module focus"}}, "required": ["task_type"]}},
+        {"name": "page_index_search", "description": "Tree-based lexical search over knowledge wiki pages", "inputSchema": {"type": "object", "properties": {"query": {"type": "string", "description": "Search query"}, "max_results": {"type": "integer", "default": 10}}, "required": ["query"]}}
     ]}
 
 def handle_call_tool(params):
@@ -189,6 +204,8 @@ def handle_call_tool(params):
             result = wiki_lookup(args["module_name"])
         elif tool_name == "retrieve_context":
             result = retrieve_context(args["task_type"], args.get("module"))
+        elif tool_name == "page_index_search":
+            result = page_index_search(args["query"], args.get("max_results", 10))
         else:
             return {"isError": True, "content": [{"type": "text", "text": f"Unknown tool: {tool_name}"}]}
 
