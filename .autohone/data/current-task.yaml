@@ -1,4 +1,54 @@
 agent: planner
+task: autopilot으로 knowledge vault 최종 설계 구현
+generation: gen-054
+timestamp: 2026-04-11T20:13:00+09:00
+
+plan:
+  id: plan-20260411-gen-054-knowledge-vault
+  title: autopilot으로 knowledge vault 최종 설계 구현
+  status: in_progress
+  created_at: '2026-04-11T20:13:00+09:00'
+  context:
+    task_type: implementation
+    generation: gen-054
+    domain_type: infra
+    model_used: claude-sonnet-4-6
+    design_source: .debate/20260411-000400-final-design-consolidation/report.md
+    execution_engine: autopilot --from-plan
+    skill_version: domain-expert@1.4.0
+    skills_needed:
+      - domain-expert
+      - quality-gate
+    scope:
+      directories:
+        - knowledge/00-meta/
+        - knowledge/10-wiki/modules/
+        - knowledge/10-wiki/cross-cutting/
+        - knowledge/20-notes/
+        - knowledge/30-memory/facts/
+        - knowledge/30-memory/experiences/
+        - knowledge/90-templates/
+      deliverables:
+        - knowledge/ directory scaffold
+        - .autopilot/REPORT.md
+  sprints:
+    - id: sprint-1
+      title: autopilot knowledge vault 구현
+      status: planned
+      description: |
+        autopilot --from-plan으로 debate 최종 설계 보고서를 입력하여
+        knowledge/ vault 전체 scaffold 및 초기 파일을 구현한다.
+      acceptance_criteria:
+        - "test -d knowledge/"
+        - "test -d knowledge/00-meta && test -d knowledge/10-wiki && test -d knowledge/20-notes && test -d knowledge/30-memory"
+        - "test -d knowledge/90-templates"
+        - "test -f .autopilot/REPORT.md"
+        - "test -d knowledge/10-wiki/modules && test -d knowledge/10-wiki/cross-cutting"
+        - "test -d knowledge/30-memory/facts && test -d knowledge/30-memory/experiences"
+      skills_needed:
+        - domain-expert
+        - quality-gate
+      dependencies: []
 episode_id: plan-20260411-gen-053-gemini-analysis
 payload:
   plan:
