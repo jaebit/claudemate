@@ -1,187 +1,57 @@
 agent: planner
-payload:
-  plan:
-    id: plan-20260411-gen-055-memory-pipeline
-    title: Phase 2 — memory pipeline (capture/query/promote/retrieve + hook)
-    status: in_progress
-    created_at: '2026-04-11T20:41:00+09:00'
-    context:
-      task_type: implementation
-      generation: gen-055
-      domain_type: infra
-      model_used: claude-sonnet-4-6
-      design_source: .debate/20260411-000400-final-design-consolidation/report.md
-      phase: 2
-      improvement_over: gen-054
-      key_improvement: "Phase 2 memory pipeline 구현 (gen-054 Phase 1 knowledge vault 확장)"
-      skill_rotation_applied: true
-      rotation_reason: "agent-contract(usage=0), context-budget(usage=0) 미사용 스킬 우선 배정"
-      skills_needed:
-        - domain-expert
-        - agent-contract
-        - context-budget
-      scope:
-        new_files:
-          - knowledge/00-meta/tools/memory_cli.py
-          - knowledge/00-meta/retrieval-budget.yaml
-          - knowledge/00-meta/tools/memory_hook.py
-        modified_files: []
-
-    sprints:
-      - id: sprint-1
-        title: memory_cli.py 핵심 서브커맨드 구현
-        status: planned
-        acceptance_criteria:
-          - "test -f knowledge/00-meta/tools/memory_cli.py"
-          - "grep -q 'capture' knowledge/00-meta/tools/memory_cli.py"
-          - "grep -q 'query' knowledge/00-meta/tools/memory_cli.py"
-          - "grep -q 'promote' knowledge/00-meta/tools/memory_cli.py"
-          - "grep -q 'status' knowledge/00-meta/tools/memory_cli.py"
-          - "grep -q 'argparse\\|click\\|typer' knowledge/00-meta/tools/memory_cli.py"
-        skills_needed: ["domain-expert"]
-        dependencies: []
-
-      - id: sprint-2
-        title: retrieval budget + Stop hook 통합
-        status: planned
-        acceptance_criteria:
-          - "test -f knowledge/00-meta/retrieval-budget.yaml"
-          - "grep -q 'explore\\|locate\\|edit\\|validate' knowledge/00-meta/retrieval-budget.yaml"
-          - "grep -q 'retrieve' knowledge/00-meta/tools/memory_cli.py"
-          - "test -f knowledge/00-meta/tools/memory_hook.py"
-          - "grep -qi 'capture\\|memory\\|save' knowledge/00-meta/tools/memory_hook.py"
-          - "grep -qi 'token\\|budget\\|limit' knowledge/00-meta/retrieval-budget.yaml"
-        skills_needed: ["agent-contract", "context-budget"]
-        dependencies: ["sprint-1"]
-task: autopilot으로 knowledge vault 최종 설계 구현
-generation: gen-054
-timestamp: 2026-04-11T20:13:00+09:00
+generation: gen-056
+timestamp: 2026-04-11T21:04:00Z
 
 plan:
-  id: plan-20260411-gen-054-knowledge-vault
-  title: autopilot으로 knowledge vault 최종 설계 구현
-  status: in_progress
-  created_at: '2026-04-11T20:13:00+09:00'
-  context:
-    task_type: implementation
-    generation: gen-054
-    domain_type: infra
-    model_used: claude-sonnet-4-6
-    design_source: .debate/20260411-000400-final-design-consolidation/report.md
-    execution_engine: autopilot --from-plan
-    skill_version: domain-expert@1.4.0
-    skills_needed:
-      - domain-expert
-      - quality-gate
-    scope:
-      directories:
-        - knowledge/00-meta/
-        - knowledge/10-wiki/modules/
-        - knowledge/10-wiki/cross-cutting/
-        - knowledge/20-notes/
-        - knowledge/30-memory/facts/
-        - knowledge/30-memory/experiences/
-        - knowledge/90-templates/
-      deliverables:
-        - knowledge/ directory scaffold
-        - .autopilot/REPORT.md
+  id: "plan-20260411-gen-056-mcp-wrapper"
+  title: "Phase 3: Knowledge Vault MCP Thin Wrapper + Obsidian Integration"
+  status: "in_progress"
+  created_at: "2026-04-11T21:04:00Z"
+
   sprints:
-    - id: sprint-1
-      title: autopilot knowledge vault 구현
-      status: planned
-      description: |
-        autopilot --from-plan으로 debate 최종 설계 보고서를 입력하여
-        knowledge/ vault 전체 scaffold 및 초기 파일을 구현한다.
+    - id: "sprint-1"
+      title: "MCP Thin Wrapper Server Implementation"
+      status: "planned"
       acceptance_criteria:
-        - "test -d knowledge/"
-        - "test -d knowledge/00-meta && test -d knowledge/10-wiki && test -d knowledge/20-notes && test -d knowledge/30-memory"
-        - "test -d knowledge/90-templates"
-        - "test -f .autopilot/REPORT.md"
-        - "test -d knowledge/10-wiki/modules && test -d knowledge/10-wiki/cross-cutting"
-        - "test -d knowledge/30-memory/facts && test -d knowledge/30-memory/experiences"
-      skills_needed:
-        - domain-expert
-        - quality-gate
+        - "MCP 서버 메인 파일 knowledge/00-meta/tools/knowledge_mcp.py 존재"
+        - "graph_query 도구가 MCP 서버에 정의됨 (graph.json 관계 조회)"
+        - "memory_search 도구가 MCP 서버에 정의됨 (30-memory/ 키워드 검색)"
+        - "wiki_lookup 도구가 MCP 서버에 정의됨 (10-wiki/ 모듈 페이지 조회)"
+        - "retrieve_context 도구가 MCP 서버에 정의됨 (토큰 예산 내 컨텍스트 조합)"
+        - "메인 파일이 300줄 이하로 유지됨 (모듈화 규칙 적용)"
+      skills_needed: ["domain-expert", "agent-contract", "context-budget"]
       dependencies: []
-episode_id: plan-20260411-gen-053-gemini-analysis
-payload:
-  plan:
-    context:
-      analysis_constraints:
-        ac_pattern: '''^## [^#]'''
-        duplicate_detection: grep -c
-        file_discovery: fd -H -t f
-        line_count: wc -l < file | tr -d ' '
-        single_pass_write: true
-      domain_type: general
-      generation: gen-053
-      golden_pattern_source: gen-052
-      handoff_style: structured_handoff
-      model_used: claude-sonnet-4-6
-      output_dir: .analysis/gen-053/
-      relevant_reflections: []
-      relevant_skills:
-      - domain-expert
-      - quality-gate
-      rotation_reason: domain-expert와 quality-gate는 미사용 스킬이므로 로테이션 정책에 따라 우선 배정
-      skill_rotation_applied: true
-      target_files:
-        commands:
-        - ask.md
-        - commit.md
-        - docs.md
-        - release.md
-        - review.md
-        - search.md
-        config:
-        - .claude-plugin/plugin.json
-        hooks:
-        - hooks.json
-        - session-init.mjs
-      task_type: technical-analysis
-    created_at: '2026-04-11T19:45:00+09:00'
-    id: plan-20260411-gen-053-gemini-analysis
-    sprints:
-    - acceptance_criteria:
-      - '`fd -H -t f . plugins/gemini-cli/commands/` 실행하여 6개 .md 파일 존재 확인'
-      - '`wc -l < .analysis/gen-053/command-matrix.md | tr -d '' ''` 결과가 80 이상'
-      - '`grep -c ''^## [^#]'' .analysis/gen-053/command-matrix.md` 결과가 4개'
-      - '`grep -c ''|.*|.*|.*|'' .analysis/gen-053/command-matrix.md` 결과가 7 이상 (테이블
-        헤더+6개 커맨드)'
-      - '`grep -c ''hooks.json\|session-init.mjs'' .analysis/gen-053/command-matrix.md`
-        결과가 2 이상'
-      - '`grep -c ''PreToolUse\|PostToolUse\|session-init'' .analysis/gen-053/command-matrix.md`
-        결과가 1 이상'
-      dependencies: []
-      description: gemini-cli의 6개 커맨드(ask, commit, docs, release, review, search)의
-        목적·트리거·도구를 매트릭스로 분석하고, hooks.json + session-init.mjs의 아키텍처 패턴을 문서화
-      id: sprint-1
-      skills_needed:
-      - domain-expert
-      - quality-gate
-      status: completed
-      title: 커맨드 역할 매트릭스 + 훅 분석
-    - acceptance_criteria:
-      - '`wc -l < .analysis/gen-053/gemini-report.md | tr -d '' ''` 결과가 120 이상'
-      - '`grep -c ''^## [^#]'' .analysis/gen-053/gemini-report.md` 결과가 5개'
-      - '`grep -c ''\[P0\]\|\[P1\]\|\[P2\]'' .analysis/gen-053/gemini-report.md` 결과가
-        3 이상'
-      - '`grep -c ''crew.*vs.*gemini-cli\|gemini-cli.*vs.*crew'' .analysis/gen-053/gemini-report.md`
-        결과가 1 이상'
-      - '`grep -c ''MCP.*server\|mcp.*integration'' .analysis/gen-053/gemini-report.md`
-        결과가 2 이상'
-      - '`grep -c ''roadmap\|improvement\|recommendation'' .analysis/gen-053/gemini-report.md`
-        결과가 2 이상'
-      dependencies:
-      - sprint-1
-      description: crew vs gemini-cli 아키텍처 패턴 비교, P0/P1/P2 리스크 식별, 개선 로드맵 작성. crew
-        플러그인을 골든 예제로 참조하여 gemini-cli의 구조적 차이점과 개선 포인트를 도출
-      id: sprint-2
-      skills_needed:
-      - domain-expert
-      - quality-gate
-      status: completed
-      title: 아키텍처 비교 보고서 + 리스크·개선 권고
-    status: completed
-    title: gemini-cli 플러그인 커맨드·훅 심층 분석
-timestamp: '2026-04-11T19:45:00+09:00'
+
+    - id: "sprint-2"
+      title: "Obsidian Dataview 대시보드 + 통합 검증"
+      status: "planned"
+      acceptance_criteria:
+        - "dashboard.md에 Dataview 쿼리 포함 (vault 건강 지표)"
+        - "통합 테스트 파일 knowledge/00-meta/tools/integration_test.py 존재"
+        - "MCP 서버 Python syntax 유효성 검증 통과"
+        - "통합 테스트 Python syntax 유효성 검증 통과"
+        - "dashboard에 memory/wiki/module 통계 포함"
+        - "통합 테스트에 assert 또는 검증 로직 포함"
+      skills_needed: ["quality-gate", "pipeline-orchestrator"]
+      dependencies: ["sprint-1"]
+
+  context:
+    domain_type: "backend"
+    model_used: "claude-sonnet-4-6"
+    skill_rotation_applied: true
+    rotation_reason: "agent-contract, context-budget, pipeline-orchestrator have usage_count=0, applying diversity policy"
+    relevant_reflections: []
+    relevant_skills: ["domain-expert", "agent-contract", "context-budget", "quality-gate", "pipeline-orchestrator"]
+    domain_constraints:
+      - "300줄 상한 규칙: 단일 파일 300줄 초과 시 모듈 분리 필수"
+      - "Python syntax 검증: python3 -c 'import ast; ast.parse(...)' 통과 필수"
+      - "MCP 서버 표준: 라우팅과 핸들러 분리, 에러 처리 포함"
+      - "gen-055 교훈 적용: 611줄 memory_cli.py의 모듈화 문제 해결"
+    handoff_details:
+      sprint_context_limit: 5
+      handoff_style: "structured_handoff"
+      key_files:
+        - "/Users/urd_book/Projects/claudemate/knowledge/00-meta/tools/memory_cli.py (611줄, 모듈화 필요)"
+        - "/Users/urd_book/Projects/claudemate/knowledge/10-wiki/graph.json (의존성 그래프)"
+        - "/Users/urd_book/Projects/claudemate/knowledge/00-meta/retrieval-budget.yaml (토큰 예산)"
+        - "/Users/urd_book/Projects/claudemate/knowledge/00-meta/dashboard.md (업데이트 대상)"
