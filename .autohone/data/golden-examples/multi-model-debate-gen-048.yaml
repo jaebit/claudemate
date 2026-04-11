@@ -1,0 +1,12 @@
+golden_example:
+  task_type: "multi-model-debate"
+  generation: "gen-048"
+  score: 0.93
+  timestamp: "2026-04-11T07:54:59.422243+00:00"
+  summary: |
+    딥페이크 × 표현의 자유 사회정책 토론. 4/4 DP 3:0 합의 달성. External Knowledge Pre-loading(CIVICUS 2025, Harvard Ash, 오픈넷 헌법소원, EU AI Act)으로 DP-3에서 Codex Medium→High 전환 유도. 한국 공직선거법 §82조의8 과잉금지 위반 합의 + 공동 규제 대안 구체화.
+  skills_used: [multi-model-debate, task-planner]
+  key_decisions: |
+    1. External Knowledge Pre-loading: Tavily 3개 병렬 검색으로 한국법/글로벌 규제/실증 데이터 사전 수집 후 모든 모델 프롬프트에 동일 삽입. 2. DP-3 Round 2 집중: Codex Medium confidence 유보를 헌재 판례 분석(2021·2022 위헌 패턴)으로 High 전환. 3. Codex round-1 파일 리디렉션 오류 → 즉시 재실행으로 복구. 4. 3단계 집행 체계(플랫폼→선관위→법원) 합의 달성. 5. 이중 의무 주체(생성자=부착, 플랫폼=보존) 역할 분리 원칙.
+  lessons: |
+    1. Codex Bash 실행 시 파일 리디렉션(> file)을 명령에 직접 포함해야 함 — run_in_background는 stdout을 캡처하지 않음. 2. 사회정책 토론은 비교법+실증 데이터를 pre-loading하면 추상 논거 수렴 어려움을 해소 가능. 3. Round 2에서 Medium confidence 모델에 헌재 판례·비교법 근거를 직접 제시하면 입장 전환 가능. 4. Gemini 응답(55줄 9.8KB)은 줄 수가 짧아도 바이트 기준으로 충분한 분량일 수 있음 — AC는 줄 수보다 바이트로 설계가 유리.

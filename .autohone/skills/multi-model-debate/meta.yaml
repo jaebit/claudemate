@@ -1,8 +1,8 @@
 name: "multi-model-debate"
-version: "1.3.0"
+version: "1.4.0"
 status: "active"
 created_at: "2026-04-10T22:30:00Z"
-updated_at: "2026-04-11T06:10:00Z"
+updated_at: "2026-04-11T16:00:00+09:00"
 created_by: "reflector"
 description: "multi-model-debate 플러그인 사용 시 출력 아티팩트 규격, Codex CLI fallback 절차, macOS 호환 acceptance criteria 패턴 정의"
 
@@ -21,6 +21,15 @@ tags:
   - "macos-compat"
 
 changelog:
+  - version: "1.4.0"
+    date: "2026-04-11T16:00:00+09:00"
+    changes: |
+      gen-048 골든 실행 기반 3개 개선:
+      1. Codex CLI run_in_background stdout redirect 규칙 추가
+      2. Gemini AC 줄 수→바이트 기준 권고 추가
+      3. 사회정책 도메인 Pre-loading 패턴 및 Tavily 검색 예시 추가
+    auto_applied: true
+    trigger: "autohone:reflect --auto | gen-048 | score: 0.93 PASS | 골든 예제 저장 완료"
   - version: "1.3.0"
     date: "2026-04-11T06:10:00Z"
     changes: |
