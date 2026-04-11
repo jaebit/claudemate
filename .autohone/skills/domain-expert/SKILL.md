@@ -1,7 +1,7 @@
 ---
 name: domain-expert
 description: 도메인 지식이 필요한 태스크에서 knowledge-base 검색, 규칙 준수 확인, 골든 예제 참조를 수행합니다.
-version: 1.4.0
+version: 1.5.0
 ---
 
 # Domain Expert Skill
@@ -75,6 +75,20 @@ domain/knowledge-base/
 ├── coding-standards/  # 코딩 표준
 └── business-rules/    # 비즈니스 규칙
 ```
+
+### 코드 구현 품질 가이드 (implementation task_type용, ref-20260411T205500)
+
+코드를 생성하는 태스크에서 `conciseness` 및 `structure_quality` 점수를 유지하기 위한 규칙:
+
+1. **300줄 상한 규칙**: 단일 Python/JS 파일이 300줄을 초과할 것으로 예상되면, Sprint 설계 시점에 모듈 분리를 계획할 것.
+   - CLI 도구: 서브커맨드별 모듈 + 공통 유틸리티 모듈로 분리
+   - 예: `memory_cli.py`(611줄) → `memory_cli.py`(메인) + `memory_capture.py` + `memory_query.py`
+   - (ref: gen-055 conciseness 0.65 — 단일 파일 CLI 병목)
+
+2. **Syntax 검증 의무**: Write/Edit 후 Python 파일은 `python3 -c "import ast; ast.parse(open('<file>').read())"` 실행
+3. **테스트 동반 권고**: 주요 함수(argparse 서브커맨드 핸들러 등)에 최소 1개 테스트 작성 권고
+
+> **배경**: gen-054(scaffold, 0.88)와 gen-055(tool-impl, 0.73)의 15포인트 차이는 파일 크기/모듈화 차이가 주된 원인. scaffold 태스크는 자연히 높은 structure_quality를 얻지만, tool 구현은 의식적 모듈화가 필요하다.
 
 ### 규칙 적용 우선순위
 
