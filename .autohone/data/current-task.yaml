@@ -62,5 +62,5 @@ plan:
     - quality-gate
     status: planned
     title: 의존성 분석 + 리스크 보고서 생성
-  status: evaluating
+  status: completed
   title: claudemate 플러그인 아키텍처 기술 도메인 분석
