@@ -45,6 +45,17 @@ __pycache__/
 .DS_Store
 data/metrics/*.jsonl
 
+# Working memory (volatile, session-scoped)
+.claudemate/runtime/
+
+# Obsidian workspace (user-specific, not shared)
+knowledge/.obsidian/workspace.json
+knowledge/.obsidian/workspace-mobile.json
+knowledge/.obsidian/plugins/
+knowledge/.obsidian/themes/
+knowledge/.obsidian/hotkeys.json
+knowledge/.obsidian/appearance.json
+
 # Build artifacts
 target/
 node_modules/

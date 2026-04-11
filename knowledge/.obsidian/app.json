@@ -1,0 +1,9 @@
+{
+  "alwaysUpdateLinks": true,
+  "newFileLocation": "folder",
+  "newFileFolderPath": "20-notes",
+  "attachmentFolderPath": "00-meta/attachments",
+  "showUnsupportedFiles": false,
+  "defaultViewMode": "preview",
+  "strictLineBreaks": false
+}

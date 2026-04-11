@@ -1,12 +1,12 @@
 name: "task-planner"
-version: "1.8.0"
+version: "1.9.0"
 status: "active"
 created_at: "2026-04-05T12:30:00Z"
-updated_at: "2026-04-11T08:15:00Z"
+updated_at: "2026-04-11T11:02:13.918124+00:00"
 created_by: "reflector"
-description: "사용자 요청을 구조화된 태스크 계획으로 변환, Contract Validation 품질 기준 준수, 언어별 import 패턴 가이드 포함"
+description: "사용자 요청을 구조화된 태스크 계획으로 변환, Contract Validation 품질 기준 준수, 언어별 import 패턴 가이드 포함, technical-analysis 복잡도 점수 기반 태스크 선택 가이드 포함"
 
-utility_score: 0.84
+utility_score: 0.86
 usage_count: 4
 success_count: 4
 success_rate: 1.0
@@ -21,6 +21,11 @@ tags:
   - "sprint-design"
 
 changelog:
+  - version: "1.9.0"
+    date: "2026-04-11T11:05:00Z"
+    changes: "technical-analysis 복잡도 점수 기반 태스크 선택 가이드 추가 (ref-20260411T195800). 요소별 배점표, 최소 기준(10점), 실제 사례(crew 29점 vs gemini-cli 7점) 포함. 자체 검토 체크리스트에 복잡도 검증 항목 추가."
+    adaptation: true
+    trigger: "autohone:improve | gen-053 insight_depth 0.82 — 분석 대상 복잡도 부족이 원인"
   - version: "1.8.0"
     date: "2026-04-11T08:15:00Z"
     changes: "허용 AC 패턴 확장: grep -q/-qi (Boolean quiet grep), wc -c (바이트 수), wc -l | tr -d ' ' (macOS-safe 줄 수) 추가. gen-048 deepfake 토론에서 실증된 패턴."
