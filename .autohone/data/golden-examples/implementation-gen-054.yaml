@@ -1,0 +1,12 @@
+golden_example:
+  task_type: "implementation"
+  generation: "gen-054"
+  score: 0.88
+  timestamp: "2026-04-11T11:32:56.409014+00:00"
+  summary: |
+    autopilot --from-plan으로 3회 multi-model debate 최종 합의 설계를 구현. knowledge/ vault scaffold 27개 파일, wiki CLI (init/update/lint/graph/status), zone-based editing, 7개 모듈 wiki 페이지, graph.json 자동 생성. 6/6 AC 완벽 통과.
+  skills_used: [domain-expert@1.4.0,autopilot]
+  key_decisions: |
+    autopilot --from-plan으로 debate report를 설계 문서로 직접 전달하여 Phase 1-2 생략; numbered semantic 폴더 명명(00/10/20/30/90 안정성 gradient); Zone-Based Editing 마커(LLM-ZONE/HUMAN-ZONE) 적용; graph.json 의존성 그래프 자동 생성
+  lessons: |
+    1) autopilot --from-plan은 이미 합의된 설계가 있을 때 연구·설계 단계를 완전히 건너뛰는 효율적 경로이다. 2) multi-model debate 합의 문서를 구현 입력으로 직접 사용하면 debate→build 파이프라인이 end-to-end로 연결된다. 3) 단일 스프린트로 autopilot 전체 파이프라인을 감싸는 것이 implementation task_type에 적합하다.
