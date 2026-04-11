@@ -95,7 +95,7 @@ plan:
     skills_needed:
     - multi-model-debate
     - task-planner
-    status: planned
+    status: completed
     title: SETUP + Round 1 (3모델 병렬) + Synthesis Round 1
   - acceptance_criteria:
     - 'test -f .debate/20260411-160000-deepfake-freedom/synthesis-round-2.md && [
@@ -130,7 +130,7 @@ plan:
     id: sprint-2
     skills_needed:
     - multi-model-debate
-    status: planned
+    status: completed
     title: Round 2 (집중 토론) + Synthesis Round 2 + 최종 보고서
   status: completed
   title: 딥페이크로 인한 사회적 양극화·선거 영향, 표현의 자유 한계 멀티 모델 토론
