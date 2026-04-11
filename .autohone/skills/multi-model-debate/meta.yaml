@@ -21,6 +21,15 @@ tags:
   - "macos-compat"
 
 changelog:
+  - version: "1.3.0"
+    date: "2026-04-11T06:10:00Z"
+    changes: |
+      [autohone:improve] 2개 섹션 추가:
+      1. 외부 지식 Pre-loading 패턴: context.md SETUP 단계에서 vault/debate결과 사전 로딩, gen-047 실증(5/5 DP 3:0 합의)
+      2. validate_golden_gate 오탐 처리: debate-start/debate-orchestration 미등록 오탐 식별·우회 절차
+      골든 예제 목록에 gen-047 추가 (score 0.92)
+    adaptation: true
+    trigger: "autohone:improve | GAP-005 RESOLVE_GAP + gen-047 next_generation_recommendations"
   - version: "1.2.0"
     date: "2026-04-11T00:39:00Z"
     changes: |
