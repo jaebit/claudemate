@@ -1,0 +1,56 @@
+generation: gen-060
+plan_id: plan-20260412-gen-060-failure-handling
+task_type: testing
+topic: memory_capture failure_handling 강화 — OSError/UnicodeEncodeError 경로 커버리지
+created_at: '2026-04-12T18:43:00+09:00'
+completed_at: '2026-04-12T19:52:00+09:00'
+
+score: 0.88
+verdict: PASS
+golden_example_saved: true
+
+dimensions:
+  ac_pass_rate: 1.00
+  correctness: 0.95
+  failure_handling: 0.90
+  test_isolation: 0.95
+  cost_time_control: 0.95
+  artifact_discipline: 0.85
+
+skill_version: domain-expert-v1.8.0
+carry_over: null
+
+sprints:
+  - id: sprint-1
+    title: _env() 헬퍼 + ExitStack 격리 패턴 + 기존 6개 테스트 리팩터
+    ac_pass_rate: 4/4
+    status: PASS
+    lines: 71 (target ≤72L ✓)
+    isolation_design: FACTS_DIR + EXPERIENCES_DIR + TEMPLATES_DIR → tempdir, fake template written before ExitStack
+
+  - id: sprint-2
+    title: test_capture_write_oserror + test_promote_read_oserror 추가
+    ac_pass_rate: 3/3
+    status: PASS
+    lines: 71 (target ≤72L ✓)
+    tests: 7 total (4 capture + 3 promote)
+
+new_files: []
+modified_files:
+  - knowledge/00-meta/tools/tests/test_memory_capture.py (74L→71L, 6→7 tests)
+
+key_fixes:
+  - body='x' 주입으로 pytest stdin 캡처 OSError 방지 (격리 환경 의존성 제거)
+  - TEMPLATES_DIR 패치로 실제 파일시스템 의존성 완전 제거
+  - ExitStack 패턴으로 동적 patch 수 조합 가능
+
+gen059_improvements:
+  failure_handling: 0.70 → 0.90  (+0.20)
+  test_isolation: 0.75 → 0.95  (+0.20)
+  cost_time_control: 0.85 → 0.95  (+0.10)
+  score: 0.82 → 0.88  (+0.06)
+
+lessons_learned:
+  - pytest의 stdin 캡처(DontReadFromInput)는 OSError를 발생시킴 — body 파라미터 명시 필수
+  - _env() 헬퍼에서 fake template을 ExitStack 진입 전 write해야 write_text 패치와 충돌 없음
+  - ExitStack + extras=() 패턴은 선택적 patch 조합의 재사용 가능한 설계
