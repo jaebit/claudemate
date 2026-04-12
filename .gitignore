@@ -44,17 +44,13 @@ __pycache__/
 .venv/
 .DS_Store
 data/metrics/*.jsonl
+.autohone/data/metrics/*.jsonl
 
 # Working memory (volatile, session-scoped)
 .claudemate/runtime/
 
-# Obsidian workspace (user-specific, not shared)
-knowledge/.obsidian/workspace.json
-knowledge/.obsidian/workspace-mobile.json
-knowledge/.obsidian/plugins/
-knowledge/.obsidian/themes/
-knowledge/.obsidian/hotkeys.json
-knowledge/.obsidian/appearance.json
+# knowledge/ — migrated to cmem plugin
+knowledge/
 
 # Build artifacts
 target/
