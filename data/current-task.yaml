@@ -1,4 +1,78 @@
-episode_output: "plan_created"
+---
+episode_output:
+  agent: "planner"
+  timestamp: "2026-04-12T21:41:00+09:00"
+  status: "complete"
+
+payload:
+  plan:
+    id: "plan-20260412-gen-060-failure-handling"
+    title: "Strengthen failure_handling in Memory Unit Tests"
+    status: "in_progress"
+    created_at: "2026-04-12T21:41:00+09:00"
+
+    sprints:
+      - id: "sprint-1"
+        title: "Unicode Error Propagation Testing"
+        status: "planned"
+        acceptance_criteria:
+          - "UnicodeEncodeError propagation test added to test_cmd_capture_unicode_error"
+          - "Test verifies exception bubbles up rather than returning error code"
+          - "Unicode path test covers both encoding and decoding failures"
+          - "All existing tests still pass"
+        skills_needed: ["domain-expert", "quality-gate"]
+        dependencies: []
+        target_lines: 18
+        isolation_design: "Mock tempfile.mkdtemp() to return unicode path that triggers encoding error"
+
+      - id: "sprint-2"
+        title: "OSError Branch Coverage Enhancement"
+        status: "planned"
+        acceptance_criteria:
+          - "Permission denied test added for cmd_capture file operations"
+          - "OSError.EACCES branch explicitly tested with mock"
+          - "Invalid path OSError test covers directory creation failure"
+          - "Total line count remains ≤72 lines"
+        skills_needed: ["domain-expert"]
+        dependencies: ["sprint-1"]
+        target_lines: 16
+        isolation_design: "Mock Path.mkdir() and Path.write_text() to raise PermissionError"
+
+      - id: "sprint-3"
+        title: "SystemExit and FileNotFoundError Coverage"
+        status: "planned"
+        acceptance_criteria:
+          - "cmd_capture invalid type → SystemExit test completed"
+          - "cmd_promote FileNotFoundError path test added"
+          - "Both tests verify proper exit codes and error messages"
+          - "Final test suite ≤72 lines with +25% estimation buffer applied"
+        skills_needed: ["domain-expert", "quality-gate"]
+        dependencies: ["sprint-2"]
+        target_lines: 20
+        isolation_design: "Mock Path.exists() for FileNotFoundError, sys.exit for SystemExit capture"
+
+    context:
+      domain_type: "testing"
+      model_used: "claude-sonnet-4-6"
+      relevant_reflections: []
+      relevant_skills: ["domain-expert", "quality-gate"]
+      domain_constraints:
+        - "v1.8.0 test isolation design required"
+        - "Line estimation +25% overhead buffer"
+        - "Line budget ≤72L enforcement"
+      skill_rotation_applied: true
+      rotation_reason: "domain-expert active usage, quality-gate hardened status for verification"
+
+      failure_gaps_identified:
+        - "UnicodeEncodeError propagation not verified (observation #883)"
+        - "OSError permission denied branch uncovered"
+        - "cmd_capture invalid type → SystemExit untested"
+        - "cmd_promote FileNotFoundError path missing"
+
+      target_improvement:
+        current_score: 0.70
+        target_score: 0.88
+        gap_analysis: "Missing 4 critical error handling paths in failure_handling dimension"
 agent: "planner"
 timestamp: "2026-04-12T09:55:00Z"
 

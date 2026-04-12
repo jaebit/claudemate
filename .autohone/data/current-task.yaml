@@ -1,118 +1,39 @@
 agent: worker
-generation: gen-059
-plan:
-  context:
-    carry_over_action_item: ai-058-03 (P3)
-    domain_constraints:
-    - Single Python file ≤90 lines (tests)
-    - 'v1.7.0: 사전 라인 추정 후 Write (≤90% 상한)'
-    - 'v1.6.0: 명시적 예외 처리 (OSError, UnicodeEncodeError, yaml.YAMLError)'
-    - 테스트 격리 필수 — 프로덕션 볼트 write 없음
-    domain_type: backend
-    existing_infrastructure:
-    - knowledge/00-meta/tools/memory_utils.py (80L)
-    - knowledge/00-meta/tools/memory_capture.py (110L)
-    - knowledge/00-meta/tools/memory_query.py (130L)
-    model_used: claude-sonnet-4-6
-    skill_version: domain-expert-v1.7.0
-  created_at: '2026-04-12T10:00:00+09:00'
-  id: plan-20260412-gen-059-memory-unit-tests
-  sprints:
-  - acceptance_criteria:
-    - command: test -f knowledge/00-meta/tools/tests/test_memory_utils.py && python3
-        -c "import ast; ast.parse(open('knowledge/00-meta/tools/tests/test_memory_utils.py').read())"
-        && echo PASS
-      description: test_memory_utils.py 존재 + syntax 유효
-      expected: PASS
-      id: AC1
-    - command: test $(wc -l < knowledge/00-meta/tools/tests/test_memory_utils.py)
-        -le 70 && echo PASS
-      description: test_memory_utils.py ≤70줄
-      expected: PASS
-      id: AC2
-    - command: cd knowledge/00-meta/tools && python3 tests/test_memory_utils.py &&
-        echo PASS
-      description: 5개 테스트 함수 모두 통과
-      expected: PASS
-      id: AC3
-    deliverables:
-    - description: 테스트 패키지 초기화
-      path: knowledge/00-meta/tools/tests/__init__.py
-    - description: slugify, parse_simple_yaml_frontmatter, render_template, now_iso,
-        rebuild_frontmatter 테스트 (≤63L)
-      path: knowledge/00-meta/tools/tests/test_memory_utils.py
-    goal: memory_utils 5개 함수 단위 테스트
-    id: sprint-1
-    status: completed
-    title: test_memory_utils.py + __init__.py
-  - acceptance_criteria:
-    - command: test -f knowledge/00-meta/tools/tests/test_memory_capture.py && python3
-        -c "import ast; ast.parse(open('knowledge/00-meta/tools/tests/test_memory_capture.py').read())"
-        && echo PASS
-      description: test_memory_capture.py 존재 + syntax 유효
-      expected: PASS
-      id: AC4
-    - command: test $(wc -l < knowledge/00-meta/tools/tests/test_memory_capture.py)
-        -le 80 && echo PASS
-      description: test_memory_capture.py ≤80줄
-      expected: PASS
-      id: AC5
-    - command: cd knowledge/00-meta/tools && python3 tests/test_memory_capture.py
-        && echo PASS
-      description: 6개 테스트 함수 모두 통과
-      expected: PASS
-      id: AC6
-    - command: cd knowledge/00-meta/tools && python3 tests/test_memory_capture.py
-        && test $(find knowledge/30-memory/facts/ -name '*.md' 2>/dev/null | wc -l)
-        -eq 0 && echo PASS || echo FAIL
-      description: 프로덕션 볼트 격리 — 테스트 실행 후 facts/ 파일 없음
-      expected: PASS
-      id: AC7
-    deliverables:
-    - description: capture/promote 테스트 (tempdir 격리, ≤72L)
-      path: knowledge/00-meta/tools/tests/test_memory_capture.py
-    goal: memory_capture cmd_capture/cmd_promote 테스트 (프로덕션 볼트 격리)
-    id: sprint-2
-    status: completed
-    title: test_memory_capture.py (격리 포함)
-  - acceptance_criteria:
-    - command: test -f knowledge/00-meta/tools/tests/test_memory_query.py && python3
-        -c "import ast; ast.parse(open('knowledge/00-meta/tools/tests/test_memory_query.py').read())"
-        && echo PASS
-      description: test_memory_query.py 존재 + syntax 유효
-      expected: PASS
-      id: AC8
-    - command: test $(wc -l < knowledge/00-meta/tools/tests/test_memory_query.py)
-        -le 90 && echo PASS
-      description: test_memory_query.py ≤90줄
-      expected: PASS
-      id: AC9
-    - command: cd knowledge/00-meta/tools && python3 tests/test_memory_query.py &&
-        echo PASS
-      description: 7개 테스트 함수 모두 통과
-      expected: PASS
-      id: AC10
-    deliverables:
-    - description: query/status/retrieve 테스트 (≤81L)
-      path: knowledge/00-meta/tools/tests/test_memory_query.py
-    goal: memory_query cmd_query/cmd_status/cmd_retrieve 테스트
-    id: sprint-3
-    status: completed
-    title: test_memory_query.py
-  status: completed
-  task_type: testing
-  title: Memory 단위 테스트 suite 구현
-  verification_commands:
-    commands:
-    - test -f knowledge/00-meta/tools/tests/__init__.py && echo '__init__.py OK'
-    - test $(wc -l < knowledge/00-meta/tools/tests/test_memory_utils.py) -le 70 &&
-      echo 'utils lines OK'
-    - test $(wc -l < knowledge/00-meta/tools/tests/test_memory_capture.py) -le 80
-      && echo 'capture lines OK'
-    - test $(wc -l < knowledge/00-meta/tools/tests/test_memory_query.py) -le 90 &&
-      echo 'query lines OK'
-    - cd knowledge/00-meta/tools && python3 tests/test_memory_utils.py
-    - cd knowledge/00-meta/tools && python3 tests/test_memory_capture.py
-    - cd knowledge/00-meta/tools && python3 tests/test_memory_query.py
-    - find knowledge/30-memory/facts/ -name '*.md' 2>/dev/null | wc -l
-    working_directory: /Users/urd_book/Projects/claudemate
+payload:
+  plan:
+    id: plan-20260412-gen-060-failure-handling
+    task_type: testing
+    topic: memory_capture failure_handling 강화 — OSError/UnicodeEncodeError 경로 커버리지
+    created_at: '2026-04-12T18:43:00+09:00'
+    skill_version: domain-expert-v1.8.0
+    status: in_progress
+
+    isolation_design:
+      patch_targets:
+        - memory_capture.FACTS_DIR → tempdir
+        - memory_capture.EXPERIENCES_DIR → tempdir
+        - memory_capture.TEMPLATES_DIR → tempdir (fake template file written before patch)
+        - pathlib.Path.write_text → OSError / UnicodeEncodeError
+        - pathlib.Path.read_text → OSError (promote read path)
+      note: "_env() helper writes template BEFORE patches entered via ExitStack"
+
+    sprints:
+      - id: sprint-1
+        title: Refactor test_memory_capture.py with _env() helper + isolation
+        acceptance_criteria:
+          - 파일 ≤72L
+          - 기존 6개 테스트 모두 pass
+          - 모든 테스트가 tempdir 격리 사용 (vault write 없음)
+          - TEMPLATES_DIR 패치로 template 경로 의존 제거
+        target_lines: 55
+        status: pending
+
+      - id: sprint-2
+        title: Add test_capture_write_oserror + test_promote_read_oserror
+        acceptance_criteria:
+          - 파일 ≤72L 유지 (7개 → 8개 테스트)
+          - test_capture_write_oserror → OSError on write → returns 1
+          - test_promote_read_oserror → OSError on read → returns non-zero
+          - python knowledge/00-meta/tools/tests/test_memory_capture.py 실행 성공
+        target_lines: 71
+        status: pending
