@@ -1,124 +1,103 @@
 agent: planner
-generation: gen-057
+generation: gen-058
 plan:
-  complexity_breakdown:
-    cli_interface: 2 CLI tools +2pt
-    integration: existing infra 연동 +3pt
-    mcp_extension: MCP서버 확장 +3pt
-    new_python_files: 3 files × 3pt = 9pt
-  complexity_score: 17
-  context:
-    design_source: .debate/20260411-000400-final-design-consolidation/report.md
-    domain_constraints:
-    - Single Python file ≤300 lines — split modules if exceeded
-    - Write/Edit후 python3 syntax validation required
-    - Documentation Write 1회 completion only
-    - 'fd -H: 파일시스템 탐색 시 숨김 디렉토리 포함 필수'
-    domain_type: backend
-    existing_infrastructure:
-    - memory_cli.py (611줄) — needs modularization (out of scope this sprint)
-    - knowledge_mcp.py (228줄) — compliant, minor extension planned
-    - knowledge/30-memory/facts/ and experiences/ — empty, ready for population
-    model_used: claude-sonnet-4-6
-    phase_scope:
-      note: MemFactory full RL requires 100+ trajectories; MVP = distillation + trajectory
-        format + PageIndex
-  created_at: '2026-04-12T04:36:00+09:00'
-  id: plan-20260412-gen-057-memfactory-rl
-  sprints:
-  - acceptance_criteria:
-    - command: test -f knowledge/00-meta/tools/memory_distill.py && python3 -c "import
-        ast; ast.parse(open('knowledge/00-meta/tools/memory_distill.py').read())"
-        && echo PASS
-      description: 파일 존재 및 syntax 유효
-      expected: PASS
-      id: AC1
-    - command: test $(wc -l < knowledge/00-meta/tools/memory_distill.py) -le 300 &&
-        echo PASS
-      description: 300줄 상한 준수
-      expected: PASS
-      id: AC2
-    - command: python3 knowledge/00-meta/tools/memory_distill.py --help | grep -cE
-        '(dry-run|min-confidence|max-age-days)'
-      description: CLI --help에 3개 옵션 모두 표시
-      expected: '3'
-      id: AC3
-    - command: grep -cE '^def (group_by_topic|merge_notes|prune_stale|distill)' knowledge/00-meta/tools/memory_distill.py
-      description: 핵심 함수 4개 포함
-      expected: '4'
-      id: AC4
-    - command: python3 knowledge/00-meta/tools/memory_distill.py --dry-run --min-confidence
-        0.5 --max-age-days 30 && echo PASS
-      description: dry-run 모드 오류 없음
-      expected: PASS
-      id: AC5
-    - command: grep -c '30-memory' knowledge/00-meta/tools/memory_distill.py
-      description: 30-memory 디렉토리 경로 참조 포함
-      expected: ≥2
-      id: AC6
-    deliverables:
-    - constraints:
-      - ≤300 lines total
-      - 'CLI: --dry-run, --min-confidence, --max-age-days'
-      - Targets knowledge/30-memory/experiences/ and facts/
-      description: Memory distillation engine (≤300줄)
-      path: knowledge/00-meta/tools/memory_distill.py
-    goal: Implement atomic memory compression and cleanup system for knowledge/30-memory/
-    id: sprint-1
-    title: Memory Distillation Engine
-  - acceptance_criteria:
-    - command: test -f knowledge/00-meta/tools/page_index.py && python3 -c "import
-        ast; ast.parse(open('knowledge/00-meta/tools/page_index.py').read())" && echo
-        PASS
-      description: page_index.py 존재 및 syntax 유효
-      expected: PASS
-      id: AC1
-    - command: test $(wc -l < knowledge/00-meta/tools/page_index.py) -le 200 && echo
-        PASS
-      description: page_index.py ≤200줄
-      expected: PASS
-      id: AC2
-    - command: test -f knowledge/00-meta/tools/trajectory_log.py && python3 -c "import
-        ast; ast.parse(open('knowledge/00-meta/tools/trajectory_log.py').read())"
-        && echo PASS
-      description: trajectory_log.py 존재 및 syntax 유효
-      expected: PASS
-      id: AC3
-    - command: test $(wc -l < knowledge/00-meta/tools/trajectory_log.py) -le 200 &&
-        echo PASS
-      description: trajectory_log.py ≤200줄
-      expected: PASS
-      id: AC4
-    - command: test $(wc -l < knowledge/00-meta/tools/knowledge_mcp.py) -le 300 &&
-        echo PASS
-      description: knowledge_mcp.py ≤300줄 유지
-      expected: PASS
-      id: AC5
-    - command: grep -cE '^def (build_index|search_tree)' knowledge/00-meta/tools/page_index.py
-        && grep -c 'page_index_search' knowledge/00-meta/tools/knowledge_mcp.py
-      description: build_index/search_tree 함수 및 page_index_search MCP tool 존재
-      expected: '2
-
-        1'
-      id: AC6
-    deliverables:
-    - constraints:
-      - ≤200 lines
-      - build_index + search_tree functions
-      description: PageIndex tree-search (≤200줄)
-      path: knowledge/00-meta/tools/page_index.py
-    - constraints:
-      - ≤200 lines
-      - log + query + stats subcommands
-      description: JSONL trajectory logging (≤200줄)
-      path: knowledge/00-meta/tools/trajectory_log.py
-    - constraints:
-      - Total ≤300 lines after extension
-      description: page_index_search tool 추가 (≤300줄 유지)
-      path: knowledge/00-meta/tools/knowledge_mcp.py
-    goal: Tree-search PageIndex + JSONL trajectory logging for MemFactory RL foundation
-    id: sprint-2
-    title: PageIndex + Trajectory Framework
-  status: completed
+  id: plan-20260412-gen-058-memory-modularize
+  title: "memory_cli.py 모듈 분리 + 에러 핸들링 강화"
   task_type: implementation
-  title: Phase 4 MemFactory RL MVP
+  status: in_progress
+  created_at: '2026-04-12T08:00:00+09:00'
+
+  context:
+    domain_type: backend
+    model_used: claude-sonnet-4-6
+    skill_version: domain-expert-v1.6.0
+    domain_constraints:
+      - "Single Python file ≤300 lines — split modules if exceeded"
+      - "Write/Edit후 python3 syntax validation required"
+      - "bare except 금지 — 구체적 예외 타입 명시 (v1.6.0)"
+      - "CLI argparse 입력 경계 검증 필수 (v1.6.0)"
+      - "파일시스템 graceful degradation — stderr 경고 후 계속 (v1.6.0)"
+    existing_infrastructure:
+      - "memory_cli.py (611줄, 5 subcommands) — 분리 대상"
+      - "memory_utils.py 없음 — 신규 생성"
+      - "knowledge/30-memory/{facts,experiences}/ — 빈 디렉토리"
+    carry_over_action_item: "ai-057-03 (P2)"
+
+  complexity_score: 14
+  complexity_breakdown:
+    new_python_files: "3 new files × 3pt = 9pt"
+    refactoring_scope: "611줄 모듈 분리 +3pt"
+    error_handling_patch: "v1.6.0 4개 규칙 적용 +2pt"
+
+  sprints:
+    - id: sprint-1
+      title: "Utilities + Capture Module"
+      goal: "공통 유틸 분리 + capture/promote 모듈 구현 (v1.6.0 에러 핸들링 적용)"
+      deliverables:
+        - path: "knowledge/00-meta/tools/memory_utils.py"
+          description: "공통 상수 + 유틸리티 함수 (≤80줄)"
+          constraints: ["≤80 lines", "slugify, parse_simple_yaml_frontmatter, render_template 포함"]
+        - path: "knowledge/00-meta/tools/memory_capture.py"
+          description: "capture + promote 명령어 (≤200줄)"
+          constraints: ["≤200 lines", "bare except 없음", "입력 검증 포함"]
+      acceptance_criteria:
+        - id: AC1
+          description: "memory_utils.py 존재 + syntax 유효"
+          command: "test -f knowledge/00-meta/tools/memory_utils.py && python3 -c \"import ast; ast.parse(open('knowledge/00-meta/tools/memory_utils.py').read())\" && echo PASS"
+          expected: "PASS"
+        - id: AC2
+          description: "memory_utils.py ≤80줄"
+          command: "test $(wc -l < knowledge/00-meta/tools/memory_utils.py) -le 80 && echo PASS"
+          expected: "PASS"
+        - id: AC3
+          description: "memory_capture.py 존재 + syntax 유효"
+          command: "test -f knowledge/00-meta/tools/memory_capture.py && python3 -c \"import ast; ast.parse(open('knowledge/00-meta/tools/memory_capture.py').read())\" && echo PASS"
+          expected: "PASS"
+        - id: AC4
+          description: "memory_capture.py ≤200줄"
+          command: "test $(wc -l < knowledge/00-meta/tools/memory_capture.py) -le 200 && echo PASS"
+          expected: "PASS"
+        - id: AC5
+          description: "bare except 없음 (두 파일)"
+          command: "grep -c 'except:' knowledge/00-meta/tools/memory_utils.py knowledge/00-meta/tools/memory_capture.py 2>/dev/null | grep -v ':0' | wc -l"
+          expected: "0"
+        - id: AC6
+          description: "slugify + parse_simple_yaml_frontmatter + render_template 함수 포함"
+          command: "grep -cE '^def (slugify|parse_simple_yaml_frontmatter|render_template)' knowledge/00-meta/tools/memory_utils.py"
+          expected: "3"
+
+    - id: sprint-2
+      title: "Query Module + CLI Dispatcher"
+      goal: "query/status/retrieve 모듈 + 얇은 CLI 래퍼 구현"
+      deliverables:
+        - path: "knowledge/00-meta/tools/memory_query.py"
+          description: "query + status + retrieve 명령어 (≤270줄)"
+          constraints: ["≤270 lines", "bare except 없음", "yaml import at top"]
+        - path: "knowledge/00-meta/tools/memory_cli.py"
+          description: "얇은 CLI 디스패처 (≤70줄, 기존 대체)"
+          constraints: ["≤70 lines", "imports from memory_capture + memory_query"]
+      acceptance_criteria:
+        - id: AC1
+          description: "memory_query.py 존재 + syntax 유효"
+          command: "test -f knowledge/00-meta/tools/memory_query.py && python3 -c \"import ast; ast.parse(open('knowledge/00-meta/tools/memory_query.py').read())\" && echo PASS"
+          expected: "PASS"
+        - id: AC2
+          description: "memory_query.py ≤270줄"
+          command: "test $(wc -l < knowledge/00-meta/tools/memory_query.py) -le 270 && echo PASS"
+          expected: "PASS"
+        - id: AC3
+          description: "memory_cli.py refactored ≤70줄"
+          command: "test $(wc -l < knowledge/00-meta/tools/memory_cli.py) -le 70 && echo PASS"
+          expected: "PASS"
+        - id: AC4
+          description: "bare except 없음 (query + cli)"
+          command: "grep -c 'except:' knowledge/00-meta/tools/memory_query.py knowledge/00-meta/tools/memory_cli.py 2>/dev/null | grep -v ':0' | wc -l"
+          expected: "0"
+        - id: AC5
+          description: "memory_cli.py --help 동작 (backward compat)"
+          command: "python3 knowledge/00-meta/tools/memory_cli.py --help 2>&1 | grep -i 'capture\\|query\\|promote\\|status\\|retrieve' | wc -l"
+          expected: "≥3"
+        - id: AC6
+          description: "전체 4개 모듈 총 줄수 < 원본 611줄"
+          command: "echo $(($(wc -l < knowledge/00-meta/tools/memory_utils.py) + $(wc -l < knowledge/00-meta/tools/memory_capture.py) + $(wc -l < knowledge/00-meta/tools/memory_query.py) + $(wc -l < knowledge/00-meta/tools/memory_cli.py)))"
+          expected: "≤600"
