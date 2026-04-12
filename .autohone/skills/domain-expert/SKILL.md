@@ -1,7 +1,7 @@
 ---
 name: domain-expert
 description: 도메인 지식이 필요한 태스크에서 knowledge-base 검색, 규칙 준수 확인, 골든 예제 참조를 수행합니다.
-version: 1.5.0
+version: 1.8.0
 ---
 
 # Domain Expert Skill
@@ -118,8 +118,25 @@ domain/knowledge-base/
    - 트리밍 Edit 반복은 `cost_time_control` 감점 원인 (ref: gen-058 82→80줄 2회 트리밍)
 3. **함수 단위 공간 배분**: 파일 내 각 함수/섹션에 예산(줄 수)을 미리 할당
    - 예: 300줄 파일 = imports(15) + 공통유틸(40) + 함수A(80) + 함수B(80) + CLI(60) + 여유(25)
+4. **격리/패치 오버헤드 예약**: 사후 패치가 예상되는 경우(테스트 격리 추가 등) 해당 줄 수를 사전 추정에 반영
+   - 예: 테스트 격리 컨텍스트 매니저 추가 예상 → 대상 함수당 +2줄 선반영
 
-> **배경**: gen-058(0.82) — memory_utils.py 82→80줄(2회 트리밍), memory_cli.py 79→70줄 post-hoc 수정으로 cost_time_control 0.75. 사전 추정으로 방지 가능.
+> **배경**: gen-058(0.82) — memory_utils.py 82→80줄(2회 트리밍), memory_cli.py 79→70줄 post-hoc 수정으로 cost_time_control 0.75. 사전 추정으로 방지 가능. gen-059(0.82) — 격리 패치 +2줄 미반영으로 capture 파일 73L→72L 목표 1줄 초과.
+
+### 테스트 격리 설계 규칙 (testing task_type용, ref-20260412T101200)
+
+테스트 코드 작성 시 프로덕션 시스템 오염을 방지하기 위한 규칙:
+
+1. **Write 전 격리 전략 결정 필수**: 테스트 함수 설계 시 각 함수가 쓰기를 시도하는 경로를 파악하고, Write 전 격리 방법을 결정
+   - 실제 파일시스템 쓰기 → `tempfile.TemporaryDirectory` 또는 `patch`
+   - DB/네트워크 → `unittest.mock.patch` or `pytest.fixture`
+2. **module-level import된 상수 패치 위치**: `from module import CONST` 패턴의 상수는 원본 모듈이 아닌 **사용 모듈**에서 패치
+   - 올바름: `patch('memory_capture.FACTS_DIR', Path(d))`
+   - 틀림: `patch('memory_utils.FACTS_DIR', Path(d))` — 이미 바인딩된 참조에 영향 없음
+3. **격리 실패 즉시 감지**: 테스트 실행 후 프로덕션 디렉토리 파일 수를 확인하는 AC 추가 의무화
+   - 예: `find knowledge/30-memory/facts/ -name '*.md' | wc -l` = 0
+
+> **배경**: gen-059(0.82) — test_cmd_capture_success가 production vault(`knowledge/30-memory/facts/`)에 4개 아티팩트 생성. 사후 cleanup + 격리 패치 필요. test_isolation 0.75.
 
 ### 규칙 적용 우선순위
 

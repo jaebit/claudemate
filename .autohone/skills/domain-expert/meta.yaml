@@ -1,9 +1,9 @@
 name: "domain-expert"
-version: "1.7.0"
+version: "1.8.0"
 created_at: "2026-03-28T04:33:58Z"
-updated_at: "2026-04-12T09:15:00+09:00"
-utility_score: 0.86
-usage_count: 16
+updated_at: "2026-04-12T01:17:53.088471+00:00"
+utility_score: 0.87
+usage_count: 17
 success_count: 15
 success_rate: 1.0
 status: "active"
@@ -20,3 +20,6 @@ changelog:
   - version: 7
     date: "2026-04-12T09:15:00+09:00"
     change: "P1 패치(ref-20260412T091200): '라인 수 사전 추정 규칙' 섹션 추가 — Write 전 함수별 예산 할당, 목표 상한 90% 이하 설계, 오버슈트 시 재설계(트리밍 금지). gen-058 cost_time_control 0.75 원인 해소"
+  - version: 8
+    date: "2026-04-12T10:17:00+09:00"
+    change: "P1 패치(ref-20260412T101200): '테스트 격리 설계 규칙' 섹션 추가 + 라인 수 추정에 격리 오버헤드 계산 규칙 보강. module-level import 상수 패치 위치 명시. gen-059 test_isolation 0.75 원인 해소"
