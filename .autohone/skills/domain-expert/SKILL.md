@@ -107,6 +107,20 @@ domain/knowledge-base/
 
 > **배경**: gen-057(0.83, Phase 4 MemFactory) — failure_handling 0.70 + resumability 0.75가 golden 0.85 미달 원인. 12/12 AC 전부 통과했지만 방어 코딩 패턴 부재가 NFR 평가 항목 감점.
 
+### 라인 수 사전 추정 규칙 (implementation task_type용, ref-20260412T091200)
+
+코드를 생성하는 태스크에서 `cost_time_control` 점수를 유지하기 위한 규칙:
+
+1. **Write 전 라인 수 사전 추정 필수**: 각 파일의 예상 줄 수를 함수 단위로 계산한 뒤 목표 상한의 **90% 이하**로 설계
+   - 예: 상한 ≤300줄이면 목표 구현 ≤270줄로 설계
+   - 방법: 함수별 예상 줄 수 합산 (import 10 + 함수A 30 + 함수B 50 + ...) → 합계 확인
+2. **오버슈트 시 재설계 (트리밍 금지)**: Write 후 줄 수 초과 시 Edit로 트리밍하지 말고 함수 설계를 축약하여 **Write 1회로 재작성**
+   - 트리밍 Edit 반복은 `cost_time_control` 감점 원인 (ref: gen-058 82→80줄 2회 트리밍)
+3. **함수 단위 공간 배분**: 파일 내 각 함수/섹션에 예산(줄 수)을 미리 할당
+   - 예: 300줄 파일 = imports(15) + 공통유틸(40) + 함수A(80) + 함수B(80) + CLI(60) + 여유(25)
+
+> **배경**: gen-058(0.82) — memory_utils.py 82→80줄(2회 트리밍), memory_cli.py 79→70줄 post-hoc 수정으로 cost_time_control 0.75. 사전 추정으로 방지 가능.
+
 ### 규칙 적용 우선순위
 
 1. 안전 규칙 (security rules) — 최우선
