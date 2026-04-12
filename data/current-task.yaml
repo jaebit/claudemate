@@ -1,4 +1,72 @@
-agent: planner
+episode_output: "plan_created"
+agent: "planner"
+timestamp: "2026-04-12T09:55:00Z"
+
+payload:
+  plan:
+    id: "gen-059"
+    title: "Memory 단위 테스트 suite 구현"
+    task: "gen-058에서 분리된 memory_utils.py, memory_capture.py, memory_query.py 모듈에 대한 단위 테스트를 구현하고, 에러 핸들링 경로 검증"
+    status: "in_progress"
+    created_at: "2026-04-12T09:55:00Z"
+
+    sprints:
+      - id: "sprint-1"
+        title: "테스트 인프라 및 memory_utils 테스트 구현"
+        status: "planned"
+        acceptance_criteria:
+          - "tools/tests/ 디렉토리와 __init__.py 생성 완료"
+          - "test_memory_utils.py 파일이 63L 이하로 작성됨"
+          - "모든 memory_utils 함수(slugify, parse_simple_yaml_frontmatter, render_template, now_iso, rebuild_frontmatter)에 대한 테스트 포함"
+          - "pytest 실행 시 모든 테스트 통과"
+        skills_needed: ["domain-expert", "agent-contract"]
+        dependencies: []
+
+      - id: "sprint-2"
+        title: "memory_capture 명령 테스트 구현"
+        status: "planned"
+        acceptance_criteria:
+          - "test_memory_capture.py 파일이 72L 이하로 작성됨"
+          - "cmd_capture와 cmd_promote 함수 테스트 포함"
+          - "에러 핸들링 경로(OSError, UnicodeDecodeError) 테스트 포함"
+          - "pytest 실행 시 모든 테스트 통과"
+        skills_needed: ["domain-expert", "context-budget"]
+        dependencies: ["sprint-1"]
+
+      - id: "sprint-3"
+        title: "memory_query 명령 테스트 구현"
+        status: "planned"
+        acceptance_criteria:
+          - "test_memory_query.py 파일이 81L 이하로 작성됨"
+          - "cmd_query, cmd_status, cmd_retrieve 함수 테스트 포함"
+          - "yaml.YAMLError 및 파일 접근 예외 테스트 포함"
+          - "pytest 실행 시 모든 테스트 통과"
+        skills_needed: ["domain-expert", "pipeline-orchestrator"]
+        dependencies: ["sprint-1"]
+
+      - id: "sprint-4"
+        title: "통합 테스트 실행 및 검증"
+        status: "planned"
+        acceptance_criteria:
+          - "pytest knowledge/00-meta/tools/tests/ 실행 시 모든 테스트 통과"
+          - "테스트 커버리지가 핵심 기능 100% 포함"
+          - "에러 핸들링 경로 검증 완료"
+          - "테스트 파일 라인 수 제한 준수 확인"
+        skills_needed: ["domain-expert"]
+        dependencies: ["sprint-1", "sprint-2", "sprint-3"]
+
+    context:
+      domain_type: "backend"
+      model_used: "claude-sonnet-4-6"
+      skill_rotation_applied: true
+      rotation_reason: "agent-contract, context-budget, pipeline-orchestrator는 usage_count=0으로 미사용 스킬 우선 배정 적용"
+      relevant_reflections: []
+      relevant_skills: ["domain-expert", "agent-contract", "context-budget", "pipeline-orchestrator"]
+      domain_constraints:
+        - "v1.7.0 라인 수 사전 추정 규칙 적용 (상한의 90% 이하)"
+        - "pytest 기반 단위 테스트 구현"
+        - "에러 핸들링 경로 명시적 테스트"
+        - "backend 도메인 criteria.yaml 기준 적용"
 generation: gen-057
 plan:
   id: plan-20260412-gen-057-memfactory-rl
