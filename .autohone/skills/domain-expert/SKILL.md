@@ -151,6 +151,21 @@ domain/knowledge-base/
 > **배경**: gen-059(0.82) — test_cmd_capture_success가 production vault(`knowledge/30-memory/facts/`)에 4개 아티팩트 생성. 사후 cleanup + 격리 패치 필요. test_isolation 0.75.  
 > gen-060(0.88) — memory_capture failure_handling 강화에서 pytest stdin OSError, ExitStack 동적 패턴, TEMPLATES_DIR 격리 패턴 발견. test_isolation 0.95.
 
+### Sprint Contract 검증 명령어 규칙 (ai-058-02)
+
+Evaluator의 자동 검증을 활성화하기 위한 Sprint Contract 포함 규칙:
+
+1. **verification_commands 항상 포함**: Planner는 Sprint Contract에 실행 가능한 검증 명령어 명시
+   - 예: `python -m pytest knowledge/00-meta/tools/tests/ -v`
+   - `run_verification_commands` MCP가 이 필드를 읽어 Evaluator 자동 실행
+   - 미포함 시: `verification_commands_run: false` → artifact_discipline 감점
+
+2. **working_directory 명시**: 검증 명령어 기준 디렉토리를 절대경로로 포함
+   - testing task_type은 항상 필수
+   - 예: `working_directory: /Users/urd_book/Projects/claudemate`
+
+> **배경**: gen-058/060 모두 `verification_commands_run: false` — artifact_discipline 감점. Sprint Contract에 명시 시 자동 검증 활성화 가능. (ai-058-02 해소)
+
 ### 규칙 적용 우선순위
 
 1. 안전 규칙 (security rules) — 최우선

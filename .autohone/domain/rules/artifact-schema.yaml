@@ -9,6 +9,12 @@ rules:
       - "acceptance_criteria"
       - "target_files"
       - "dependencies"
+    recommended_fields:
+      - "verification_commands"   # Evaluator가 run_verification_commands MCP로 자동 실행
+      - "working_directory"       # 검증 명령어 실행 기준 디렉토리 (예: /path/to/project)
+    notes:
+      - "verification_commands 미포함 시 Evaluator는 수동 검증만 가능 (verification_commands_run: false)"
+      - "working_directory는 pytest, python 실행 경로 결정에 필수"
 
   - id: "artifact_qa_result"
     name: "QA Result 필수 필드 검증"
