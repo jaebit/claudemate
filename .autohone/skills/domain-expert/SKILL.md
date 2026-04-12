@@ -1,7 +1,7 @@
 ---
 name: domain-expert
 description: 도메인 지식이 필요한 태스크에서 knowledge-base 검색, 규칙 준수 확인, 골든 예제 참조를 수행합니다.
-version: 1.8.0
+version: 1.9.0
 ---
 
 # Domain Expert Skill
@@ -136,7 +136,20 @@ domain/knowledge-base/
 3. **격리 실패 즉시 감지**: 테스트 실행 후 프로덕션 디렉토리 파일 수를 확인하는 AC 추가 의무화
    - 예: `find knowledge/30-memory/facts/ -name '*.md' | wc -l` = 0
 
-> **배경**: gen-059(0.82) — test_cmd_capture_success가 production vault(`knowledge/30-memory/facts/`)에 4개 아티팩트 생성. 사후 cleanup + 격리 패치 필요. test_isolation 0.75.
+4. **pytest stdin 격리 (gen-060)**: capture 함수 테스트 시 `body=''` 금지
+   - pytest의 `DontReadFromInput`이 `sys.stdin.read()` 호출 시 `OSError` 발생
+   - 해결: capture 함수에 `body='x'` 등 non-empty body 주입 필수
+
+5. **ExitStack extras 동적 패턴 (gen-060)**: 동적 수의 patch 조합 시 `_env(tmp, extras=())` 헬퍼 사용
+   - fake 파일 write는 ExitStack 진입 전 실행 (write_text 패치와 충돌 방지)
+   - 기본 3개 patch + 선택적 추가 patch 조합에 적합
+
+6. **TEMPLATES_DIR 완전 격리 (gen-060)**: FACTS_DIR, EXPERIENCES_DIR 외에 TEMPLATES_DIR도 패치 필수
+   - fake template 파일을 tempdir에 write_text로 생성 후 TEMPLATES_DIR 패치
+   - 메모리 관련 테스트 시 모든 디렉토리 상수 격리 확인
+
+> **배경**: gen-059(0.82) — test_cmd_capture_success가 production vault(`knowledge/30-memory/facts/`)에 4개 아티팩트 생성. 사후 cleanup + 격리 패치 필요. test_isolation 0.75.  
+> gen-060(0.88) — memory_capture failure_handling 강화에서 pytest stdin OSError, ExitStack 동적 패턴, TEMPLATES_DIR 격리 패턴 발견. test_isolation 0.95.
 
 ### 규칙 적용 우선순위
 

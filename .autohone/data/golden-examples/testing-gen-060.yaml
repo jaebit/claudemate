@@ -2,11 +2,11 @@ golden_example:
   task_type: "testing"
   generation: "gen-060"
   score: 0.88
-  timestamp: "2026-04-12T09:53:30.459869+00:00"
+  timestamp: "2026-04-12T09:58:29.645445+00:00"
   summary: |
-    failure_handling 강화: OSError write/read + UnicodeEncodeError 경로 완전 커버. ExitStack + _env() 헬퍼로 FACTS_DIR/EXPERIENCES_DIR/TEMPLATES_DIR 전체 격리. 71L (≤72L AC). 7/7 PASS.
-  skills_used: [domain-expert-v1.8.0, quality-gate]
+    memory_capture failure_handling 강화에서 pytest stdin 격리, ExitStack 동적 패턴, TEMPLATES_DIR 완전 격리 등 3가지 새로운 테스트 격리 패턴 발견
+  skills_used: [domain-expert-v1.8.0]
   key_decisions: |
-    1. ExitStack으로 동적 patch 수 조합 (extras=() 패턴). 2. fake template을 ExitStack 진입 전 write. 3. body='x' 주입으로 pytest stdin OSError 방지. 4. TEMPLATES_DIR 패치로 파일시스템 의존성 완전 제거.
+    capture 함수 테스트 시 non-empty body 주입 필수, 동적 patch 조합에 ExitStack extras 헬퍼 사용, 메모리 관련 테스트 시 모든 디렉토리 상수 격리
   lessons: |
-    pytest DontReadFromInput이 OSError 발생 — body 파라미터 명시 필수. _env() 헬퍼에서 template write를 patch 활성화 전 수행해야 write_text patch와 충돌 없음. ExitStack extras=() 패턴은 재사용 가능한 격리 설계.
+    pytest DontReadFromInput OSError 패턴, ExitStack 진입 전 파일 생성 필요성, TEMPLATES_DIR 격리 누락 위험
