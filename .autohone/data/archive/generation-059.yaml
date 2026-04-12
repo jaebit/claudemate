@@ -1,0 +1,69 @@
+generation: gen-059
+plan_id: plan-20260412-gen-059-memory-unit-tests
+task_type: testing
+topic: Memory 단위 테스트 suite (test_memory_utils, test_memory_capture, test_memory_query)
+created_at: '2026-04-12T10:00:00+09:00'
+completed_at: '2026-04-12T10:12:00+09:00'
+
+score: 0.82
+verdict: PASS
+golden_example_saved: false
+
+dimensions:
+  ac_pass_rate: 1.00
+  correctness: 0.95
+  failure_handling: 0.70
+  cost_time_control: 0.85
+  resumability: 0.80
+  test_isolation: 0.75
+
+skill_version: domain-expert-v1.7.0
+carry_over: ai-058-03 (P3)
+
+sprints:
+  - id: sprint-1
+    title: test_memory_utils.py + __init__.py
+    ac_pass_rate: 3/3
+    status: PASS
+    lines: 57 (target ≤63L, v1.7.0 ✓)
+    tests: 5 functions (slugify, parse_yaml_frontmatter, render_template, now_iso, rebuild_frontmatter)
+
+  - id: sprint-2
+    title: test_memory_capture.py (격리 포함)
+    ac_pass_rate: 4/4
+    status: PASS
+    lines: 73 (target ≤72L, v1.7.0 ✗ 1L over)
+    tests: 6 functions (capture success/invalid/unicode, promote success/file-error/invalid-type)
+    isolation_fix: patch memory_capture.FACTS_DIR/EXPERIENCES_DIR → tempdir
+
+  - id: sprint-3
+    title: test_memory_query.py
+    ac_pass_rate: 3/3
+    status: PASS
+    lines: 58 (target ≤81L, v1.7.0 ✓)
+    tests: 7 functions (query, status, filters, retrieve, missing-budget, exclusions, file-access-error)
+
+new_files:
+  - knowledge/00-meta/tools/tests/__init__.py
+  - knowledge/00-meta/tools/tests/test_memory_utils.py (57L)
+  - knowledge/00-meta/tools/tests/test_memory_capture.py (73L)
+  - knowledge/00-meta/tools/tests/test_memory_query.py (58L)
+
+vault_cleanup:
+  deleted: 4 test artifacts from knowledge/30-memory/facts/
+
+v1_7_0_impact:
+  utils_compliance: true (57L ≤ 63L)
+  capture_compliance: false (73L > 72L, 1L over)
+  query_compliance: true (58L ≤ 81L)
+  pre_estimation_applied: true
+
+weaknesses:
+  - test_memory_capture.py 73L (v1.7.0 목표 72L 1줄 초과)
+  - failure_handling 0.70 — unicode 경로 테스트 단순화, 일부 에러 타입 미커버
+  - test_isolation 0.75 — 구조는 격리됐으나 추가 edge-case 미검증
+
+lessons_learned:
+  - Planner subagent가 구현까지 수행 (역할 경계 모호) — orchestrator가 파일 생성 후 검증 필요
+  - 테스트 파일은 격리 설계를 Write 전 결정해야 함 (사후 격리 수정 발생)
+  - FACTS_DIR 같이 module-level import된 상수는 memory_capture.FACTS_DIR로 patch해야 함
