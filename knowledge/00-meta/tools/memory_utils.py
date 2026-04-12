@@ -19,7 +19,6 @@ BUDGET_FILE = Path(__file__).resolve().parent / "retrieval-budget.yaml"
 VALID_MEMORY_TYPES = ("factual", "experiential")
 VALID_TASK_TYPES = ("explore", "locate", "edit", "validate")
 
-
 # ── Utilities ────────────────────────────────────────────────────────────────
 
 def slugify(text: str) -> str:
@@ -62,12 +61,11 @@ def render_template(template: str, variables: dict[str, str]) -> str:
 
 
 def now_iso() -> str:
-    """Return current datetime as ISO string."""
     return datetime.now().isoformat()
 
 
 def rebuild_frontmatter(meta: dict[str, Any], body: str) -> str:
-    """Reconstruct a markdown file from frontmatter dict and body."""
+    """Rebuild markdown from frontmatter dict + body."""
     lines = ['---']
     for k, v in meta.items():
         if isinstance(v, list):
