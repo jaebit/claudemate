@@ -6,7 +6,7 @@ payload:
     topic: memory_capture failure_handling 강화 — OSError/UnicodeEncodeError 경로 커버리지
     created_at: '2026-04-12T18:43:00+09:00'
     skill_version: domain-expert-v1.8.0
-    status: in_progress
+    status: evaluating
 
     isolation_design:
       patch_targets:

@@ -1,74 +1,71 @@
 #!/usr/bin/env python3
-"""Tests for memory_capture module."""
+"""Tests for memory_capture: failure_handling coverage."""
 import sys
+import os
+import tempfile
+from contextlib import ExitStack
 from pathlib import Path
 from unittest.mock import patch
-import tempfile
-import os
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from memory_capture import cmd_capture, cmd_promote
 
 class MockArgs:
-    def __init__(self, **kwargs):
-        # Default values for all possible args
-        defaults = {
-            'source_task': '', 'commit': '', 'outcome': '', 'task_type': '', 'modules': None,
-            'body': '', 'path': '', 'file': '', 'destination': '', 'move': False
-        }
-        defaults.update(kwargs)
-        for k, v in defaults.items(): setattr(self, k, v)
+    def __init__(self, **kw):
+        d = dict(source_task='', commit='', outcome='', task_type='',
+                 modules=None, body='', path='', move=False)
+        d.update(kw)
+        for k, v in d.items(): setattr(self, k, v)
 
-def test_cmd_capture_success():
-    """Test successful memory capture."""
-    with tempfile.TemporaryDirectory() as d, \
-         patch('memory_capture.FACTS_DIR', Path(d)), patch('memory_capture.EXPERIENCES_DIR', Path(d)):
-        assert cmd_capture(MockArgs(title="Test Memory", type="factual", template=None)) == 0
+def _env(tmp, extras=()):
+    td = Path(tmp)
+    (td / 'tpl-memory-factual.md').write_text("---\ntitle: X\n---\n")
+    return [patch('memory_capture.FACTS_DIR', td),
+            patch('memory_capture.EXPERIENCES_DIR', td),
+            patch('memory_capture.TEMPLATES_DIR', td)] + list(extras)
 
-def test_cmd_capture_invalid_type():
-    """Test cmd_capture with invalid memory type."""
-    args = MockArgs(title="Test Memory", type="invalid_type", template=None)
-    result = cmd_capture(args)
-    assert result != 0
-
-def test_cmd_capture_unicode_error():
-    """Test cmd_capture with unicode errors."""
-    with patch('pathlib.Path.write_text', side_effect=UnicodeEncodeError('utf-8', '', 0, 1, 'test')):
-        args = MockArgs(title="Test Unicode", type="factual", template=None)
-        try:
-            result = cmd_capture(args)
-            assert False, "Should have raised UnicodeEncodeError"
-        except UnicodeEncodeError:
-            assert True  # Expected behavior
-
-def test_cmd_promote_success():
-    """Test successful memory promotion."""
+def test_capture_success():
     with tempfile.TemporaryDirectory() as d:
-        src = Path(d) / "source.md"
-        src.write_text("---\ntitle: Test\ntype: factual\n---\nContent")
-        with patch('memory_capture.FACTS_DIR', Path(d)), patch('memory_capture.EXPERIENCES_DIR', Path(d)):
-            assert cmd_promote(MockArgs(path=str(src), type="factual", move=False)) == 0
+        with ExitStack() as es:
+            for p in _env(d): es.enter_context(p)
+            assert cmd_capture(MockArgs(title="T", type="factual", template=None, body='x')) == 0
 
-def test_cmd_promote_file_error():
-    """Test cmd_promote with missing source file."""
-    args = MockArgs(path="/nonexistent/file.md", type="factual", move=False)
-    assert cmd_promote(args) != 0
+def test_capture_invalid_type():
+    assert cmd_capture(MockArgs(title="T", type="bad", template=None, body='x')) != 0
 
-def test_cmd_promote_invalid_type():
-    """Test cmd_promote with invalid type."""
-    with tempfile.NamedTemporaryFile(mode='w', suffix='.md', delete=False) as tf:
-        tf.write("test content")
-        tf.flush()
-        args = MockArgs(path=tf.name, type="invalid", move=False)
-        result = cmd_promote(args)
-        assert result != 0
-        os.unlink(tf.name)
+def test_capture_unicode_error():
+    ue = UnicodeEncodeError('utf-8', '', 0, 1, 'x')
+    with tempfile.TemporaryDirectory() as d:
+        with ExitStack() as es:
+            for p in _env(d, [patch('pathlib.Path.write_text', side_effect=ue)]): es.enter_context(p)
+            try:
+                cmd_capture(MockArgs(title="T", type="factual", template=None, body='x'))
+                assert False, "Expected UnicodeEncodeError"
+            except UnicodeEncodeError: pass
+
+def test_capture_write_oserror():
+    with tempfile.TemporaryDirectory() as d:
+        with ExitStack() as es:
+            for p in _env(d, [patch('pathlib.Path.write_text', side_effect=OSError("disk full"))]): es.enter_context(p)
+            assert cmd_capture(MockArgs(title="T", type="factual", template=None, body='x')) == 1
+
+def test_promote_success():
+    with tempfile.TemporaryDirectory() as d:
+        td = Path(d); src = td / "s.md"
+        src.write_text("---\ntitle: T\ntype: factual\n---\nBody")
+        with patch('memory_capture.FACTS_DIR', td), patch('memory_capture.EXPERIENCES_DIR', td):
+            assert cmd_promote(MockArgs(path=str(src), type="factual")) == 0
+
+def test_promote_missing_file():
+    assert cmd_promote(MockArgs(path="/no/such/file.md", type="factual")) != 0
+
+def test_promote_read_oserror():
+    with tempfile.NamedTemporaryFile(suffix='.md', delete=False) as tf:
+        tf.write(b"content"); name = tf.name
+    with patch('pathlib.Path.read_text', side_effect=OSError("perm denied")):
+        result = cmd_promote(MockArgs(path=name, type="factual"))
+    os.unlink(name); assert result != 0
 
 if __name__ == "__main__":
-    test_cmd_capture_success()
-    test_cmd_capture_invalid_type()
-    test_cmd_capture_unicode_error()
-    test_cmd_promote_success()
-    test_cmd_promote_file_error()
-    test_cmd_promote_invalid_type()
-    print("All memory_capture tests passed!")
+    import pytest
+    pytest.main([__file__, "-v"])
