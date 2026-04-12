@@ -1,103 +1,105 @@
-agent: planner
-generation: gen-058
+agent: worker
+generation: gen-059
 plan:
-  id: plan-20260412-gen-058-memory-modularize
-  title: "memory_cli.py 모듈 분리 + 에러 핸들링 강화"
-  task_type: implementation
-  status: in_progress
-  created_at: '2026-04-12T08:00:00+09:00'
+  id: plan-20260412-gen-059-memory-unit-tests
+  title: "Memory 단위 테스트 suite 구현"
+  task_type: testing
+  status: evaluating
+  created_at: '2026-04-12T10:00:00+09:00'
 
   context:
     domain_type: backend
     model_used: claude-sonnet-4-6
-    skill_version: domain-expert-v1.6.0
+    skill_version: domain-expert-v1.7.0
     domain_constraints:
-      - "Single Python file ≤300 lines — split modules if exceeded"
-      - "Write/Edit후 python3 syntax validation required"
-      - "bare except 금지 — 구체적 예외 타입 명시 (v1.6.0)"
-      - "CLI argparse 입력 경계 검증 필수 (v1.6.0)"
-      - "파일시스템 graceful degradation — stderr 경고 후 계속 (v1.6.0)"
+      - "Single Python file ≤90 lines (tests)"
+      - "v1.7.0: 사전 라인 추정 후 Write (≤90% 상한)"
+      - "v1.6.0: 명시적 예외 처리 (OSError, UnicodeEncodeError, yaml.YAMLError)"
+      - "테스트 격리 필수 — 프로덕션 볼트 write 없음"
     existing_infrastructure:
-      - "memory_cli.py (611줄, 5 subcommands) — 분리 대상"
-      - "memory_utils.py 없음 — 신규 생성"
-      - "knowledge/30-memory/{facts,experiences}/ — 빈 디렉토리"
-    carry_over_action_item: "ai-057-03 (P2)"
-
-  complexity_score: 14
-  complexity_breakdown:
-    new_python_files: "3 new files × 3pt = 9pt"
-    refactoring_scope: "611줄 모듈 분리 +3pt"
-    error_handling_patch: "v1.6.0 4개 규칙 적용 +2pt"
+      - "knowledge/00-meta/tools/memory_utils.py (80L)"
+      - "knowledge/00-meta/tools/memory_capture.py (110L)"
+      - "knowledge/00-meta/tools/memory_query.py (130L)"
+    carry_over_action_item: "ai-058-03 (P3)"
 
   sprints:
     - id: sprint-1
-      title: "Utilities + Capture Module"
-      goal: "공통 유틸 분리 + capture/promote 모듈 구현 (v1.6.0 에러 핸들링 적용)"
+      title: "test_memory_utils.py + __init__.py"
+      goal: "memory_utils 5개 함수 단위 테스트"
+      status: completed
       deliverables:
-        - path: "knowledge/00-meta/tools/memory_utils.py"
-          description: "공통 상수 + 유틸리티 함수 (≤80줄)"
-          constraints: ["≤80 lines", "slugify, parse_simple_yaml_frontmatter, render_template 포함"]
-        - path: "knowledge/00-meta/tools/memory_capture.py"
-          description: "capture + promote 명령어 (≤200줄)"
-          constraints: ["≤200 lines", "bare except 없음", "입력 검증 포함"]
+        - path: "knowledge/00-meta/tools/tests/__init__.py"
+          description: "테스트 패키지 초기화"
+        - path: "knowledge/00-meta/tools/tests/test_memory_utils.py"
+          description: "slugify, parse_simple_yaml_frontmatter, render_template, now_iso, rebuild_frontmatter 테스트 (≤63L)"
       acceptance_criteria:
         - id: AC1
-          description: "memory_utils.py 존재 + syntax 유효"
-          command: "test -f knowledge/00-meta/tools/memory_utils.py && python3 -c \"import ast; ast.parse(open('knowledge/00-meta/tools/memory_utils.py').read())\" && echo PASS"
+          description: "test_memory_utils.py 존재 + syntax 유효"
+          command: "test -f knowledge/00-meta/tools/tests/test_memory_utils.py && python3 -c \"import ast; ast.parse(open('knowledge/00-meta/tools/tests/test_memory_utils.py').read())\" && echo PASS"
           expected: "PASS"
         - id: AC2
-          description: "memory_utils.py ≤80줄"
-          command: "test $(wc -l < knowledge/00-meta/tools/memory_utils.py) -le 80 && echo PASS"
+          description: "test_memory_utils.py ≤70줄"
+          command: "test $(wc -l < knowledge/00-meta/tools/tests/test_memory_utils.py) -le 70 && echo PASS"
           expected: "PASS"
         - id: AC3
-          description: "memory_capture.py 존재 + syntax 유효"
-          command: "test -f knowledge/00-meta/tools/memory_capture.py && python3 -c \"import ast; ast.parse(open('knowledge/00-meta/tools/memory_capture.py').read())\" && echo PASS"
+          description: "5개 테스트 함수 모두 통과"
+          command: "cd knowledge/00-meta/tools && python3 tests/test_memory_utils.py && echo PASS"
           expected: "PASS"
-        - id: AC4
-          description: "memory_capture.py ≤200줄"
-          command: "test $(wc -l < knowledge/00-meta/tools/memory_capture.py) -le 200 && echo PASS"
-          expected: "PASS"
-        - id: AC5
-          description: "bare except 없음 (두 파일)"
-          command: "grep -c 'except:' knowledge/00-meta/tools/memory_utils.py knowledge/00-meta/tools/memory_capture.py 2>/dev/null | grep -v ':0' | wc -l"
-          expected: "0"
-        - id: AC6
-          description: "slugify + parse_simple_yaml_frontmatter + render_template 함수 포함"
-          command: "grep -cE '^def (slugify|parse_simple_yaml_frontmatter|render_template)' knowledge/00-meta/tools/memory_utils.py"
-          expected: "3"
 
     - id: sprint-2
-      title: "Query Module + CLI Dispatcher"
-      goal: "query/status/retrieve 모듈 + 얇은 CLI 래퍼 구현"
+      title: "test_memory_capture.py (격리 포함)"
+      goal: "memory_capture cmd_capture/cmd_promote 테스트 (프로덕션 볼트 격리)"
+      status: completed
       deliverables:
-        - path: "knowledge/00-meta/tools/memory_query.py"
-          description: "query + status + retrieve 명령어 (≤270줄)"
-          constraints: ["≤270 lines", "bare except 없음", "yaml import at top"]
-        - path: "knowledge/00-meta/tools/memory_cli.py"
-          description: "얇은 CLI 디스패처 (≤70줄, 기존 대체)"
-          constraints: ["≤70 lines", "imports from memory_capture + memory_query"]
+        - path: "knowledge/00-meta/tools/tests/test_memory_capture.py"
+          description: "capture/promote 테스트 (tempdir 격리, ≤72L)"
       acceptance_criteria:
-        - id: AC1
-          description: "memory_query.py 존재 + syntax 유효"
-          command: "test -f knowledge/00-meta/tools/memory_query.py && python3 -c \"import ast; ast.parse(open('knowledge/00-meta/tools/memory_query.py').read())\" && echo PASS"
-          expected: "PASS"
-        - id: AC2
-          description: "memory_query.py ≤270줄"
-          command: "test $(wc -l < knowledge/00-meta/tools/memory_query.py) -le 270 && echo PASS"
-          expected: "PASS"
-        - id: AC3
-          description: "memory_cli.py refactored ≤70줄"
-          command: "test $(wc -l < knowledge/00-meta/tools/memory_cli.py) -le 70 && echo PASS"
-          expected: "PASS"
         - id: AC4
-          description: "bare except 없음 (query + cli)"
-          command: "grep -c 'except:' knowledge/00-meta/tools/memory_query.py knowledge/00-meta/tools/memory_cli.py 2>/dev/null | grep -v ':0' | wc -l"
-          expected: "0"
+          description: "test_memory_capture.py 존재 + syntax 유효"
+          command: "test -f knowledge/00-meta/tools/tests/test_memory_capture.py && python3 -c \"import ast; ast.parse(open('knowledge/00-meta/tools/tests/test_memory_capture.py').read())\" && echo PASS"
+          expected: "PASS"
         - id: AC5
-          description: "memory_cli.py --help 동작 (backward compat)"
-          command: "python3 knowledge/00-meta/tools/memory_cli.py --help 2>&1 | grep -i 'capture\\|query\\|promote\\|status\\|retrieve' | wc -l"
-          expected: "≥3"
+          description: "test_memory_capture.py ≤80줄"
+          command: "test $(wc -l < knowledge/00-meta/tools/tests/test_memory_capture.py) -le 80 && echo PASS"
+          expected: "PASS"
         - id: AC6
-          description: "전체 4개 모듈 총 줄수 < 원본 611줄"
-          command: "echo $(($(wc -l < knowledge/00-meta/tools/memory_utils.py) + $(wc -l < knowledge/00-meta/tools/memory_capture.py) + $(wc -l < knowledge/00-meta/tools/memory_query.py) + $(wc -l < knowledge/00-meta/tools/memory_cli.py)))"
-          expected: "≤600"
+          description: "6개 테스트 함수 모두 통과"
+          command: "cd knowledge/00-meta/tools && python3 tests/test_memory_capture.py && echo PASS"
+          expected: "PASS"
+        - id: AC7
+          description: "프로덕션 볼트 격리 — 테스트 실행 후 facts/ 파일 없음"
+          command: "cd knowledge/00-meta/tools && python3 tests/test_memory_capture.py && test $(find knowledge/30-memory/facts/ -name '*.md' 2>/dev/null | wc -l) -eq 0 && echo PASS || echo FAIL"
+          expected: "PASS"
+
+    - id: sprint-3
+      title: "test_memory_query.py"
+      goal: "memory_query cmd_query/cmd_status/cmd_retrieve 테스트"
+      status: completed
+      deliverables:
+        - path: "knowledge/00-meta/tools/tests/test_memory_query.py"
+          description: "query/status/retrieve 테스트 (≤81L)"
+      acceptance_criteria:
+        - id: AC8
+          description: "test_memory_query.py 존재 + syntax 유효"
+          command: "test -f knowledge/00-meta/tools/tests/test_memory_query.py && python3 -c \"import ast; ast.parse(open('knowledge/00-meta/tools/tests/test_memory_query.py').read())\" && echo PASS"
+          expected: "PASS"
+        - id: AC9
+          description: "test_memory_query.py ≤90줄"
+          command: "test $(wc -l < knowledge/00-meta/tools/tests/test_memory_query.py) -le 90 && echo PASS"
+          expected: "PASS"
+        - id: AC10
+          description: "7개 테스트 함수 모두 통과"
+          command: "cd knowledge/00-meta/tools && python3 tests/test_memory_query.py && echo PASS"
+          expected: "PASS"
+
+  verification_commands:
+    working_directory: "/Users/urd_book/Projects/claudemate"
+    commands:
+      - "test -f knowledge/00-meta/tools/tests/__init__.py && echo '__init__.py OK'"
+      - "test $(wc -l < knowledge/00-meta/tools/tests/test_memory_utils.py) -le 70 && echo 'utils lines OK'"
+      - "test $(wc -l < knowledge/00-meta/tools/tests/test_memory_capture.py) -le 80 && echo 'capture lines OK'"
+      - "test $(wc -l < knowledge/00-meta/tools/tests/test_memory_query.py) -le 90 && echo 'query lines OK'"
+      - "cd knowledge/00-meta/tools && python3 tests/test_memory_utils.py"
+      - "cd knowledge/00-meta/tools && python3 tests/test_memory_capture.py"
+      - "cd knowledge/00-meta/tools && python3 tests/test_memory_query.py"
+      - "find knowledge/30-memory/facts/ -name '*.md' 2>/dev/null | wc -l"

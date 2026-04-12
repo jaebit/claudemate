@@ -21,9 +21,9 @@ class MockArgs:
 
 def test_cmd_capture_success():
     """Test successful memory capture."""
-    args = MockArgs(title="Test Memory Success", type="factual", template=None)
-    result = cmd_capture(args)
-    assert result == 0
+    with tempfile.TemporaryDirectory() as d, \
+         patch('memory_capture.FACTS_DIR', Path(d)), patch('memory_capture.EXPERIENCES_DIR', Path(d)):
+        assert cmd_capture(MockArgs(title="Test Memory", type="factual", template=None)) == 0
 
 def test_cmd_capture_invalid_type():
     """Test cmd_capture with invalid memory type."""
@@ -43,11 +43,11 @@ def test_cmd_capture_unicode_error():
 
 def test_cmd_promote_success():
     """Test successful memory promotion."""
-    with tempfile.TemporaryDirectory() as temp_dir:
-        source_file = Path(temp_dir) / "source.md"
-        source_file.write_text("---\ntitle: Test\ntype: factual\n---\nContent")
-        args = MockArgs(path=str(source_file), type="factual", move=False)
-        assert cmd_promote(args) == 0
+    with tempfile.TemporaryDirectory() as d:
+        src = Path(d) / "source.md"
+        src.write_text("---\ntitle: Test\ntype: factual\n---\nContent")
+        with patch('memory_capture.FACTS_DIR', Path(d)), patch('memory_capture.EXPERIENCES_DIR', Path(d)):
+            assert cmd_promote(MockArgs(path=str(src), type="factual", move=False)) == 0
 
 def test_cmd_promote_file_error():
     """Test cmd_promote with missing source file."""
