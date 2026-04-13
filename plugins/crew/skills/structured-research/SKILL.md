@@ -2,10 +2,7 @@
 name: structured-research
 user_invocable: false
 description: "Deep research and investigation skill that produces comprehensive, cross-validated reports on any topic. Use this skill whenever the user asks to research, investigate, compare, or do a deep dive on technologies, architectures, tools, libraries, frameworks, or strategies. Triggers on phrases like 'research X', 'deep dive on', 'compare X vs Y', 'thorough analysis of', 'investigate how', 'pros and cons', 'trade-offs between', '비교 분석', '심층 분석', '조사해줘'. Decomposes topics into subtopics, dispatches parallel web/docs investigations via MCP tools, cross-validates findings for contradictions, and synthesizes into a structured research report with confidence ratings and sourced citations."
-context: fork
-agent: general-purpose
 disable-model-invocation: true
-allowed-tools: Read, Write, Glob, Grep, Bash, Agent
 ---
 
 # Structured Research
@@ -70,30 +67,24 @@ Create `.caw/research/<topic-slug>/plan.json`:
 
 ## Stage 2: Parallel Investigation
 
-Dispatch 1 Agent per subtopic, all in a **single message** with `run_in_background: true`.
+Dispatch research for all subtopics in parallel. **MCP tools are called directly inline; non-MCP tools use Agent subagents.**
 
-Max concurrency: **5 agents** (all subtopics are independent = single wave).
+### Dispatch Rules
 
-### Agent Prompt Template
+| Tool | Dispatch Method | Reason |
+|------|----------------|--------|
+| tavily | **Direct MCP call** (`mcp__tavily__tavily_research`) | MCP tools unavailable in Agent subagents |
+| context7 | **Direct MCP call** (`resolve-library-id` → `query-docs`) | Same — MCP not inherited by subagents |
+| exa | **Direct MCP call** (`mcp__exa__web_search_exa`) | Same — MCP not inherited by subagents |
+| WebSearch | **Direct tool call** (built-in) | Built-in, works anywhere |
+| gemini | **Agent subagent** → Bash: `gemini -p "..."` | CLI tool needs Bash execution context |
 
-Each agent receives:
-- Subtopic question
-- Assigned tools (primary + secondary)
-- Output path: `.caw/research/<slug>/subtopic-N-<name>.md`
+> **Parallel execution**: Call all MCP tools and Agent dispatches in a **single message** for maximum parallelism.
+> Each MCP call can run concurrently. Agent subagents with `run_in_background: true` also run in parallel.
 
-### Tool-Specific Dispatch
+### Per-Subtopic Output
 
-| Tool | How to Call |
-|------|------------|
-| WebSearch | Direct tool call |
-| tavily | `mcp__tavily__tavily_research` |
-| gemini | Agent → Bash: `gemini -p "Search: {question}"` |
-| context7 | `mcp__context7__resolve-library-id` → `mcp__context7__query-docs` |
-| exa | `mcp__exa__web_search_exa` |
-
-### Per-Subtopic Output Format
-
-Each `subtopic-N-<name>.md`:
+After each tool returns, **save results using Write tool** to `.caw/research/<slug>/subtopic-N-<name>.md`:
 
 ```markdown
 # Subtopic N: <question>
@@ -114,7 +105,7 @@ Each `subtopic-N-<name>.md`:
 
 ## Stage 3: Cross-Validation
 
-Single Agent reads all `subtopic-*.md` files and produces a cross-validation report.
+Read all `subtopic-*.md` files and produce a cross-validation report.
 
 Adapted from multi-model-debate Phase 3 synthesis pattern.
 

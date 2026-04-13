@@ -2,10 +2,7 @@
 name: learning-loop
 user_invocable: false
 description: Continuous improvement through Ralph Loop reflection, instinct evolution, integrated research, and cross-session memory sync
-context: fork
-agent: general-purpose
 disable-model-invocation: true
-allowed-tools: Read, Write, Glob, Grep, Bash, WebSearch, WebFetch
 ---
 
 # Learning Loop
@@ -16,7 +13,7 @@ Combines Ralph Loop continuous improvement, instinct evolution, integrated resea
 
 - **Learnings**: !`cat .caw/learnings.md 2>/dev/null | head -20 || echo "(no learnings yet)"`
 - **Instincts**: !`cat .caw/instincts/index.json 2>/dev/null | head -10 || echo "(no instincts yet)"`
-- **Serena sync**: !`python3 "${CLAUDE_SKILL_DIR}/../../../hooks/scripts/sync-check.sh" 2>/dev/null || echo "(sync check unavailable)"`
+- **Serena sync**: (use `serena` MCP tools directly — available in inline context)
 
 ## MCP Servers
 

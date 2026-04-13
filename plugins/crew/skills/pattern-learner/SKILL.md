@@ -13,7 +13,7 @@ Analyzes codebase to extract and document project-specific coding patterns.
 
 ## Project Snapshot
 
-- **Project files**: !`find . -name "*.ts" -o -name "*.tsx" -o -name "*.py" -o -name "*.go" 2>/dev/null | head -30 || echo "(no source files found)"`
+- **Project files**: !`git ls-files "*.ts" "*.tsx" "*.py" "*.go" 2>/dev/null | head -30 || echo "(no source files found)"`
 - **Project config**: !`cat package.json 2>/dev/null | head -15 || cat pyproject.toml 2>/dev/null | head -15 || cat go.mod 2>/dev/null | head -5 || echo "(no project config found)"`
 - **Cached patterns**: !`cat .caw/patterns/patterns.md 2>/dev/null | head -20 || echo "(no cached patterns)"`
 

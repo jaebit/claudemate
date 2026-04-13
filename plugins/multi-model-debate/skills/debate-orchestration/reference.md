@@ -39,6 +39,10 @@ For each contested point:
 
 ## Agent Dispatch Patterns
 
+> **Architecture Note**: These dispatch patterns are used by `debate-start` (inline context),
+> NOT by `debate-orchestration`. The orchestration skill only performs synthesis and consensus
+> — it reads pre-collected round files and never dispatches agents or calls MCP tools.
+
 **Claude** (Agent tool, sub-agent):
 ```
 prompt: "<prompt with Claude perspective>"
