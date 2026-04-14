@@ -55,7 +55,7 @@ Execute the complete CW workflow in a single command with a 9-stage pipeline.
 | `--verbose` | Show detailed progress |
 | `--no-questions` | Minimize interactive questions |
 | `--worktree` | Isolate each build step in a git worktree (create → build → merge back) |
-| `--no-advisor` | Disable Opus advisor consultation at decision points (see [Advisor Protocol](../../_shared/advisor-protocol.md)) |
+| `--no-advisor` | Disable explicit Opus advisor for contested review triage (see [Advisor Protocol](../../_shared/advisor-protocol.md)). Does not affect built-in `/advisor`. |
 
 ## Signal-Based Phase Transitions
 
@@ -97,13 +97,12 @@ for each pending step in task_plan:
     3. Update state, proceed to next step
 ```
 
-On error — 6-level recovery:
-1. **Retry** — Retry the step once
+On error — 5-level recovery:
+1. **Retry** — Retry the step once (with `/advisor` active, the executor auto-consults Opus for diagnosis)
 2. **Fixer-Haiku** — Spawn Fixer agent to patch the failure
-3. **Advisor-Opus** — If `config.advisor_enabled` AND `advisor.calls_made < 3`: consult Opus advisor for diagnosis. See [Advisor Protocol](../../_shared/advisor-protocol.md). Pass advisor's decision (RETRY_WITH_HINT / REPLAN / SKIP / ESCALATE) to the next recovery level. If advisor disabled or budget exhausted, skip to level 4.
-4. **Planner-Haiku alternative** — Replan the step (incorporating advisor hint if available)
-5. **Skip non-blocking** — Skip if step is non-blocking
-6. **Abort** — Halt execution
+3. **Planner-Haiku alternative** — Replan the step
+4. **Skip non-blocking** — Skip if step is non-blocking
+5. **Abort** — Halt execution
 
 Exit on: completion promise, all steps complete, max iterations, 3+ consecutive failures, or critical error.
 
@@ -243,7 +242,7 @@ State saved in `.caw/auto-state.json`:
   "phase": "execution",
   "task_description": "Add logout button",
   "config": { "skip_qa": false, "parallel_validation": true, "team_mode": false, "team_size": 2, "codex_mode": false, "max_iterations": 20, "advisor_enabled": true },
-  "advisor": { "calls_made": 0, "max_calls": 3, "decisions": [] },
+  "advisor": { "calls_made": 0, "max_calls": 3, "decisions": [], "_note": "tracks explicit Opus subagent calls for contested review only; built-in /advisor is separate" },
   "execution": { "current_step": "2.1", "tasks_completed": 3, "consecutive_failures": 0 },
   "signals": { "detected_signals": [] }
 }

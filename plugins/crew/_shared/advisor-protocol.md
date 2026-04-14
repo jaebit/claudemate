@@ -1,41 +1,65 @@
-# Advisor Protocol (Escape Hatch)
+# Advisor Protocol
 
-Defines when and how the crew:go orchestrator consults an Opus-tier advisor
-for judgment-only guidance at decision points.
+Defines how the crew:go orchestrator uses advisor consultation at decision points.
 
 ## Overview
 
-The Advisor is a tool-less Opus subagent spawned for diagnostic judgment only.
-It cannot read files, write code, or execute commands. It receives a structured
-situation summary and returns a triage decision under 500 tokens.
+Two advisor mechanisms are available:
 
-## Invocation
+1. **Built-in Advisor** (primary): The official Claude Code `/advisor` feature — executor model (Sonnet) automatically consults Opus within a single API call when it encounters hard decisions. No extra round-trips, full conversation context preserved.
+2. **Explicit Opus Subagent** (structured triage only): A tool-less Opus subagent spawned for situations requiring structured decision output (e.g., contested review verdict triage).
+
+## Built-in Advisor (Primary)
+
+The official `advisor_20260301` tool type, activated via Claude Code `/advisor`.
+
+### How It Works
+
+- **Executor** (Sonnet 4.6) runs end-to-end: tool calls, file edits, iteration
+- **Advisor** (Opus 4.6) provides ~400-700 token strategic guidance when the executor self-determines it needs help
+- Advisor **never** calls tools or produces user-facing output
+- Advisor receives **full conversation context** automatically
+- All handled within a single `/v1/messages` request — zero extra round-trips
+
+### When It Activates
+
+The executor autonomously decides to consult the advisor. Typical triggers:
+- Complex architectural decisions during planning or execution
+- Ambiguous error diagnosis during recovery
+- Multi-file refactoring strategy
+- Security-sensitive code paths
+
+### Setup
+
+Activate in Claude Code: `/advisor` → select Opus 4.6. No additional parameters required.
+
+### Cost
+
+- Advisor tokens reported separately in API response
+- Typical cost reduction: ~11.9% per agentic task vs running Opus end-to-end
+- SWE-bench: Sonnet + Advisor = 74.8% (vs 72.1% Sonnet solo)
+
+## Explicit Opus Subagent (Structured Triage)
+
+For situations requiring a **structured decision format** (not free-form advice),
+spawn a tool-less Opus subagent directly.
+
+### Invocation
 
 ```
 Agent(model="opus", prompt="<advisor prompt>")
 ```
 
-The advisor has NO tools — it provides reasoning and decisions only.
+The subagent has NO tools — it provides reasoning and structured decisions only.
 
-## When to Consult
+### When to Use
 
-### Trigger 1: Execution Recovery (Stage 4)
-
-**Condition**: `consecutive_failures >= 2` AND Fixer-Haiku has already failed.
-**Position in recovery chain**: retry → Fixer-Haiku → **ADVISOR** → Planner-Haiku → skip → abort
-**Purpose**: Diagnose *why* the step keeps failing before trying a different approach.
-
-### Trigger 2: Contested Review (Stage 6)
+This is reserved for **contested review triage** (Stage 6 of crew:go):
 
 **Condition**: Reviewer verdicts split (not unanimous) on same files.
 **Purpose**: Triage which reviewer findings are genuine vs false positives.
 
-### Trigger 3: QA Stall (Stage 5)
-
-**Condition**: Same issue hash appears in 2 consecutive QA cycles.
-**Purpose**: Determine if the issue is a real bug or a flaky/misconfigured check.
-
-## Prompt Template
+### Prompt Template
 
 ```
 You are an Advisor providing diagnostic judgment. You have NO tools.
@@ -46,43 +70,44 @@ Respond in under 500 tokens with a structured decision.
 
 ## Context
 - Step: {step_id} — {step_description}
-- Error/Conflict: {error_or_conflict_summary}
-- Prior attempts: {what_was_tried}
+- Conflict: {conflict_summary}
+- Reviewer verdicts: {verdict_details}
 - Files involved: {file_list}
 
 ## Your Task
-Provide ONE of these decisions:
-1. RETRY_WITH_HINT: "The likely root cause is X. Instruct the builder/fixer to Y."
-2. REPLAN: "This step should be decomposed differently. Suggest: Z."
-3. SKIP: "This failure is non-blocking because X. Safe to skip."
-4. ESCALATE: "This requires human judgment because X."
+For each contested finding, classify as:
+- GENUINE: Real issue that needs fixing. Reason: ...
+- FALSE_POSITIVE: Not a real issue. Reason: ...
 
-## Decision
-{decision_type}: {reasoning}
+## Verdicts
+{structured verdicts}
 ```
 
-## Response Consumption
+### Response Consumption
 
-The orchestrator reads the advisor response inline (not written to file).
-Based on the decision_type:
+The orchestrator reads the response inline (not written to file).
+Only GENUINE findings are forwarded to the Fix stage.
+FALSE_POSITIVE findings are logged but not acted on.
 
-| Decision | Orchestrator Action |
-|----------|-------------------|
-| RETRY_WITH_HINT | Pass hint to next recovery agent's prompt |
-| REPLAN | Invoke Planner-Haiku with advisor's suggestion |
-| SKIP | Mark step skipped, log advisor reasoning, continue |
-| ESCALATE | Pause workflow, surface advisor reasoning to user |
-
-## Cost Control
+### Cost Control
 
 - Max response: 500 tokens (enforced via prompt instruction)
-- Max advisor calls per workflow: 3 (tracked in `auto-state.json` → `advisor.calls_made`)
+- Max explicit subagent calls per workflow: 3 (tracked in `auto-state.json` → `advisor.calls_made`)
 - tools: none (no tool tokens consumed)
-- Only triggered on failure/conflict paths, never on happy path
+- Only triggered on contested review path, never on happy path
 
-## Opt-Out
+### Opt-Out
 
-Flag: `--no-advisor`
-Config: `config.advisor_enabled: false`
-When disabled, the recovery chain skips the advisor step entirely
-(existing behavior: retry → Fixer-Haiku → Planner-Haiku → skip → abort).
+Flag: `--no-advisor` on `/crew:go`
+Config: `config.advisor_enabled: false` in `auto-state.json`
+When disabled, contested reviews fall back to majority-vote resolution.
+
+## Migration Notes
+
+Previously, the advisor protocol also covered:
+- **Execution Recovery (Stage 4)**: Diagnosis after consecutive failures
+- **QA Stall (Stage 5)**: Determining real bug vs flaky check
+
+These are now handled by the built-in advisor. The executor (with `/advisor` active)
+naturally consults Opus during recovery attempts, making explicit subagent calls
+at these decision points redundant.
