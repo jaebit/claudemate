@@ -116,7 +116,7 @@
         "advisor_enabled": {
           "type": "boolean",
           "default": true,
-          "description": "Enable Opus advisor consultation at failure/conflict decision points. Disable with --no-advisor flag."
+          "description": "Enable explicit Opus subagent for contested review triage (Stage 6). Disable with --no-advisor flag. Does not affect built-in /advisor."
         }
       }
     },
@@ -470,19 +470,19 @@
     },
     "advisor": {
       "type": "object",
-      "description": "Advisor consultation tracking. See _shared/advisor-protocol.md",
+      "description": "Explicit Opus subagent tracking for contested review triage only. Built-in /advisor is tracked separately by the API. See _shared/advisor-protocol.md",
       "properties": {
         "calls_made": {
           "type": "integer",
           "default": 0,
           "minimum": 0,
           "maximum": 3,
-          "description": "Number of advisor consultations in this workflow"
+          "description": "Number of explicit Opus subagent calls in this workflow (contested review only)"
         },
         "max_calls": {
           "type": "integer",
           "default": 3,
-          "description": "Maximum advisor consultations per workflow (cost control)"
+          "description": "Maximum explicit subagent calls per workflow (cost control)"
         },
         "decisions": {
           "type": "array",
@@ -491,14 +491,23 @@
             "properties": {
               "trigger": {
                 "type": "string",
-                "enum": ["execution_recovery", "contested_review", "qa_stall"]
+                "enum": ["contested_review"]
               },
-              "decision": {
-                "type": "string",
-                "enum": ["RETRY_WITH_HINT", "REPLAN", "SKIP", "ESCALATE"]
+              "findings": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "classification": {
+                      "type": "string",
+                      "enum": ["GENUINE", "FALSE_POSITIVE"]
+                    },
+                    "issue": { "type": "string" },
+                    "reasoning": { "type": "string" }
+                  }
+                }
               },
               "step": { "type": "string" },
-              "reasoning_summary": { "type": "string" },
               "timestamp": { "type": "string", "format": "date-time" }
             }
           }
