@@ -56,6 +56,7 @@ Execute the complete CW workflow in a single command with a 9-stage pipeline.
 | `--no-questions` | Minimize interactive questions |
 | `--worktree` | Isolate each build step in a git worktree (create → build → merge back) |
 | `--no-advisor` | Disable explicit Opus advisor for contested review triage (see [Advisor Protocol](../../_shared/advisor-protocol.md)). Does not affect built-in `/advisor`. |
+| `--no-external-orch` | Disable external Python orchestrator for Stage 4 execution. Falls back to inline orchestration (legacy). |
 
 ## Signal-Based Phase Transitions
 
@@ -86,6 +87,35 @@ Check `.caw/context_manifest.json`. If missing, invoke Bootstrapper Agent.
 Invoke Planner Agent with spec.md context. Output: `.caw/task_plan.md`
 
 ### Stage 4: Execution
+
+**IF NOT `--no-external-orch` (default — external orchestration):**
+
+Run the external execution orchestrator. This externalizes the entire execution loop to a Python script, reducing main agent context cost from O(N steps) to O(1).
+
+1. Run:
+```bash
+python3 "$CREW_PLUGIN_DIR/hooks/scripts/execution_orchestrator.py" \
+    --plan .caw/task_plan.md \
+    --state .caw/auto-state.json \
+    --cwd "$(pwd)" \
+    --effort "${EFFORT:-medium}"
+```
+
+   Optional flags (pass through from crew:go args):
+   - `--mcp-config <path>` — if `.mcp.json` or MCP config exists
+   - `--max-budget-usd <N>` — per-Builder-call budget cap
+   - `--dry-run` — show execution plan without running
+
+2. Parse JSON result from stdout:
+   - If `status == "success"`: read `steps_completed`, `commits`, `files_created`, `files_modified`
+   - If `status == "error"`: read `error` message, check if `steps_completed > 0` (partial success)
+   - Update auto-state.json execution fields from the result
+
+3. Output `SIGNAL: EXECUTION_COMPLETE` (the orchestrator does NOT emit signals — you must)
+
+4. Continue to Stage 5
+
+**ELSE (`--no-external-orch` — legacy inline mode):**
 
 **CRITICAL**: Steps MUST be executed **one at a time** in a loop. Each step runs individually so the Post-Step Cycle (commit + simplify) executes between steps.
 

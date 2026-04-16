@@ -117,6 +117,16 @@
           "type": "boolean",
           "default": true,
           "description": "Enable explicit Opus subagent for contested review triage (Stage 6). Disable with --no-advisor flag. Does not affect built-in /advisor."
+        },
+        "external_orchestration": {
+          "type": "boolean",
+          "default": true,
+          "description": "Use external Python orchestrators for execution and review stages. Disable with --no-external-orch flag."
+        },
+        "codex_mode": {
+          "type": "boolean",
+          "default": false,
+          "description": "Use Codex for step execution"
         }
       }
     },
@@ -238,6 +248,10 @@
           "type": "boolean",
           "default": false,
           "description": "EXECUTION_COMPLETE signal detected"
+        },
+        "orchestrator_artifacts": {
+          "type": ["string", "null"],
+          "description": "Path to orchestrator temp artifacts directory (set when external_orchestration is used)"
         }
       }
     },
