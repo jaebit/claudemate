@@ -63,3 +63,5 @@ Complexity signals: `_shared/complexity-hints.md`.
 - **DON'T** rely on global state across agent executions.
 - **DON'T** use complex logic in Markdown; delegate to Python scripts.
 - **DON'T** create model tier variants; agents adapt behavior internally.
+- **DON'T** hardcode `--effort max` in new orchestration scripts; prefer `xhigh` (the Opus 4.7 recommended default — `max` shows diminishing returns and tends to overthink).
+- **DON'T** assume implicit parallel subagent fan-out; Opus 4.7 requires explicit "spawn N agents in a single assistant message with N tool uses" phrasing in dispatch instructions.
