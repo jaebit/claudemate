@@ -357,6 +357,10 @@
           "type": "boolean",
           "default": false,
           "description": "REVIEW_COMPLETE signal detected"
+        },
+        "orchestrator_artifacts": {
+          "type": ["string", "null"],
+          "description": "Path to review orchestrator temp artifacts directory (set when external_orchestration is used)"
         }
       }
     },

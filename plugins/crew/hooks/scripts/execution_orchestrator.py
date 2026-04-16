@@ -28,7 +28,10 @@ import tempfile
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from task_plan_parser import TaskPlanParser, StepNode
+from crew_orch_lib import (
+    TaskPlanParser, StepNode,
+    StateManager, SubAgentRunner, WaveCalculator,
+)
 
 
 # ── Result Types ─────────────────────────────────────────────────────
@@ -51,92 +54,6 @@ class PostStepResult:
     tidy_hash: str | None = None
 
 
-# ── Wave Calculator ──────────────────────────────────────────────────
-
-class WaveCalculator:
-    """Group steps into execution waves via topological sort."""
-
-    @staticmethod
-    def calculate(steps: list[StepNode]) -> list[list[StepNode]]:
-        step_map = {s.id: s for s in steps}
-        all_ids = {s.id for s in steps}
-
-        # Only consider deps that are within our pending set
-        # Deps on completed steps are already satisfied
-        in_degree = {}
-        for s in steps:
-            relevant_deps = [d for d in s.deps if d in all_ids]
-            in_degree[s.id] = len(relevant_deps)
-
-        remaining = set(all_ids)
-        waves: list[list[StepNode]] = []
-
-        while remaining:
-            wave_ids = sorted(sid for sid in remaining if in_degree[sid] == 0)
-            if not wave_ids:
-                raise ValueError(f"Circular dependency among: {remaining}")
-            waves.append([step_map[sid] for sid in wave_ids])
-            for sid in wave_ids:
-                remaining.discard(sid)
-                for other in steps:
-                    if sid in other.deps and other.id in remaining:
-                        in_degree[other.id] -= 1
-
-        return waves
-
-
-# ── State Manager ────────────────────────────────────────────────────
-
-class StateManager:
-    """Read/write .caw/auto-state.json."""
-
-    def __init__(self, state_path: str):
-        self._path = Path(state_path)
-        self._state: dict = {}
-        if self._path.exists():
-            self._state = json.loads(self._path.read_text(encoding="utf-8"))
-
-    @property
-    def state(self) -> dict:
-        return self._state
-
-    def update_step(self, step_id: str, tasks_completed: int, tasks_total: int,
-                    files_created: list[str] | None = None,
-                    files_modified: list[str] | None = None):
-        execution = self._state.setdefault("execution", {})
-        execution["current_step"] = step_id
-        execution["tasks_completed"] = tasks_completed
-        execution["tasks_total"] = tasks_total
-        if files_created is not None:
-            existing = execution.get("files_created", [])
-            execution["files_created"] = list(set(existing + files_created))
-        if files_modified is not None:
-            existing = execution.get("files_modified", [])
-            execution["files_modified"] = list(set(existing + files_modified))
-        self._save()
-
-    def increment_builder_iterations(self):
-        execution = self._state.setdefault("execution", {})
-        execution["builder_iterations"] = execution.get("builder_iterations", 0) + 1
-        self._save()
-
-    def record_error(self, step_id: str, message: str):
-        self._state["last_error"] = {
-            "phase": "execution",
-            "step": step_id,
-            "message": message[:500],
-            "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-        }
-        self._save()
-
-    def _save(self):
-        self._path.parent.mkdir(parents=True, exist_ok=True)
-        self._path.write_text(
-            json.dumps(self._state, indent=2, ensure_ascii=False),
-            encoding="utf-8",
-        )
-
-
 # ── Execution Orchestrator ───────────────────────────────────────────
 
 class ExecutionOrchestrator:
@@ -149,9 +66,9 @@ class ExecutionOrchestrator:
         self.cwd = cwd
         self.dry_run = dry_run
         self.effort = effort
-        self.mcp_config = mcp_config
         self.max_budget = max_budget
         self.state = StateManager(state_path)
+        self.runner = SubAgentRunner(cwd=cwd, mcp_config=mcp_config)
         self.artifacts_dir = Path(tempfile.mkdtemp(prefix="crew_exec_"))
 
         # Load builder prompt template
@@ -246,7 +163,7 @@ class ExecutionOrchestrator:
                     self._log(f"  ⏭ [{step.id}] skipped")
                 else:
                     consecutive_failures += 1
-                    self.state.record_error(step.id, result.error or "unknown")
+                    self.state.record_error("execution", step.id, result.error or "unknown")
                     self._log(f"  ✗ [{step.id}] failed (recovery level {result.recovery_level})")
 
                     if consecutive_failures >= 3:
@@ -272,31 +189,9 @@ class ExecutionOrchestrator:
     async def _run_builder(self, step: StepNode, extra_context: str = "") -> str:
         """Run a Builder sub-agent via claude -p."""
         prompt = self._build_prompt(step, extra_context)
-
-        cmd = [
-            "claude", "-p", prompt,
-            "--output-format", "text",
-            "--allowedTools", "Read,Write,Edit,Bash,Grep,Glob",
-            "--permission-mode", "auto",
-            "--effort", self.effort,
-        ]
-        if self.mcp_config:
-            cmd += ["--mcp-config", self.mcp_config]
-        if self.max_budget:
-            cmd += ["--max-budget-usd", str(self.max_budget)]
-
-        proc = await asyncio.create_subprocess_exec(
-            *cmd,
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE,
-            cwd=self.cwd,
+        return await self.runner.run_or_raise(
+            prompt, effort=self.effort, max_budget=self.max_budget,
         )
-        stdout, stderr = await proc.communicate()
-
-        if proc.returncode != 0:
-            raise RuntimeError(stderr.decode().strip()[:500] or "Builder exited with non-zero")
-
-        return stdout.decode().strip()
 
     def _build_prompt(self, step: StepNode, extra_context: str = "") -> str:
         """Construct the full prompt for a Builder sub-agent."""
@@ -388,27 +283,7 @@ class ExecutionOrchestrator:
             f"Error: {error}\n\n"
             "Diagnose the root cause and apply a minimal fix. Run tests to verify."
         )
-        cmd = [
-            "claude", "-p", prompt,
-            "--output-format", "text",
-            "--allowedTools", "Read,Write,Edit,Bash,Grep,Glob",
-            "--permission-mode", "auto",
-            "--model", "haiku",
-            "--effort", "low",
-        ]
-        if self.mcp_config:
-            cmd += ["--mcp-config", self.mcp_config]
-
-        proc = await asyncio.create_subprocess_exec(
-            *cmd,
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE,
-            cwd=self.cwd,
-        )
-        stdout, stderr = await proc.communicate()
-
-        if proc.returncode != 0:
-            raise RuntimeError(f"Fixer failed: {stderr.decode().strip()[:200]}")
+        await self.runner.run_or_raise(prompt, model="haiku", effort="low")
 
     @staticmethod
     def _is_non_blocking(step: StepNode) -> bool:
@@ -440,20 +315,9 @@ class ExecutionOrchestrator:
                     "Make only clear improvements: remove dead code, fix naming, simplify logic. "
                     "Do NOT add features or change behavior."
                 )
-                cmd = [
-                    "claude", "-p", simplify_prompt,
-                    "--output-format", "text",
-                    "--allowedTools", "Read,Edit,Grep,Glob",
-                    "--permission-mode", "auto",
-                    "--effort", "low",
-                ]
-                proc = await asyncio.create_subprocess_exec(
-                    *cmd,
-                    stdout=asyncio.subprocess.PIPE,
-                    stderr=asyncio.subprocess.PIPE,
-                    cwd=self.cwd,
+                await self.runner.run(
+                    simplify_prompt, effort="low", tools="Read,Edit,Grep,Glob",
                 )
-                await proc.communicate()
                 result.simplified = True
         except Exception:
             pass  # Simplification is best-effort

@@ -236,7 +236,19 @@ git commit -m "[tidy] Simplify Step <N>"
 ### Stage 5: QA Loop
 Invoke QA loop with max_cycles: 2, severity: major. Build → Review → Fix cycle until quality criteria met. Stall detection via issue hashing.
 
-### Stage 6: Review (Parallel Validation)
+### Stage 6-7: Review + Fix
+
+**IF NOT --no-external-orch:**
+
+1. Run: `python3 "$CREW_PLUGIN_DIR/hooks/scripts/review_orchestrator.py" --state .caw/auto-state.json --cwd "$(pwd)" --spec .caw/spec.md --max-rounds 3`
+2. Parse JSON result from stdout
+3. If status == "success" and final_verdict == "APPROVED": continue to Stage 8
+4. If status == "needs_intervention": report issues, prompt user
+5. If status == "error": report failure
+
+**ELSE (--no-external-orch, legacy mode):**
+
+**Stage 6: Review (Parallel Validation)**
 Spawn 3 Reviewer agents in parallel:
 - **Functional**: Verify spec.md requirements
 - **Security**: Check OWASP Top 10
@@ -244,7 +256,7 @@ Spawn 3 Reviewer agents in parallel:
 
 Aggregate verdicts. If any REJECTED, proceed to Fix (max 3 rounds).
 
-#### Contested Review Advisor Check
+**Contested Review Advisor Check**
 
 IF verdicts are split (not unanimous — e.g., one APPROVED and one REJECTED on overlapping files) AND `config.advisor_enabled` AND `advisor.calls_made < 3`:
 1. Consult Advisor-Opus with the conflicting verdicts and file context. See [Advisor Protocol](../../_shared/advisor-protocol.md).
@@ -254,7 +266,7 @@ IF verdicts are split (not unanimous — e.g., one APPROVED and one REJECTED on 
 
 This prevents unnecessary fix cycles caused by reviewer disagreement.
 
-### Stage 7: Fix
+**Stage 7: Fix**
 Parse review issues. Auto-fix via Fixer Agent (Haiku tier). Track in validation-results.json.
 
 ### Stage 8: Check
