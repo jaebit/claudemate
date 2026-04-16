@@ -141,9 +141,14 @@ Based on `whenToUse` documentation:
 
 | Threshold | Model | Trigger Keywords |
 |-----------|-------|------------------|
-| ≤ 0.3 | Haiku | "quick", "fast", "simple" |
-| 0.3 - 0.7 | Sonnet | (default) |
-| > 0.7 | Opus | "deep", "thorough", "ultrathink", "security" |
+| ≤ 0.3 | Main agent handles directly (no spawn) | "quick", "fast", "simple" |
+| 0.3 - 0.5 | Haiku subagent | "boilerplate", "crud", "format" |
+| 0.5 - 0.75 | Sonnet subagent | (default) |
+| > 0.75 | Opus subagent | "deep", "thorough", "ultrathink", "security" |
+
+> **Opus 4.7 note:** The main orchestrator model (Opus 4.7) calls tools *less often and reasons more* than 4.6. The `≤ 0.3` band therefore recommends **no subagent spawn at all** — the main agent should handle trivial work inline rather than pay the tool/context roundtrip cost. Thresholds for Haiku/Sonnet/Opus spawn have been raised accordingly (previously 0.3/0.7; now 0.5/0.75) to reflect 4.7's more deliberate delegation profile.
+>
+> Also: prefer `--effort xhigh` (the new Opus 4.7 default) over `--effort max` when configuring spawned subagents — `max` shows diminishing returns and is prone to overthinking per Anthropic's Opus 4.7 guidance.
 
 ---
 

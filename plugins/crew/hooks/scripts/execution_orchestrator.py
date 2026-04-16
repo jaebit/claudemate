@@ -446,7 +446,12 @@ def main():
     parser.add_argument("--state", required=True, help="Path to .caw/auto-state.json")
     parser.add_argument("--cwd", default=".", help="Project working directory")
     parser.add_argument("--dry-run", action="store_true", help="Show execution plan without running")
-    parser.add_argument("--effort", default="medium", choices=["low", "medium", "high", "max"])
+    parser.add_argument(
+        "--effort",
+        default="xhigh",
+        choices=["low", "medium", "high", "xhigh", "max"],
+        help="Reasoning effort. xhigh is recommended default for Opus 4.7; max may overthink.",
+    )
     parser.add_argument("--mcp-config", help="MCP server config JSON file path")
     parser.add_argument("--max-budget-usd", type=float, help="Max USD budget per Builder call")
 

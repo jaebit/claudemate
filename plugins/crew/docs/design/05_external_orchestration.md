@@ -95,7 +95,7 @@ cmd = [
     "--output-format", "text",
     "--allowedTools", "Read,Write,Edit,Bash,Grep,Glob",
     "--permission-mode", "auto",
-    "--effort", "medium",
+    "--effort", "xhigh",
 ]
 # MCP 서버가 필요한 경우
 if mcp_config_path:

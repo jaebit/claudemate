@@ -4,7 +4,7 @@ Enhanced review phase with 3-architect parallel validation.
 
 ## Overview
 
-During `/crew:auto` review phase, spawn 3 parallel Reviewer agents for comprehensive validation:
+During `/crew:auto` review phase, spawn 3 Reviewer agents **concurrently in a single assistant message with 3 Task tool uses** (not sequential calls across turns — Opus 4.7 requires explicit parallel instruction to fan out):
 
 1. **Functional Reviewer**: Verifies all requirements implemented correctly
 2. **Security Reviewer**: Checks for vulnerabilities and security issues
@@ -50,7 +50,7 @@ All three must return `APPROVED` for the phase to complete.
 ```markdown
 ## Parallel Validation Execution
 
-Spawn 3 Reviewer agents in parallel using Task tool:
+Spawn 3 Reviewer agents in parallel — **emit all 3 Task tool uses in a single assistant message so they execute concurrently** (Opus 4.7 will NOT automatically fan out unless told so explicitly):
 
 ### Functional Review
 Use Task tool with:

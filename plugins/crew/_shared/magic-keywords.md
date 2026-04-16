@@ -20,19 +20,21 @@ Magic Keywords allow users to activate special workflow modes by including speci
 
 ### Thinking Keywords
 
-| Keyword | Mode | Behavior |
-|---------|------|----------|
-| `thinkhard` | DEEP_ANALYSIS | Extended reasoning, multi-approach |
-| `ultrathink` | DEEP_ANALYSIS | Maximum analysis depth |
-| `think` | DEEP_ANALYSIS | Standard deep analysis |
+| Keyword | Mode | Injected Prompt Prefix |
+|---------|------|------------------------|
+| `thinkhard` | DEEP_ANALYSIS | `Think carefully and step-by-step before acting. Consider multiple approaches.` |
+| `ultrathink` | DEEP_ANALYSIS | `Think carefully and step-by-step before acting. Explore the solution space deeply, verify assumptions.` |
+| `think` | DEEP_ANALYSIS | `Think step-by-step before acting.` |
+
+> **Opus 4.7 note:** Extended Thinking with fixed `budget_tokens` is unsupported in Opus 4.7 — thinking is now adaptive per step. These keywords therefore **inject prompt phrasing** rather than setting a thinking budget. The phrasing nudges 4.7's adaptive reasoning toward more deliberation while remaining a no-op hint on older models.
 
 ### Speed Keywords
 
-| Keyword | Mode | Behavior |
-|---------|------|----------|
-| `quickfix` | MINIMAL_CHANGE | Essential changes only |
-| `quick` | MINIMAL_CHANGE | Prioritize speed |
-| `fast` | MINIMAL_CHANGE | Skip optional improvements |
+| Keyword | Mode | Injected Prompt Prefix |
+|---------|------|------------------------|
+| `quickfix` | MINIMAL_CHANGE | `Prioritize responding quickly. Make the smallest correct change; avoid unnecessary tool calls.` |
+| `quick` | MINIMAL_CHANGE | `Prioritize responding quickly; skip optional improvements.` |
+| `fast` | MINIMAL_CHANGE | `Prioritize responding quickly; avoid unnecessary tool calls.` |
 
 ### Economy Keywords (Cost Optimization)
 

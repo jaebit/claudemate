@@ -43,7 +43,7 @@ class SubAgentRunner:
         prompt: str,
         *,
         model: str | None = None,
-        effort: str = "medium",
+        effort: str = "xhigh",
         tools: str = "Read,Write,Edit,Bash,Grep,Glob",
         max_budget: float | None = None,
         output_format: str = "text",

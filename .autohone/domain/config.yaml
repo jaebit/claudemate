@@ -25,6 +25,7 @@ domain:
     # 모델 체급 분류
     model_tiers:
       "claude-sonnet-4-6": "sonnet"
+      "claude-opus-4-7": "opus"
       "claude-opus-4-6": "opus"
       "claude-haiku-4-5-20251001": "haiku"
 

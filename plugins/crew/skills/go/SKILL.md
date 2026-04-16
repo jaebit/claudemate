@@ -98,7 +98,7 @@ python3 "$CREW_PLUGIN_DIR/hooks/scripts/execution_orchestrator.py" \
     --plan .caw/task_plan.md \
     --state .caw/auto-state.json \
     --cwd "$(pwd)" \
-    --effort "${EFFORT:-medium}"
+    --effort "${EFFORT:-xhigh}"
 ```
 
    Optional flags (pass through from crew:go args):
@@ -249,7 +249,7 @@ Invoke QA loop with max_cycles: 2, severity: major. Build → Review → Fix cyc
 **ELSE (--no-external-orch, legacy mode):**
 
 **Stage 6: Review (Parallel Validation)**
-Spawn 3 Reviewer agents in parallel:
+Spawn 3 Reviewer agents in parallel — emit all 3 Task tool uses **in a single assistant message** so they run concurrently (Opus 4.7 defaults to sequential unless explicitly told to fan out):
 - **Functional**: Verify spec.md requirements
 - **Security**: Check OWASP Top 10
 - **Quality**: Check maintainability

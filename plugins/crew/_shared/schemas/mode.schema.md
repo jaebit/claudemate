@@ -29,8 +29,8 @@ Defines the structure for `.caw/mode.json` - tracks the active workflow mode.
 | Mode | Trigger Keywords | Behavior |
 |------|------------------|----------|
 | `DEEP_WORK` | deepwork, fullwork, ultrawork, nonstop, keepgoing | Complete ALL tasks without stopping |
-| `DEEP_ANALYSIS` | thinkhard, ultrathink, think | Extended reasoning and validation |
-| `MINIMAL_CHANGE` | quickfix, quick, fast | Minimal changes, speed priority |
+| `DEEP_ANALYSIS` | thinkhard, ultrathink, think | Injects "Think carefully and step-by-step" prompt prefix (adaptive thinking in Opus 4.7) |
+| `MINIMAL_CHANGE` | quickfix, quick, fast | Injects "Prioritize responding quickly" prompt prefix |
 | `RESEARCH` | research, investigate, explore | Comprehensive information gathering |
 | `NORMAL` | (default) | Standard behavior |
 
