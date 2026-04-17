@@ -8,7 +8,16 @@ allowed-tools: Read, Write, Glob, Grep, Bash
 
 # Session Manager
 
-Combines session persistence, intelligent context management, real-time HUD metrics, and analytics dashboard.
+Combines session persistence, subagent context curation, real-time HUD metrics, and analytics dashboard.
+
+## Scope Note (post-1M context)
+
+With the primary model's 1M context window, this skill is **not** in the business of compressing the main conversation to survive token limits. Its two load-bearing jobs are:
+
+- **Durable session handoff**: persist enough state between sessions that `/crew:go --continue` or `/crew:dashboard` can resume cleanly the next day.
+- **Subagent context curation**: decide which files and summaries to pass to each spawned Agent — subagents still run with smaller contexts than the main executor, so prioritization matters there even when it no longer matters for the main thread.
+
+The HUD and dashboard components are independent and unaffected by the context-window shift.
 
 ## Current Session
 
@@ -22,11 +31,11 @@ Combines session persistence, intelligent context management, real-time HUD metr
 - Fields: session_id, workflow, progress, context, metrics
 - Recovery: recent (<24h) → offer restore, old → fresh start
 
-### Context Management
-- Intelligent context prioritization for agents
+### Subagent Context Curation
+- Picks which files each spawned Agent sees; the main executor's 1M context is not the bottleneck here — subagent context budgets are.
 - Context tiers: Active (modifying), Project (reference), Packed (interface-only), Archived
 - Priority scoring: direct_reference (1.0), dependency_output (0.8), same_directory (0.6), pattern_match (0.4)
-- Memory optimization: completed steps → summarize, large files → extract relevant sections
+- For subagent dispatch: completed steps → summarize, large files → extract relevant sections. The main conversation keeps full fidelity.
 
 ### HUD Metrics
 - Real-time progress display during execution
