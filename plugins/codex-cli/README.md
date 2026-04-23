@@ -65,9 +65,44 @@ Codex MCP 서버를 통해 Claude Code에서 Codex를 네이티브 도구로 사
 
 ## Prerequisites
 
-- Codex CLI가 설치되어 있어야 합니다
-- PATH에 `codex` 명령어가 등록되어 있어야 합니다
-- `codex mcp-server` 지원 버전 필요
+### 설치
+
+npm 또는 Homebrew 중 편한 방법으로 설치합니다:
+
+```bash
+# npm
+npm install -g @openai/codex
+
+# Homebrew
+brew install codex
+```
+
+최소 요구 버전: `codex >= 1.0` (`codex mcp-server` 서브커맨드 지원 필요)
+
+설치 후 PATH 확인:
+```bash
+which codex
+codex --version
+```
+
+> **주의**: `codex mcp-server` 서브커맨드를 지원하지 않는 버전을 사용하면 MCP 서버가 자동 시작에 실패하며, Claude Code에서 `codex` / `codex-reply` 도구가 "tool not found"로 표시됩니다. 이 경우 Codex CLI를 최신 버전으로 업데이트하세요.
+
+### 인증
+
+`OPENAI_API_KEY` 환경 변수를 설정하거나, 인터랙티브 로그인 중 한 가지를 선택합니다:
+
+**방법 1 — 환경 변수 (권장)**
+```bash
+export OPENAI_API_KEY=<your-api-key>
+```
+셸 프로파일(`.zshrc`, `.bashrc` 등)에 추가하면 영구적으로 적용됩니다.
+
+**방법 2 — 인터랙티브 로그인**
+```bash
+codex auth login
+```
+
+인증 상태 확인: `codex auth status`
 
 ## Installation
 
