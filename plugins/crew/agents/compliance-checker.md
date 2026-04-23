@@ -1,7 +1,7 @@
 ---
 name: compliance-checker
 description: "Validates adherence to project rules, conventions, and workflow requirements"
-model: haiku
+model: claude-haiku-4-5
 whenToUse: |
   Use to validate project compliance:
   - Before commits to verify rule adherence

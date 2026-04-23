@@ -1,7 +1,7 @@
 ---
 name: analyst
 description: Extract functional, non-functional, and implicit requirements from user requests for auto workflow expansion phase
-model: sonnet
+model: claude-sonnet-4-6
 whenToUse: |
   Use for requirements extraction:
   - /crew:auto expansion Phase 1

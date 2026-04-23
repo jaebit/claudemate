@@ -8,7 +8,7 @@ whenToUse: |
   - Data model and API contract design
   - Technology selection and trade-off analysis
   - Wireframes, user flows, interaction specs
-model: sonnet
+model: claude-sonnet-4-6
 color: magenta
 tools:
   - Read

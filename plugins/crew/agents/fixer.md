@@ -7,7 +7,7 @@ whenToUse: |
   - /crew:fix --deep for comprehensive refactoring
   - Multi-file changes, performance/architecture/logic improvements
   - Security vulnerability remediation
-model: sonnet
+model: claude-sonnet-4-6
 color: yellow
 tools:
   - Read

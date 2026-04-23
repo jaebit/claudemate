@@ -139,7 +139,12 @@ queue:
     - id: "t5-debate-metadata-fix"
       plugin: "multi-model-debate"
       started_at: "2026-04-23T22:45:00+09:00"
-      status: "in_progress"
+      completed_at: "2026-04-23T22:51:00+09:00"
+      status: "completed"
+      run_id: "queue-t5-debate-metadata-fix-20260423"
+      score: 1.0
+      commits: ["29d4719", "c36e088", "0b90da6"]
+      golden_example_eligible: true
       description: |
         3개 skill 모두 user_invocable 플래그가 누락됨 (실제 확인). 명시적으로 설정하고,
         round_limit·timeout 등 토론 파이프라인의 제어 변수를 문서화.
@@ -155,6 +160,8 @@ queue:
     # ─────────────────────────────────────────────────────────────
     - id: "t6-crew-consistency"
       plugin: "crew"
+      started_at: "2026-04-23T22:52:00+09:00"
+      status: "in_progress"
       description: |
         crew는 성숙한 9-stage orchestrator. 기존 tests/ 실행하여 회귀 없음 확인 후,
         최근 Opus 4.7/1M context 정렬 커밋(5ea4747, 8063cb2) 이후 16 skill 메타데이터가 일관한지 점검.
@@ -164,7 +171,6 @@ queue:
         - "plugins/crew/CLAUDE.md: Opus 4.7 / 1M context 최신 반영 확인 (최근 커밋과 일관)"
         - "plugins/crew/agents/*.md: model 참조가 최신 Opus 4.7 / Sonnet 4.6 / Haiku 4.5 명시"
         - "plugin.json 스키마 준수 유지 + 버전 드리프트 없음 (4.1.1 3자 일치)"
-      status: "pending"
 
     # ─────────────────────────────────────────────────────────────
     # Task 7: autopilot (v0.4.0 / orchestrator / 마지막)
