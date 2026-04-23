@@ -13,6 +13,18 @@ function checkGemini() {
   }
 }
 
+function checkGeminiAuth() {
+  try {
+    execFileSync("gemini", ["-p", ""], { encoding: "utf-8", timeout: 4000, stdio: ["ignore", "pipe", "pipe"] });
+    return { ok: true };
+  } catch (err) {
+    const output = (err.stdout || "") + (err.stderr || "");
+    const authKeywords = ["auth", "login", "authenticate", "credential", "unauthorized", "unauthenticated", "sign in", "not logged"];
+    const isAuthError = authKeywords.some((kw) => output.toLowerCase().includes(kw));
+    return { ok: false, isAuthError, output };
+  }
+}
+
 const result = checkGemini();
 
 if (!result.ok) {
@@ -25,5 +37,17 @@ if (!result.ok) {
       "gemini:* commands will not work until installed.",
   }));
 } else {
-  console.log(JSON.stringify({ result: "continue" }));
+  const authResult = checkGeminiAuth();
+  if (!authResult.ok && authResult.isAuthError) {
+    console.log(JSON.stringify({
+      result: "continue",
+      additionalContext:
+        "⚠️  gemini-cli: Gemini CLI is installed but not authenticated.\n" +
+        "Run:  gemini auth login\n" +
+        "Alt:  Set the GEMINI_API_KEY environment variable.\n" +
+        "gemini:* commands will not work until authenticated.",
+    }));
+  } else {
+    console.log(JSON.stringify({ result: "continue" }));
+  }
 }

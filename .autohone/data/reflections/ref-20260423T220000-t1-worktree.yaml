@@ -1,0 +1,46 @@
+reflection:
+  id: "ref-20260423T220000-t1-worktree"
+  run_id: "queue-t1-worktree-polish-20260423"
+  task_id: "t1-worktree-polish"
+  sprint_id: "plugin-improvement-sweep-2026-04-23"
+  timestamp: "2026-04-23T22:00:00+09:00"
+  outcome: "PASS"
+  score: 1.0
+  root_cause_analysis:
+    category: "N/A"
+    description: "Full PASS — no failure to attribute"
+    evidence: ["Evaluator confirmed 5/5 AC PASS, score 1.0"]
+
+  what_worked:
+    - "Planner pre-measured current state with python3 -c + grep before writing AC → all claims evidence-backed, no false-report risk"
+    - "Worker used small scoped commits per sprint (3 commits for 3 distinct concerns) → easy per-AC verification"
+    - "Evaluator ran per-AC verification commands (grep/python3) against actual files, not prose description → deterministic result"
+    - "plugin.json schema allowlist check run first (fast gate) — confirmed only name/version/description present, no forbidden fields"
+    - "Version triple-check pattern: python3 -c read plugin.json, grep marketplace.json, grep README table — one command sequence per plugin"
+
+  what_to_reuse_for_next_tasks:
+    - "plugin.json schema allowlist check: grep for any field outside [name, version, description, mcpServers] — run as first AC gate on every task"
+    - "Version triple-check sequence: plugin.json version == marketplace.json entry == README version table — applicable to all 6 remaining tasks"
+    - "user_invocable audit: for tasks with skills, grep SKILL.md frontmatter for user_invocable presence and compare against expected value (true for user-facing, false for internal)"
+    - "Pre-measurement before writing AC: always run python3/grep to establish current state so Worker does not over-write or silently pass unchanged files"
+    - "Per-AC verification command pattern: each AC maps to a concrete grep/python3 command Evaluator can replay — write these into the contract"
+
+  surprises:
+    - "plugin.json has no mcpServers field and that is valid: worktree plugin uses file-based skill discovery only; mcpServers is optional not required"
+    - "Worker self-reported 5/5 PASS matched Evaluator isolated result exactly — no grade inflation observed"
+
+  non_blocking_concerns:
+    - "plugins/worktree/README.md version table references marketplace.json but root README.md Active Plugins section does not link worktree — minor inconsistency, no functional impact"
+    - "CLAUDE.md worktree notes say .worktrees/ auto-added to .gitignore but no hook enforces this — low risk for v0.1.0"
+
+  self_critique: "No failure to reflect on. Pipeline executed cleanly. Compound learning value is in pattern extraction for Tasks 2-7."
+
+  action_items: []
+
+  lessons_learned:
+    - "Small plugins validate pipeline mechanics cheaply — correct ordering (smallest first) paid off"
+    - "Evidence-backed AC writing prevents Edit-tool false-report issue seen in ref-20260412"
+
+  generation_metrics:
+    golden_example_saved: true
+    golden_example_path: ".autohone/data/golden-examples/plugin-improvement-t1-worktree-20260423.yaml"

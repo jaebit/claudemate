@@ -65,6 +65,8 @@ queue:
     # ─────────────────────────────────────────────────────────────
     - id: "t2-gemini-cli-harden"
       plugin: "gemini-cli"
+      started_at: "2026-04-23T21:58:30+09:00"
+      status: "in_progress"
       description: |
         gemini-cli 플러그인의 SessionStart prerequisite 체크 동작을 검증하고,
         commands와 hooks가 gemini CLI 부재·인증 실패 상황을 graceful하게 처리하도록 보강.
@@ -74,7 +76,6 @@ queue:
         - "plugins/gemini-cli/README.md: GEMINI_API_KEY 또는 인증 요구사항, 설치 prerequisite 명시"
         - "hooks는 cross-platform 규칙 준수 (python3 또는 node 사용)"
         - "plugin.json 스키마 준수 유지"
-      status: "pending"
 
     # ─────────────────────────────────────────────────────────────
     # Task 3: codex-cli (v1.0.0 / MCP wrapper / skills 없음)
