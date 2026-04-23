@@ -1,86 +1,58 @@
 episode_output:
   agent: "planner"
-  task_id: "queue-t3-codex-cli-harden-20260423"
-  timestamp: "2026-04-23T22:30:00+09:00"
-  status: "plan_ready"
+  plan_id: "queue-t4-arch-guard-docs-20260423"
+  timestamp: "2026-04-23T13:35:00Z"
 
 payload:
   plan:
-    id: "queue-t3-codex-cli-harden-20260423"
-    title: "codex-cli Plugin Hardening — MCP Wrapper Robustness"
+    id: "queue-t4-arch-guard-docs-20260423"
+    title: "arch-guard: add CLAUDE.md and verify invariants"
     status: "in_progress"
-    created_at: "2026-04-23T22:30:00+09:00"
-
-    pre_measurement:
-      - ac: "AC1 — plugin.json mcpServers.codex (command: codex, args array)"
-        status: "PASS"
-        evidence: "command: codex, args: [mcp-server], no schema-violating extra fields"
-      - ac: "AC2 — README install method + version + auth setup"
-        status: "FAIL"
-        evidence: "Prerequisites section missing: no npm/brew install command, no version number, no OPENAI_API_KEY or auth setup instructions"
-      - ac: "AC3 — commands/*.md error-path guidance"
-        status: "FAIL"
-        evidence: "apply.md and cloud.md both lack any error handling block; bare `codex apply` / `codex cloud` with no failure branch"
-      - ac: "AC4 — Korean/English term consistency"
-        status: "FAIL"
-        evidence: "README body in Korean; section headers in English; table column labels alternate; inconsistent mixing throughout"
-      - ac: "AC5 — plugin.json schema compliance (no extra fields)"
-        status: "PASS"
-        evidence: "Only name, version, description, mcpServers present"
-
-    carry_over_issues:
-      - "Task 2 pattern: error-path guidance must be added as explicit '### If <cli> fails:' section per golden example template"
-      - "Hook regex narrowed to /autohone/ anchor — writes to plugins/*/commands/*.md are now allowed"
-      - "Edit-tool false-report guard: Worker must grep-verify each edit after applying"
+    created_at: "2026-04-23T13:35:00Z"
 
     sprints:
       - id: "sprint-1"
-        title: "Add error-path guidance to command files"
+        title: "Author plugins/arch-guard/CLAUDE.md"
         status: "planned"
-        target_files:
-          - "plugins/codex-cli/commands/apply.md"
-          - "plugins/codex-cli/commands/cloud.md"
         acceptance_criteria:
-          - "apply.md contains a '### If codex apply fails:' section listing: codex not in PATH, invalid task_id format, and auth/network errors with user-actionable steps"
-          - "cloud.md contains a '### If codex cloud fails:' section listing: missing --env flag, codex not in PATH, and auth errors with user-actionable steps"
-          - "Neither command file uses silent-fail patterns (e.g. `|| true` or unchecked bare commands)"
-          - "Worker grep-verifies '### If codex' appears in both files after edit"
-        skills_needed: ["domain-expert", "quality-gate"]
+          - "plugins/arch-guard/CLAUDE.md exists and is non-empty"
+          - "File documents all 4 hook scripts (session-init.mjs, layer-check.mjs, contract-guard.mjs, stop-reminder.mjs) and each script's scope guard condition (arch-guard.json sentinel) verified by reading the script before writing"
+          - "File lists 12 skills in 5 categories: Design (adr, contract-first, integration-map, spec-sync), Scaffolding (setup, scaffold), Implementation (implement, tdd, test-gen), Review (arch-check, impl-review), Tracking (track)"
+          - "File includes a Golden Rules section referencing plugin.json schema constraint (name/version/description only) and user_invocable:false internal-only policy"
+          - "File explains arch-guard.json as the project-detection sentinel that activates all hooks"
+        skills_needed: ["plugin-dev:plugin-structure", "plugin-dev:hook-development"]
         dependencies: []
+        advisor_budget: 1
 
       - id: "sprint-2"
-        title: "Fix README — install instructions, version, auth, and term consistency"
+        title: "Assert invariants (AC2/AC3/AC5) and emit carry_over"
         status: "planned"
-        target_files:
-          - "plugins/codex-cli/README.md"
         acceptance_criteria:
-          - "README Prerequisites section includes a concrete install command (npm install -g @openai/codex or brew equivalent) and specifies minimum supported version"
-          - "README includes auth setup: OPENAI_API_KEY environment variable and/or `codex auth login` command documented"
-          - "All body prose uses consistent language — no mid-section Korean/English switching; section headers remain English"
-          - "Worker grep-verifies 'OPENAI_API_KEY' and at least one of 'npm install' or 'brew install' appear in README after edit"
-        skills_needed: ["domain-expert", "hook-enforcement-probe"]
-        dependencies: []
+          - "stop-reminder.mjs scope guard confirmed present: isConfiguredProject() call on line 6 exits 0 for non-arch-guard projects (no regression from S533 fix)"
+          - "grep -c 'user_invocable: false' plugins/arch-guard/skills/*/SKILL.md returns 1 for all 12 files (12/12 confirmed)"
+          - "plugins/arch-guard/.claude-plugin/plugin.json contains only name/version/description fields (schema-clean)"
+          - "carry_over record written: AC4 deferred — root CLAUDE.md protected by pre-tool-security.sh (narrowing-unaffected rule line 122-125); recommended addition: '- **[Arch Guard](./plugins/arch-guard/CLAUDE.md)**' under '# Active Plugins'"
+        skills_needed: ["plugin-dev:plugin-structure"]
+        dependencies: ["sprint-1"]
+        advisor_budget: 1
 
     context:
       domain_type: "general"
-      complexity: "medium"
-      model_used: "claude-sonnet-4-6"
+      complexity: "low"
+      advisor_budget_total: 2
       relevant_reflections: []
       relevant_skills:
-        - "hook-enforcement-probe"
-        - "domain-expert"
-        - "quality-gate"
-        - "task-planner"
+        - "plugin-dev:plugin-structure"
+        - "plugin-dev:hook-development"
       domain_constraints:
-        - "plugin.json: only name, version, description, mcpServers fields allowed"
-        - "commands/*.md writes allowed — hook regex anchored to /autohone/, not plugins/"
-        - "No type: prompt hooks outside Stop/SubagentStop events"
+        - "plugin.json: only name/version/description fields allowed"
+        - "File-Based Discovery: CLAUDE.md auto-discovered by path, not declared in plugin.json"
+        - "root CLAUDE.md is write-protected by pre-tool-security.sh (line 122-125)"
       skill_rotation_applied: false
-      rotation_reason: "advisor.enabled=false; 2-sprint medium task; rotation overhead not warranted"
-      ac_skipped:
-        - "AC1: PASS — plugin.json already compliant, no sprint needed"
-        - "AC5: PASS — plugin.json schema clean, no sprint needed"
-      mcp_wrapper_risks:
-        - "mcpServers.codex command: codex requires codex binary in PATH at plugin load time; if absent, MCP server silently fails to start — README must document this"
-        - "args: [mcp-server] is a sub-command requiring a specific codex release; version pinning in README is critical"
-        - "MCP server auto-start means errors surface as tool-not-found rather than command errors — commands/*.md error sections should acknowledge this distinction"
+      model_used: "claude-sonnet-4-6"
+
+    carry_over:
+      - id: "carry-ac4-root-claude-md"
+        reason: "pre-tool-security.sh hook protects root CLAUDE.md (narrowing-unaffected rule, line 122-125); edit is out of scope for this task"
+        deferred_action: "Add '- **[Arch Guard](./plugins/arch-guard/CLAUDE.md)**' under '# Active Plugins' section in root CLAUDE.md — requires privileged session or manual edit"
+        status: "deferred"
