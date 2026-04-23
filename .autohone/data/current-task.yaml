@@ -1,39 +1,99 @@
-agent: worker
+agent: planner
+episode: queue-t1-worktree-polish-20260423
+timestamp: "2026-04-23T21:00:00+09:00"
+
 payload:
   plan:
-    id: plan-20260412-gen-060-failure-handling
-    task_type: testing
-    topic: memory_capture failure_handling 강화 — OSError/UnicodeEncodeError 경로 커버리지
-    created_at: '2026-04-12T18:43:00+09:00'
-    skill_version: domain-expert-v1.8.0
-    status: completed
-
-    isolation_design:
-      patch_targets:
-        - memory_capture.FACTS_DIR → tempdir
-        - memory_capture.EXPERIENCES_DIR → tempdir
-        - memory_capture.TEMPLATES_DIR → tempdir (fake template file written before patch)
-        - pathlib.Path.write_text → OSError / UnicodeEncodeError
-        - pathlib.Path.read_text → OSError (promote read path)
-      note: "_env() helper writes template BEFORE patches entered via ExitStack"
+    id: "queue-t1-worktree-polish-20260423"
+    title: "worktree plugin — Golden Rules alignment & v0.1.0 alpha polish"
+    status: "in_progress"
+    created_at: "2026-04-23T21:00:00+09:00"
 
     sprints:
-      - id: sprint-1
-        title: Refactor test_memory_capture.py with _env() helper + isolation
+      - id: "sprint-1"
+        title: "plugin.json schema + version triple consistency"
+        status: "planned"
+        goal: >
+          Ensure plugin.json contains only allowed fields (name/version/description/mcpServers)
+          and that the version string 0.1.0 is consistently reflected in marketplace.json
+          and README.md (version table).
         acceptance_criteria:
-          - 파일 ≤72L
-          - 기존 6개 테스트 모두 pass
-          - 모든 테스트가 tempdir 격리 사용 (vault write 없음)
-          - TEMPLATES_DIR 패치로 template 경로 의존 제거
-        target_lines: 55
-        status: pending
+          - "plugins/worktree/.claude-plugin/plugin.json contains exactly the keys: name, version, description — and no other top-level keys (mcpServers optional if absent is fine)"
+          - "grep -E '\"version\"' plugins/worktree/.claude-plugin/plugin.json outputs exactly '\"version\": \"0.1.0\"'"
+          - ".claude-plugin/marketplace.json entry for worktree has version field equal to '0.1.0'"
+          - "plugins/worktree/README.md contains a markdown table (pipe-delimited) with a row matching '0.1.0' in the version column"
+        dependencies: []
+        touched_files:
+          - "plugins/worktree/.claude-plugin/plugin.json"
+          - ".claude-plugin/marketplace.json"
+          - "plugins/worktree/README.md"
+        est_minutes: 10
 
-      - id: sprint-2
-        title: Add test_capture_write_oserror + test_promote_read_oserror
+      - id: "sprint-2"
+        title: "README.md — correct invocation examples for all 3 skills"
+        status: "planned"
+        goal: >
+          README.md must contain at least one runnable invocation example for each of
+          create, merge, and cleanup that matches the actual argument syntax defined in
+          the respective SKILL.md frontmatter.
         acceptance_criteria:
-          - 파일 ≤72L 유지 (7개 → 8개 테스트)
-          - test_capture_write_oserror → OSError on write → returns 1
-          - test_promote_read_oserror → OSError on read → returns non-zero
-          - python knowledge/00-meta/tools/tests/test_memory_capture.py 실행 성공
-        target_lines: 71
-        status: pending
+          - "plugins/worktree/README.md contains a code block with a worktree:create invocation using positional branch-name syntax (e.g. '/worktree:create feat/my-feature'), not '--branch' flag"
+          - "plugins/worktree/README.md contains a code block with a worktree:merge invocation (e.g. '/worktree:merge main' or '/worktree:merge')"
+          - "plugins/worktree/README.md contains a code block with a worktree:cleanup invocation (e.g. '/worktree:cleanup' or '/worktree:cleanup --all')"
+        dependencies: ["sprint-1"]
+        touched_files:
+          - "plugins/worktree/README.md"
+        est_minutes: 15
+
+      - id: "sprint-3"
+        title: "SKILL.md cross-platform compliance + user_invocable audit"
+        status: "planned"
+        goal: >
+          Verify and fix cross-platform violations in all 3 SKILL.md bodies.
+          Primary known violation: create/SKILL.md uses 'pip install' — must be 'pip3'.
+          Confirm user_invocable: true present in all 3 frontmatters (currently passing — guard only).
+        acceptance_criteria:
+          - "plugins/worktree/skills/create/SKILL.md does not contain the string 'pip install' (must use 'pip3 install' instead)"
+          - "grep -c 'user_invocable: true' plugins/worktree/skills/create/SKILL.md returns 1"
+          - "grep -c 'user_invocable: true' plugins/worktree/skills/merge/SKILL.md returns 1"
+          - "grep -c 'user_invocable: true' plugins/worktree/skills/cleanup/SKILL.md returns 1"
+          - "None of the three SKILL.md files contain 'python ' (without '3') as a command invocation or ' sh ' as a shell runner"
+        dependencies: []
+        touched_files:
+          - "plugins/worktree/skills/create/SKILL.md"
+        est_minutes: 10
+
+    carry_over_issues: []
+
+    criteria_sprint_coverage:
+      AC1_plugin_json_allowed_fields: "sprint-1"
+      AC2_user_invocable_3_of_3: "sprint-3"
+      AC3_readme_examples_per_skill: "sprint-2"
+      AC4_cross_platform_compliance: "sprint-3"
+      AC5_version_triple_consistency: "sprint-1"
+
+  context:
+    domain_type: "general"
+    complexity: "low"
+    relevant_reflections:
+      - "ref-20260412T195800"   # PASS gen-060 — no directly relevant lessons; Edit tool reported false multi-file (Apr 5) is a risk
+    relevant_skills: []
+    domain_constraints:
+      - "plugin.json: name/version/description/mcpServers only — no author/features/commands/agents/skills/hooks"
+      - "cross-platform: python3/pip3/node; no cat/rm/type/sh as commands"
+      - "registry_sync: version change in plugin.json → marketplace.json + README.md must match"
+    model_used: "claude-sonnet-4-6"
+    skill_rotation_applied: false
+    known_current_state:
+      plugin_json_fields: ["name", "version", "description"]   # no forbidden fields; AC1 already passes
+      marketplace_version: "0.1.0"                             # matches plugin.json; AC5 partially passes
+      readme_version_table: false                              # missing; AC5 fails
+      readme_examples_syntax: "wrong"                          # uses --branch flag; SKILL.md uses positional arg
+      user_invocable_count: 3                                  # all 3 true; AC2 passes
+      cross_platform_violation: "create/SKILL.md:66 pip install → must be pip3 install"
+    worker_notes: >
+      Sprint-1 and sprint-3 are independent and can run in parallel.
+      Sprint-2 depends on sprint-1 completing first (README.md version table must land before
+      examples section is finalized, to avoid two separate edits to the same file).
+      Edit tool has a known risk (Apr 5 reflection) of reporting multi-file changes when only
+      one file was modified — Worker should verify each edit with a grep after applying it.

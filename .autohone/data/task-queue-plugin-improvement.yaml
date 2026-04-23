@@ -13,7 +13,8 @@ queue:
   id: "plugin-improvement-sweep-2026-04-23"
   name: "Claudemate 플러그인 일괄 개선 (7개)"
   created_at: "2026-04-23T21:36:00+09:00"
-  status: "pending"               # pending | in_progress | completed | partially_completed
+  started_at: "2026-04-23T21:53:00+09:00"
+  status: "in_progress"           # pending | in_progress | completed | partially_completed
   pipeline: "full-cycle"           # 기본: Planner→Contract→Worker→Evaluator→Verifier→Reflector(항상)+자동 스킬 개선
 
   # 큐 전역 가드레일 (Planner가 각 태스크 컨트랙트 작성 시 반드시 참고)
@@ -42,6 +43,8 @@ queue:
     # ─────────────────────────────────────────────────────────────
     - id: "t1-worktree-polish"
       plugin: "worktree"
+      started_at: "2026-04-23T21:53:00+09:00"
+      status: "in_progress"
       description: |
         worktree 플러그인을 Golden Rules에 정렬하고 v0.1.0 alpha 상태를 다진다.
         3개 skill(create/merge/cleanup)의 메타데이터·문서·예시를 일관화.
@@ -51,7 +54,6 @@ queue:
         - "plugins/worktree/README.md: create/merge/cleanup 각 skill의 실행 예시 최소 1개씩 포함"
         - "skill 본문: 크로스플랫폼 규칙 준수 (path.join/${CLAUDE_PLUGIN_ROOT}, python3/node)"
         - "버전 3자 일치: plugin.json(0.1.0) ↔ marketplace.json ↔ README.md 표"
-      status: "pending"
 
     # ─────────────────────────────────────────────────────────────
     # Task 2: gemini-cli (v1.0.0 / skills 없음 / commands+hooks)
