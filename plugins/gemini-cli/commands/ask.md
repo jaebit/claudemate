@@ -44,3 +44,8 @@ Provide a practical, actionable answer."
 - For code review, use `/gemini:review`
 - For commit message generation, use `/gemini:commit`
 - For documentation generation, use `/gemini:docs`
+
+### If gemini fails
+
+- Surface the error message to the user — do not silently continue or return an empty response.
+- If the error is auth-related (401/403 or "not authenticated"), suggest running `gemini auth login` or setting the `GEMINI_API_KEY` environment variable.

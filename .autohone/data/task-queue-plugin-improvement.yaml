@@ -70,12 +70,10 @@ queue:
       plugin: "gemini-cli"
       started_at: "2026-04-23T21:58:30+09:00"
       paused_at: "2026-04-23T22:08:00+09:00"
-      status: "blocked"
-      partial_score: 0.6   # AC1/AC3/AC5 PASS; AC2/AC4 blocked by pre-tool-security.sh
-      commits: ["42fd190", "c05140a"]
-      blocker_ref: "ci-commands-md-gate"
+      resumed_at: "2026-04-23T22:26:00+09:00"
+      status: "in_progress"   # AC1/AC3/AC5 PASS; AC2/AC4 resuming after hook narrow
+      commits_so_far: ["42fd190", "c05140a"]
       carry_over_issues:
-        - "ci-commands-md-gate: pre-tool-security.sh blocks commands/*.md writes globally"
         - "ci-auth-probe-offline-spurious: session-init.mjs auth probe may false-warn offline"
       description: |
         gemini-cli 플러그인의 SessionStart prerequisite 체크 동작을 검증하고,

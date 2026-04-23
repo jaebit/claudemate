@@ -42,3 +42,8 @@ Question: <user_query>"
 - Free tier limit: 1,500 queries/day
 - Suitable when real-time information and LLM analysis are both needed
 - For complex research, consider combining with `/research` command
+
+### If gemini fails
+
+- Surface the error message to the user — do not silently continue or return no results.
+- If the error is auth-related (401/403 or "not authenticated"), suggest running `gemini auth login` or setting the `GEMINI_API_KEY` environment variable.
