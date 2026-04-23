@@ -1,7 +1,8 @@
 ---
 name: debate-orchestration
 description: "Perform synthesis and consensus analysis for multi-model debate rounds. Invoked by debate-start after each round's agent results are saved. Reads round files, builds comparison tables, and generates final reports."
-user-invocable: false
+user_invocable: false
+disable-model-invocation: false
 context: fork
 agent: general-purpose
 allowed-tools: Read, Write, Bash, Glob, Grep

@@ -2,6 +2,7 @@
 name: debate-resume
 description: "Resume an interrupted multi-model debate from the last completed round. Use when the user invokes /debate:resume to continue a previously started debate."
 argument-hint: "[debate-dir]"
+user_invocable: true
 disable-model-invocation: true
 ---
 
@@ -27,8 +28,25 @@ Round dispatch runs inline (MCP accessible), synthesis/consensus delegates to `d
 
 3. **Verify prerequisites** (same as debate-start):
    - Check Codex MCP tool: ToolSearch로 `mcp__plugin_codex-cli_codex__codex` 확인
-   - If unavailable → update `state.json` with `codex_mode: "cli_fallback"`
+   - If unavailable → update `state.json` with `codex_mode: "cli_fallback"` and continue
    - Check Gemini CLI: `which gemini`
+
+   ### If Codex MCP is missing:
+   Set `codex_mode: "cli_fallback"` in `state.json`. If `codex` binary is also absent, output:
+   ```
+   ERROR: Codex is not available (MCP tool not found, CLI not installed).
+   Cannot resume debate without Codex.
+   ```
+   Stop — do not attempt to dispatch rounds.
+
+   ### If Gemini CLI is missing:
+   Output:
+   ```
+   ERROR: Gemini CLI is not installed or not on PATH.
+   Install: https://github.com/google-gemini/gemini-cli
+   Cannot resume debate without Gemini.
+   ```
+   Stop — do not attempt to dispatch rounds. Never silently skip the Gemini agent.
 
 4. **Resume from next phase:**
 

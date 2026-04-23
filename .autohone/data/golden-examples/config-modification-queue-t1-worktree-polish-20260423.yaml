@@ -1,0 +1,12 @@
+golden_example:
+  task_type: "config-modification"
+  generation: "queue-t1-worktree-polish-20260423"
+  score: 1.0
+  timestamp: "2026-04-23T13:07:27.081111+00:00"
+  summary: |
+    Full PASS (1.0) aligning worktree plugin v0.1.0 with claudemate Golden Rules. Planner pre-measured state via python3+grep before writing ACs; Worker executed 3 scoped commits (one per sprint); Evaluator verified each AC with replay-able commands.
+  skills_used: [plugin-json-schema-check, version-triple-check, user-invocable-audit, cross-platform-path-check]
+  key_decisions: |
+    1) Run plugin.json schema allowlist gate first — fast fail on forbidden fields. 2) Version triple-check (plugin.json / marketplace.json / README table) as single command sequence. 3) Pre-measure current state before AC authoring to prevent false-report risk (lesson from ref-20260412). 4) mcpServers field intentionally absent — file-based discovery is sufficient for skill-only plugins.
+  lessons: |
+    plugin.json mcpServers is optional; file-based discovery covers skill-only plugins. Evidence-backed AC writing eliminates Edit-tool false-report risk. Per-AC verification commands must be concrete and replay-able by Evaluator in isolation.

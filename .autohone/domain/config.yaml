@@ -49,13 +49,19 @@ domain:
 
   # 파이프라인 설정 (Harness: 스프린트 제한, 임계값)
   pipeline:
-    default_pipeline: ""              # 빈 문자열 = legacy fallback. "default" | "hotfix" | "research" 중 선택
+    default_pipeline: ""              # 빈 문자열 = legacy fallback. "default" | "hotfix" | "research" | "full-cycle" 중 선택
     max_sprints: 5
     max_retries_per_sprint: 3
     passing_threshold: 0.7
     degraded_threshold: 0.5
     golden_example_threshold: 0.85
-    
+
+    # 큐 실행 설정 (Level 2.5 — 순차 태스크 + 복리 학습)
+    queue:
+      default_queue_file: ".autohone/data/task-queue-plugin-improvement.yaml"
+      on_task_failure: "continue"    # continue | abort — 한 플러그인 실패해도 다음으로 진행
+      max_tasks_per_queue: 10
+
   # 자기 개선 설정 (Harness: 스킬 관리, 메타 개선, 하드닝)
   self_improvement:
     max_skill_updates_per_session: 5

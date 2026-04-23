@@ -45,3 +45,8 @@ git log --oneline | gemini -p "Generate professional release notes from these co
 - Provide a git tag as the starting point for the release notes
 - If no tag is specified, uses the most recent tag or full commit history
 - This command requires a git repository with commit history
+
+### If gemini fails
+
+- Surface the error message to the user — do not silently continue or skip release note generation.
+- If the error is auth-related (401/403 or "not authenticated"), suggest running `gemini auth login` or setting the `GEMINI_API_KEY` environment variable.

@@ -88,3 +88,33 @@ All artifacts are saved to `.debate/<debate-id>/`:
 | General | Advocate | Skeptic | Pragmatist |
 
 Custom perspectives via `--perspectives "Label1,Label2,Label3"`.
+
+## Pipeline Controls
+
+### Round Limit
+
+- **Default:** 2 rounds
+- **Override:** `--rounds <N>` flag (e.g., `--rounds 3`)
+- **Hard cap:** If more than 3 rounds would be needed, the skill pauses and asks for user confirmation before proceeding
+
+### Termination Conditions
+
+A debate ends when **any** of the following is true:
+
+| Condition | Action |
+|---|---|
+| All decision points reach `Agreement (3:0)` after synthesis | Early exit — skips remaining rounds, proceeds to Final Consensus |
+| `currentRound >= rounds` (default 2, or `--rounds N`) | Proceeds to Final Consensus |
+| Max rounds exceeded (>3) | Pauses — requires user confirmation to continue |
+
+The synthesis phase classifies each decision point as `Agreement (3:0)`, `Majority (2:1)`, or `Disagreement (1:1:1)` — matching the labels emitted by `debate-orchestration` into `synthesis-round-{N}.md`. Any point not reaching unanimous `Agreement` (i.e. both `Majority` and `Disagreement`) carries forward to cross-examination in the next round.
+
+### Role Assignment
+
+Each model plays a fixed evaluative role per topic type (see Agent Perspectives table above). Roles are assigned during SETUP and recorded in `state.json`:
+
+- **Claude** — Synthesis-oriented role (Scalability / Performance / Advocate). Also serves as the orchestrator for the inline round dispatch.
+- **Codex** — Implementation-focused role (Developer experience / Ecosystem / Skeptic). Invoked via MCP (`mcp__plugin_codex-cli_codex__codex`) or CLI fallback.
+- **Gemini** — Pragmatist/realist role (Cost realism / Maintenance / Pragmatist). Invoked as a sub-agent running `gemini -p "..."` via Bash.
+
+`debate-orchestration` (synthesis) is a separate internal skill that runs in a `fork` context — it reads the saved round files and produces comparison tables and final reports without dispatching any agents.

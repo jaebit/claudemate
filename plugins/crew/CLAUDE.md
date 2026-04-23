@@ -1,7 +1,7 @@
 # Module Context
 
 **Module:** Crew
-**Version:** 4.0.0
+**Version:** 4.1.1
 **Role:** Agent-orchestrated development pipeline with 8 adaptive agents.
 
 **IMPORTANT**: crew:go, crew:explore, crew:review all have `disable-model-invocation`. The Skill tool will reject them. To invoke programmatically, embed instructions directly in the Agent prompt (Worker Preamble pattern) or spawn the specific agent type (e.g., `Agent(subagent_type="crew:builder")`).
@@ -45,7 +45,7 @@ python tests/test_plugin_structure.py
 8 agents (complexity-adaptive, no tier variants). See `_shared/agent-registry.md` for inventory.
 Complexity signals: `_shared/complexity-hints.md`.
 
-16 skills: go, status, review, parallel, explore, manage, progress-tracker, plan-detector, quality-gate, commit-discipline, insight-collector, pattern-learner, knowledge-engine, session-manager, learning-loop, structured-research.
+16 skills: go, dashboard, review, parallel, explore, manage, progress-tracker, plan-detector, quality-gate, commit-discipline, insight-collector, pattern-learner, knowledge-engine, session-manager, learning-loop, structured-research.
 
 ---
 

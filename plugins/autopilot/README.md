@@ -29,6 +29,18 @@ claude plugins install autopilot
 | `--no-questions` | Minimize interactive prompts (still shows user gate) |
 | `--worktree` | Isolate each build step in a git worktree |
 
+## Phase → Plugin Dispatch
+
+| Phase | Plugin / Skill | Required |
+|-------|----------------|----------|
+| 1 Research | `crew:explore --research-deep` | yes |
+| 2 Design | `crew:explore --arch` + `multi-model-debate` + `arch-guard` (ADR/constraints) | crew yes, others optional |
+| 3 Build | `crew` (default builder) or `codex-cli` (`--builder codex`); optional `worktree` | yes |
+| 4 Review | `codex-cli` (plugin-cc preferred, CLI fallback) + `arch-guard` + `crew:review` | yes (crew); others optional |
+| 5 Report | autopilot native (synthesis) | yes |
+
+See `CLAUDE.md` for the full invocation table with exact Skill/Agent call patterns.
+
 ## Requirements
 
 - `crew` plugin (required)

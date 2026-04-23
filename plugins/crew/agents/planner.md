@@ -7,7 +7,7 @@ whenToUse: |
   - /crew:brainstorm for ideation and discovery
   - Complex task breakdown into phases/steps
   - Vague or ambiguous requirements needing clarification
-model: sonnet
+model: claude-sonnet-4-6
 color: blue
 tools:
   - Read

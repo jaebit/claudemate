@@ -40,3 +40,8 @@ git diff --cached | gemini -p "Write a concise commit message for these changes.
 
 - Stage your changes with `git add` before running this command
 - Review the suggested message before committing
+
+### If gemini fails
+
+- Surface the error message to the user — do not silently continue or skip commit message generation.
+- If the error is auth-related (401/403 or "not authenticated"), suggest running `gemini auth login` or setting the `GEMINI_API_KEY` environment variable.

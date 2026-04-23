@@ -56,6 +56,25 @@ End-to-end autonomous coding pipeline. Single `/autopilot <topic>` command that 
 
 One user confirmation point: after Phase 2 (design). Everything else runs autonomously.
 
+## Phase → Plugin Dispatch
+
+| Phase | Plugin / Skill Invoked | Invocation | Required |
+|-------|------------------------|------------|----------|
+| 1 RESEARCH | `crew` | `Agent("/crew:explore --research-deep <topic>")` | yes |
+| 2a DESIGN arch | `crew` | `Agent("/crew:explore --arch <topic>")` | yes |
+| 2b DEBATE | `multi-model-debate` | `Skill("multi-model-debate:debate-start")` | no — skipped if absent |
+| 2c ARCH CONSTRAINTS | `arch-guard` | `Skill("arch-guard:arch-check")` | no — skipped if no arch-guard.json |
+| 2f ADR GENERATION | `arch-guard` | `Skill("arch-guard:adr", "<decision>")` | no |
+| 3a SCAFFOLDING | `arch-guard` | `Skill("arch-guard:scaffold")`, `Skill("arch-guard:contract-first")` | no |
+| 3b BUILD (crew) | `crew` | `Agent(subagent_type="crew:builder", ...)` | yes (default builder) |
+| 3b BUILD (codex) | `codex-cli` | `mcp__plugin_codex-cli_codex__codex` / `codex-reply` | no — `--builder codex` only |
+| 3c WORKTREE | `worktree` | `Skill("worktree:create")`, `Skill("worktree:merge")` | no — `--worktree` only |
+| 4a REVIEW (cc) | `codex-cli` (plugin-cc) | `adversarial-review`, `review-gate` MCP tools | no — preferred if available |
+| 4a REVIEW (cli) | `codex-cli` | `codex -q "Review..."` via Bash | no — fallback |
+| 4b ARCH REVIEW | `arch-guard` | `Skill("arch-guard:arch-check")`, `Skill("arch-guard:impl-review")` | no |
+| 4c FUNCTIONAL REVIEW | `crew` | `Agent("/crew:review --all")` | yes |
+| 5 REPORT | _(autopilot native)_ | synthesis in autopilot skill | yes |
+
 ## Completion Signals
 
 - `AUTOPILOT_COMPLETE` — all designed deliverables were built

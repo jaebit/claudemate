@@ -6,7 +6,7 @@ whenToUse: |
   - /crew:next to proceed with implementation
   - Specific step implementation
   - TDD-based code changes
-model: sonnet
+model: claude-sonnet-4-6
 color: green
 tools:
   - Read

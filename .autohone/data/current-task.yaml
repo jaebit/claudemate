@@ -1,39 +1,58 @@
-agent: worker
+episode_output:
+  agent: "planner"
+  plan_id: "queue-t4-arch-guard-docs-20260423"
+  timestamp: "2026-04-23T13:35:00Z"
+
 payload:
   plan:
-    id: plan-20260412-gen-060-failure-handling
-    task_type: testing
-    topic: memory_capture failure_handling 강화 — OSError/UnicodeEncodeError 경로 커버리지
-    created_at: '2026-04-12T18:43:00+09:00'
-    skill_version: domain-expert-v1.8.0
-    status: completed
-
-    isolation_design:
-      patch_targets:
-        - memory_capture.FACTS_DIR → tempdir
-        - memory_capture.EXPERIENCES_DIR → tempdir
-        - memory_capture.TEMPLATES_DIR → tempdir (fake template file written before patch)
-        - pathlib.Path.write_text → OSError / UnicodeEncodeError
-        - pathlib.Path.read_text → OSError (promote read path)
-      note: "_env() helper writes template BEFORE patches entered via ExitStack"
+    id: "queue-t4-arch-guard-docs-20260423"
+    title: "arch-guard: add CLAUDE.md and verify invariants"
+    status: "in_progress"
+    created_at: "2026-04-23T13:35:00Z"
 
     sprints:
-      - id: sprint-1
-        title: Refactor test_memory_capture.py with _env() helper + isolation
+      - id: "sprint-1"
+        title: "Author plugins/arch-guard/CLAUDE.md"
+        status: "planned"
         acceptance_criteria:
-          - 파일 ≤72L
-          - 기존 6개 테스트 모두 pass
-          - 모든 테스트가 tempdir 격리 사용 (vault write 없음)
-          - TEMPLATES_DIR 패치로 template 경로 의존 제거
-        target_lines: 55
-        status: pending
+          - "plugins/arch-guard/CLAUDE.md exists and is non-empty"
+          - "File documents all 4 hook scripts (session-init.mjs, layer-check.mjs, contract-guard.mjs, stop-reminder.mjs) and each script's scope guard condition (arch-guard.json sentinel) verified by reading the script before writing"
+          - "File lists 12 skills in 5 categories: Design (adr, contract-first, integration-map, spec-sync), Scaffolding (setup, scaffold), Implementation (implement, tdd, test-gen), Review (arch-check, impl-review), Tracking (track)"
+          - "File includes a Golden Rules section referencing plugin.json schema constraint (name/version/description only) and user_invocable:false internal-only policy"
+          - "File explains arch-guard.json as the project-detection sentinel that activates all hooks"
+        skills_needed: ["plugin-dev:plugin-structure", "plugin-dev:hook-development"]
+        dependencies: []
+        advisor_budget: 1
 
-      - id: sprint-2
-        title: Add test_capture_write_oserror + test_promote_read_oserror
+      - id: "sprint-2"
+        title: "Assert invariants (AC2/AC3/AC5) and emit carry_over"
+        status: "planned"
         acceptance_criteria:
-          - 파일 ≤72L 유지 (7개 → 8개 테스트)
-          - test_capture_write_oserror → OSError on write → returns 1
-          - test_promote_read_oserror → OSError on read → returns non-zero
-          - python knowledge/00-meta/tools/tests/test_memory_capture.py 실행 성공
-        target_lines: 71
-        status: pending
+          - "stop-reminder.mjs scope guard confirmed present: isConfiguredProject() call on line 6 exits 0 for non-arch-guard projects (no regression from S533 fix)"
+          - "grep -c 'user_invocable: false' plugins/arch-guard/skills/*/SKILL.md returns 1 for all 12 files (12/12 confirmed)"
+          - "plugins/arch-guard/.claude-plugin/plugin.json contains only name/version/description fields (schema-clean)"
+          - "carry_over record written: AC4 deferred — root CLAUDE.md protected by pre-tool-security.sh (narrowing-unaffected rule line 122-125); recommended addition: '- **[Arch Guard](./plugins/arch-guard/CLAUDE.md)**' under '# Active Plugins'"
+        skills_needed: ["plugin-dev:plugin-structure"]
+        dependencies: ["sprint-1"]
+        advisor_budget: 1
+
+    context:
+      domain_type: "general"
+      complexity: "low"
+      advisor_budget_total: 2
+      relevant_reflections: []
+      relevant_skills:
+        - "plugin-dev:plugin-structure"
+        - "plugin-dev:hook-development"
+      domain_constraints:
+        - "plugin.json: only name/version/description fields allowed"
+        - "File-Based Discovery: CLAUDE.md auto-discovered by path, not declared in plugin.json"
+        - "root CLAUDE.md is write-protected by pre-tool-security.sh (line 122-125)"
+      skill_rotation_applied: false
+      model_used: "claude-sonnet-4-6"
+
+    carry_over:
+      - id: "carry-ac4-root-claude-md"
+        reason: "pre-tool-security.sh hook protects root CLAUDE.md (narrowing-unaffected rule, line 122-125); edit is out of scope for this task"
+        deferred_action: "Add '- **[Arch Guard](./plugins/arch-guard/CLAUDE.md)**' under '# Active Plugins' section in root CLAUDE.md — requires privileged session or manual edit"
+        status: "deferred"

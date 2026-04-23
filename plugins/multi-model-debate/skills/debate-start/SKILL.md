@@ -2,6 +2,7 @@
 name: debate-start
 description: "Start a multi-model debate on a software engineering topic. Use when the user invokes /debate:start with a topic to evaluate using Claude, Codex, and Gemini in parallel."
 argument-hint: "<topic> [--context <files>] [--perspectives <p1,p2,p3>] [--rounds <N>]"
+user_invocable: true
 disable-model-invocation: true
 ---
 
@@ -21,8 +22,26 @@ Round dispatch runs inline (MCP accessible), synthesis/consensus delegates to `d
 2. **Verify prerequisites:**
    - Check Codex MCP tool: ToolSearch로 `mcp__plugin_codex-cli_codex__codex` 확인
    - Check Gemini CLI: run `which gemini` via Bash
-   - If Codex MCP unavailable → set `codex_mode: "cli_fallback"` (see Fallback section)
-   - If Gemini missing → report and stop
+
+   ### If Codex MCP is missing:
+   Set `codex_mode: "cli_fallback"` in `state.json` and continue using `codex exec` via Bash (see Fallback section).
+   If `codex` binary is also missing, output:
+   ```
+   ERROR: Codex is not available (MCP tool not found, CLI not installed).
+   Install the codex-cli plugin or run: npm install -g @openai/codex
+   Debate cannot proceed without Codex.
+   ```
+   Stop — do not continue to SETUP.
+
+   ### If Gemini CLI is missing:
+   Output:
+   ```
+   ERROR: Gemini CLI is not installed or not on PATH.
+   Install: https://github.com/google-gemini/gemini-cli
+   Then authenticate: gemini auth login
+   Debate cannot proceed without Gemini.
+   ```
+   Stop — do not continue to SETUP. Never silently skip the Gemini agent.
 
 3. **Read context files** (if `--context` provided):
    - Resolve glob patterns with Glob tool

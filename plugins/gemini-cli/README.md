@@ -19,6 +19,12 @@ gemini auth login
 
 Follow the prompts to authenticate with your Google account.
 
+Alternatively, set the `GEMINI_API_KEY` environment variable to authenticate without an interactive login — useful for CI/CD pipelines and headless environments:
+
+```bash
+export GEMINI_API_KEY="your-api-key"
+```
+
 ### 3. Verify Installation
 
 ```bash
