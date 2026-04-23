@@ -5,6 +5,7 @@
 //   2. Detect .autopilot/state.json and print resume notice.
 
 import { readFile } from "fs/promises";
+import { statSync } from "fs";
 import { join } from "path";
 import { execFileSync } from "child_process";
 
@@ -29,8 +30,9 @@ function probePlugin(name) {
   ];
   for (const candidate of candidates) {
     try {
-      execFileSync("test", ["-d", candidate]);
-      return { installed: true, path: candidate };
+      if (statSync(candidate).isDirectory()) {
+        return { installed: true, path: candidate };
+      }
     } catch {
       // continue
     }
