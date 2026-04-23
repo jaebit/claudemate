@@ -1,141 +1,86 @@
 episode_output:
   agent: "planner"
-  run_id: "queue-t2-gemini-cli-harden-20260423"
-  timestamp: "2026-04-23T22:08:00+09:00"
+  task_id: "queue-t3-codex-cli-harden-20260423"
+  timestamp: "2026-04-23T22:30:00+09:00"
   status: "plan_ready"
 
 payload:
-  measured_state:
-    # Evidence gathered by pre-measurement before writing this plan.
-    # Each row maps to one queue AC.
-
-    ac1_hooks_json_prerequisite_check:
-      status: "PARTIAL_FAIL"
-      evidence: |
-        hooks/hooks.json: uses `node` (cross-platform OK, AC4 safe).
-        session-init.mjs line 9: execFileSync("gemini", ["--version"]) — detects missing CLI.
-        Missing CLI → outputs additionalContext with install instructions (line 19-25).
-        FAIL: no authentication check. Auth failure (gemini installed but not logged in)
-        produces no warning. Only install-missing case is handled.
-
-    ac2_commands_silent_fail:
-      status: "PARTIAL_FAIL"
-      evidence: |
-        ask.md: bare `gemini -p "..."` with no error handling.
-        commit.md: `git diff --cached | gemini -p "..."` — no error path if gemini exits non-zero.
-        review.md line 28: uses `cat <file> | gemini -p "..."` — uses `cat` (cross-platform
-          violation AND no error handling).
-        docs.md: all three branches use `cat <file> | gemini -p "..."` — same issues.
-        release.md: `git describe --tags 2>/dev/null` suppresses error (acceptable — fallback
-          is explicit). But `git log ... | gemini -p "..."` has no error path.
-        search.md: bare `gemini -p "..."` with no error handling.
-        Silent-fail pattern: none use `|| true` explicitly, but zero commands instruct
-          the agent to handle gemini exit code != 0 or "command not found" at runtime.
-
-    ac3_readme_gemini_api_key:
-      status: "FAIL"
-      evidence: |
-        README.md has Prerequisites section: install + `gemini auth login` + verify.
-        Troubleshooting section covers "command not found" and auth errors.
-        GEMINI_API_KEY env var is never mentioned anywhere in README.
-        Queue AC says "GEMINI_API_KEY または 인증 요구사항" — literal GEMINI_API_KEY
-        mention missing. Must add note clarifying GEMINI_API_KEY as alternative/CI path.
-
-    ac4_cross_platform:
-      status: "PARTIAL_FAIL"
-      evidence: |
-        hooks/hooks.json: uses `node` — PASS.
-        session-init.mjs: uses Node.js execFileSync — PASS.
-        commands/review.md line 28: `cat <file>` — FAIL (cat forbidden per CLAUDE.md).
-        commands/docs.md lines 20, 25, 29: `cat <file>` — FAIL (3 occurrences).
-        commands/ask.md line 25: bash subshell in heredoc — acceptable (Bash tool call).
-
-    ac5_plugin_json_schema:
-      status: "PASS"
-      evidence: |
-        Fields present: {name, version, description} — no forbidden fields.
-        marketplace.json: name=gemini-cli, version=1.0.0 — matches plugin.json.
-
   plan:
-    id: "queue-t2-gemini-cli-harden-20260423"
-    title: "gemini-cli: SessionStart auth check + commands error handling + README prerequisites"
+    id: "queue-t3-codex-cli-harden-20260423"
+    title: "codex-cli Plugin Hardening — MCP Wrapper Robustness"
     status: "in_progress"
-    created_at: "2026-04-23T22:08:00+09:00"
+    created_at: "2026-04-23T22:30:00+09:00"
+
+    pre_measurement:
+      - ac: "AC1 — plugin.json mcpServers.codex (command: codex, args array)"
+        status: "PASS"
+        evidence: "command: codex, args: [mcp-server], no schema-violating extra fields"
+      - ac: "AC2 — README install method + version + auth setup"
+        status: "FAIL"
+        evidence: "Prerequisites section missing: no npm/brew install command, no version number, no OPENAI_API_KEY or auth setup instructions"
+      - ac: "AC3 — commands/*.md error-path guidance"
+        status: "FAIL"
+        evidence: "apply.md and cloud.md both lack any error handling block; bare `codex apply` / `codex cloud` with no failure branch"
+      - ac: "AC4 — Korean/English term consistency"
+        status: "FAIL"
+        evidence: "README body in Korean; section headers in English; table column labels alternate; inconsistent mixing throughout"
+      - ac: "AC5 — plugin.json schema compliance (no extra fields)"
+        status: "PASS"
+        evidence: "Only name, version, description, mcpServers present"
 
     carry_over_issues:
-      - id: "ci-1"
-        source: "ref-20260412"
-        description: "Edit-tool false-report guard: Worker must grep-verify each edited file after edit"
-      - id: "ci-2"
-        source: "ref-20260423T220000-t1-worktree"
-        description: "Version triple-check: plugin.json == marketplace.json == README version"
+      - "Task 2 pattern: error-path guidance must be added as explicit '### If <cli> fails:' section per golden example template"
+      - "Hook regex narrowed to /autohone/ anchor — writes to plugins/*/commands/*.md are now allowed"
+      - "Edit-tool false-report guard: Worker must grep-verify each edit after applying"
 
     sprints:
       - id: "sprint-1"
-        title: "session-init.mjs: add authentication check"
+        title: "Add error-path guidance to command files"
         status: "planned"
-        scope_files:
-          - "plugins/gemini-cli/hooks/session-init.mjs"
-        dependencies: []
-        advisor_budget: 1
+        target_files:
+          - "plugins/codex-cli/commands/apply.md"
+          - "plugins/codex-cli/commands/cloud.md"
         acceptance_criteria:
-          - "session-init.mjs: when `gemini --version` succeeds, runs an auth probe and emits additionalContext with auth-failure message if probe exits non-zero"
-          - "session-init.mjs: auth-failure message references `gemini auth login` as remediation step"
-          - "session-init.mjs: continues to use `node` runtime and execFileSync (no sh/bash/cat/python) — grep for `sh|bash|python` in hook returns 0 matches"
-          - "hooks/hooks.json: hook entry unchanged (still `node session-init.mjs`) — grep confirms"
-        verification_commands:
-          - "grep -n 'auth\\|login' plugins/gemini-cli/hooks/session-init.mjs"
-          - "grep -n 'sh\\|bash\\|python\\b' plugins/gemini-cli/hooks/session-init.mjs"
+          - "apply.md contains a '### If codex apply fails:' section listing: codex not in PATH, invalid task_id format, and auth/network errors with user-actionable steps"
+          - "cloud.md contains a '### If codex cloud fails:' section listing: missing --env flag, codex not in PATH, and auth errors with user-actionable steps"
+          - "Neither command file uses silent-fail patterns (e.g. `|| true` or unchecked bare commands)"
+          - "Worker grep-verifies '### If codex' appears in both files after edit"
+        skills_needed: ["domain-expert", "quality-gate"]
+        dependencies: []
 
       - id: "sprint-2"
-        title: "commands/*.md: replace cat + add gemini error guidance"
+        title: "Fix README — install instructions, version, auth, and term consistency"
         status: "planned"
-        scope_files:
-          - "plugins/gemini-cli/commands/review.md"
-          - "plugins/gemini-cli/commands/docs.md"
-          - "plugins/gemini-cli/commands/ask.md"
-          - "plugins/gemini-cli/commands/commit.md"
-          - "plugins/gemini-cli/commands/search.md"
-          - "plugins/gemini-cli/commands/release.md"
-        dependencies: []
-        advisor_budget: 1
+        target_files:
+          - "plugins/codex-cli/README.md"
         acceptance_criteria:
-          - "review.md: `cat <file>` replaced with cross-platform alternative; grep for bare `cat ` returns 0 matches in this file"
-          - "docs.md: all three `cat <file>` occurrences replaced; grep for bare `cat ` returns 0 matches in this file"
-          - "All 6 command files: each bash snippet invoking `gemini` includes explicit error-path instruction (if gemini exits non-zero, inform user); grep for 'gemini.*fail\\|not found\\|exit\\|error' returns >= 1 match per file"
-          - "No command file uses `|| true` to suppress gemini errors"
-        verification_commands:
-          - "grep -rn 'cat ' plugins/gemini-cli/commands/review.md plugins/gemini-cli/commands/docs.md"
-          - "for f in plugins/gemini-cli/commands/*.md; do echo \"$f:\"; grep -c 'gemini.*fail\\|not found\\|exit\\|error' \"$f\" || echo 0; done"
-
-      - id: "sprint-3"
-        title: "README.md: GEMINI_API_KEY + prerequisites verification"
-        status: "planned"
-        scope_files:
-          - "plugins/gemini-cli/README.md"
+          - "README Prerequisites section includes a concrete install command (npm install -g @openai/codex or brew equivalent) and specifies minimum supported version"
+          - "README includes auth setup: OPENAI_API_KEY environment variable and/or `codex auth login` command documented"
+          - "All body prose uses consistent language — no mid-section Korean/English switching; section headers remain English"
+          - "Worker grep-verifies 'OPENAI_API_KEY' and at least one of 'npm install' or 'brew install' appear in README after edit"
+        skills_needed: ["domain-expert", "hook-enforcement-probe"]
         dependencies: []
-        advisor_budget: 0
-        acceptance_criteria:
-          - "README.md: GEMINI_API_KEY mentioned >= 1 time; grep returns match"
-          - "README.md: Prerequisites section install + auth + verify steps remain intact after edit"
-          - "README.md: no version table broken (plugin has no README version table — no risk)"
-        verification_commands:
-          - "grep -n 'GEMINI_API_KEY' plugins/gemini-cli/README.md"
-          - "grep -n 'Prerequisites\\|brew install\\|gemini auth login' plugins/gemini-cli/README.md"
 
     context:
-      domain_type: "backend"
+      domain_type: "general"
       complexity: "medium"
-      effort_hint: "medium"
-      advisor_budget_total: 2
-      relevant_reflections:
-        - "ref-20260423T220000-t1-worktree"
-        - "ref-20260412"
-      relevant_skills: []
-      domain_constraints:
-        - "hooks must use python3 or node (not sh/bash/cat/type)"
-        - "plugin.json only allows: name, version, description, mcpServers"
-        - "no || true silent suppression of gemini errors"
       model_used: "claude-sonnet-4-6"
+      relevant_reflections: []
+      relevant_skills:
+        - "hook-enforcement-probe"
+        - "domain-expert"
+        - "quality-gate"
+        - "task-planner"
+      domain_constraints:
+        - "plugin.json: only name, version, description, mcpServers fields allowed"
+        - "commands/*.md writes allowed — hook regex anchored to /autohone/, not plugins/"
+        - "No type: prompt hooks outside Stop/SubagentStop events"
       skill_rotation_applied: false
-      notes: "No skills assigned — task is hook/command/docs hardening only, no skill-type work"
+      rotation_reason: "advisor.enabled=false; 2-sprint medium task; rotation overhead not warranted"
+      ac_skipped:
+        - "AC1: PASS — plugin.json already compliant, no sprint needed"
+        - "AC5: PASS — plugin.json schema clean, no sprint needed"
+      mcp_wrapper_risks:
+        - "mcpServers.codex command: codex requires codex binary in PATH at plugin load time; if absent, MCP server silently fails to start — README must document this"
+        - "args: [mcp-server] is a sub-command requiring a specific codex release; version pinning in README is critical"
+        - "MCP server auto-start means errors surface as tool-not-found rather than command errors — commands/*.md error sections should acknowledge this distinction"

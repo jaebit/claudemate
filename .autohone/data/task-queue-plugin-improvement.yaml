@@ -69,12 +69,14 @@ queue:
     - id: "t2-gemini-cli-harden"
       plugin: "gemini-cli"
       started_at: "2026-04-23T21:58:30+09:00"
-      paused_at: "2026-04-23T22:08:00+09:00"
-      resumed_at: "2026-04-23T22:26:00+09:00"
-      status: "in_progress"   # AC1/AC3/AC5 PASS; AC2/AC4 resuming after hook narrow
-      commits_so_far: ["42fd190", "c05140a"]
+      completed_at: "2026-04-23T22:30:00+09:00"
+      status: "completed"
+      run_id: "queue-t2-gemini-cli-harden-20260423"
+      score: 1.0
+      commits: ["42fd190", "c05140a", "d2a7d3e"]
+      golden_example_eligible: true
       carry_over_issues:
-        - "ci-auth-probe-offline-spurious: session-init.mjs auth probe may false-warn offline"
+        - "ci-auth-probe-offline-spurious: session-init.mjs auth probe may false-warn offline or send benign API call per session start; consider credentials-file check"
       description: |
         gemini-cli 플러그인의 SessionStart prerequisite 체크 동작을 검증하고,
         commands와 hooks가 gemini CLI 부재·인증 실패 상황을 graceful하게 처리하도록 보강.
@@ -90,6 +92,8 @@ queue:
     # ─────────────────────────────────────────────────────────────
     - id: "t3-codex-cli-harden"
       plugin: "codex-cli"
+      started_at: "2026-04-23T22:31:00+09:00"
+      status: "in_progress"
       description: |
         codex-cli는 MCP 래퍼 플러그인. mcpServers 설정의 견고성을 검증하고,
         commands가 codex CLI 실패를 gracefully 처리하며 설치 prerequisite를 문서화.
@@ -99,7 +103,6 @@ queue:
         - "plugins/codex-cli/commands/*.md: codex 실행 실패 시 사용자 안내 포함"
         - "한/영 혼용 문서 용어 통일 (README 전반)"
         - "plugin.json 스키마 준수 (추가 필드 금지)"
-      status: "pending"
 
     # ─────────────────────────────────────────────────────────────
     # Task 4: arch-guard (v0.2.2 / 12 skills / CLAUDE.md 누락)

@@ -29,3 +29,10 @@ codex cloud --env <env_id> "<task>"
 /codex:cloud --env env123 Review this PR
 /codex:cloud --env dev-env Fix the failing CI pipeline
 ```
+
+### If codex cloud fails
+
+- **codex not in PATH**: Run `npm install -g @openai/codex` or `brew install codex`, then verify with `which codex`.
+- **Missing `--env` flag**: The `--env <env_id>` argument is required. Obtain a valid environment ID from the Codex Cloud dashboard and re-run.
+- **Auth failure** (`OPENAI_API_KEY` unset): Set `export OPENAI_API_KEY=<your-key>` or run `codex auth login`.
+- **Network / API quota errors** (429, 503, or timeout): Check your internet connection and OpenAI API quota at https://platform.openai.com/usage. Retry after a brief wait.
