@@ -16,8 +16,20 @@ queue:
   started_at: "2026-04-23T21:53:00+09:00"
   paused_at: "2026-04-23T22:08:00+09:00"
   resumed_at: "2026-04-23T22:26:00+09:00"
+  completed_at: "2026-04-23T23:10:00+09:00"
   pause_reason: "pre-tool-security.sh regex narrowed to /autohone/ path anchor at 22:25 (backup: pre-narrow-20260423.bak). Queue resumed."
-  status: "in_progress"           # pending | in_progress | paused | completed | partially_completed
+  status: "completed"             # pending | in_progress | paused | completed | partially_completed
+  summary:
+    total_tasks: 7
+    completed: 7
+    failed: 0
+    avg_score: 0.99
+    scores: {t1: 1.0, t2: 1.0, t3: 1.0, t4: 0.95, t5: 1.0, t6: 1.0, t7: 1.0}
+    golden_example_eligible: 7
+    total_commits: 14
+    carry_over_issues:
+      - "t2 ci-auth-probe-offline-spurious: session-init.mjs auth probe may false-warn offline — consider credentials-file check"
+      - "t4 root CLAUDE.md edit deferred: pre-tool-security.sh governance rule (line 122-125) still blocks root CLAUDE.md. Add '- **[Arch Guard](./plugins/arch-guard/CLAUDE.md)**' to Active Plugins section manually if desired."
   pipeline: "full-cycle"           # 기본: Planner→Contract→Worker→Evaluator→Verifier→Reflector(항상)+자동 스킬 개선
 
   # 큐 전역 가드레일 (Planner가 각 태스크 컨트랙트 작성 시 반드시 참고)
@@ -184,7 +196,12 @@ queue:
     - id: "t7-autopilot-integration"
       plugin: "autopilot"
       started_at: "2026-04-23T23:01:00+09:00"
-      status: "in_progress"
+      completed_at: "2026-04-23T23:10:00+09:00"
+      status: "completed"
+      run_id: "queue-t7-autopilot-integration-20260423"
+      score: 1.0
+      commits: ["2ce9b26", "5a029e9"]
+      golden_example_eligible: true
       description: |
         autopilot은 crew+debate+arch-guard+codex-cli를 오케스트레이션하는 entry point.
         앞선 태스크들에서 각 의존 플러그인이 정렬된 뒤, autopilot의 연계 지점과 prerequisite를 검증.
