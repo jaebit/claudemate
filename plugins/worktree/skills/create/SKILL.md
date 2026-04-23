@@ -63,7 +63,7 @@ Check in this order:
 - `package.json` exists (and none of the above lockfiles) → run `npm install` (in worktree dir)
 - `Cargo.toml` exists → run `cargo build` (in worktree dir)
 - `poetry.lock` exists → run `poetry install` (in worktree dir)
-- `requirements.txt` exists → run `pip install -r requirements.txt` (in worktree dir)
+- `requirements.txt` exists → run `pip3 install -r requirements.txt` (in worktree dir)
 - `go.mod` exists → run `go mod download` (in worktree dir)
 
 Run each applicable install as: `(cd .worktrees/<branch-name> && <install-command>) && echo "OK: <install-command>" || echo "WARN: <install-command> failed (continuing)"`
