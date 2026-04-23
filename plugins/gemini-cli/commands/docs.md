@@ -17,17 +17,17 @@ Generate comprehensive documentation for code using Google Gemini CLI.
 
 For Python files (.py), use the Read tool (preferred) to read the file, then pipe content to gemini:
 ```bash
-python3 -c "print(open('<file>').read())" | gemini -p "Generate comprehensive documentation for this Python code. Include: 1) Module overview and purpose, 2) Each class with its methods, parameters, return types, and behavior, 3) Each standalone function with parameters, return values, and edge cases, 4) Usage examples with expected output, 5) Dependencies and important notes. Use markdown format with proper code blocks."
+python3 -c 'import sys; sys.stdout.buffer.write(open(sys.argv[1], "rb").read())' "<file>" | gemini -p "Generate comprehensive documentation for this Python code. Include: 1) Module overview and purpose, 2) Each class with its methods, parameters, return types, and behavior, 3) Each standalone function with parameters, return values, and edge cases, 4) Usage examples with expected output, 5) Dependencies and important notes. Use markdown format with proper code blocks."
 ```
 
 For JavaScript/TypeScript files (.js, .ts, .tsx), use the Read tool (preferred) to read the file, then pipe content to gemini:
 ```bash
-python3 -c "print(open('<file>').read())" | gemini -p "Generate comprehensive documentation for this JavaScript/TypeScript code. Include: 1) Module overview and exports, 2) Each function/component with props/parameters, return values, and types, 3) Usage examples, 4) Dependencies and important notes. Use markdown format with proper code blocks."
+python3 -c 'import sys; sys.stdout.buffer.write(open(sys.argv[1], "rb").read())' "<file>" | gemini -p "Generate comprehensive documentation for this JavaScript/TypeScript code. Include: 1) Module overview and exports, 2) Each function/component with props/parameters, return values, and types, 3) Usage examples, 4) Dependencies and important notes. Use markdown format with proper code blocks."
 ```
 
 For config/markdown/other files, use the Read tool (preferred) to read the file, then pipe content to gemini:
 ```bash
-python3 -c "print(open('<file>').read())" | gemini -p "Generate comprehensive documentation for this file. Include: 1) Overview and purpose, 2) Structure description with each section explained, 3) Configuration options or parameters if applicable, 4) Usage examples, 5) Important notes or caveats. Use markdown format."
+python3 -c 'import sys; sys.stdout.buffer.write(open(sys.argv[1], "rb").read())' "<file>" | gemini -p "Generate comprehensive documentation for this file. Include: 1) Overview and purpose, 2) Structure description with each section explained, 3) Configuration options or parameters if applicable, 4) Usage examples, 5) Important notes or caveats. Use markdown format."
 ```
 
 5. Display the generated documentation to the user

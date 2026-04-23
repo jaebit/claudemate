@@ -103,11 +103,11 @@ A debate ends when **any** of the following is true:
 
 | Condition | Action |
 |---|---|
-| All decision points reach `Agreement` after synthesis | Early exit — skips remaining rounds, proceeds to Final Consensus |
+| All decision points reach `Agreement (3:0)` after synthesis | Early exit — skips remaining rounds, proceeds to Final Consensus |
 | `currentRound >= rounds` (default 2, or `--rounds N`) | Proceeds to Final Consensus |
 | Max rounds exceeded (>3) | Pauses — requires user confirmation to continue |
 
-The synthesis phase classifies each decision point as `Agreement`, `Partial Agreement`, or `Contested`. Only `Contested` points proceed to cross-examination in the next round.
+The synthesis phase classifies each decision point as `Agreement (3:0)`, `Majority (2:1)`, or `Disagreement (1:1:1)` — matching the labels emitted by `debate-orchestration` into `synthesis-round-{N}.md`. Any point not reaching unanimous `Agreement` (i.e. both `Majority` and `Disagreement`) carries forward to cross-examination in the next round.
 
 ### Role Assignment
 

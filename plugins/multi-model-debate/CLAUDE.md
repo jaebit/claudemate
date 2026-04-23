@@ -11,7 +11,7 @@ Structured 3-model debate orchestration (Claude + Codex + Gemini) for software e
 
 - `/debate:start <topic>` — Start and orchestrate a debate: round dispatch inline (MCP accessible), synthesis via fork
 - `/debate:resume [debate-dir]` — Resume an interrupted debate (same inline dispatch pattern)
-- `debate-orchestration` — Synthesis & consensus only (`user-invocable: false`, `context: fork`, no MCP needed)
+- `debate-orchestration` — Synthesis & consensus only (`user_invocable: false`, `context: fork`, no MCP needed)
 
 ## Architecture (Hybrid)
 

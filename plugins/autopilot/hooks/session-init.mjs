@@ -5,7 +5,7 @@
 //   2. Detect .autopilot/state.json and print resume notice.
 
 import { readFile } from "fs/promises";
-import { statSync } from "fs";
+import { statSync, readdirSync } from "fs";
 import { join } from "path";
 import { execFileSync } from "child_process";
 
@@ -17,18 +17,20 @@ const cwd = process.env.CWD || process.cwd();
 
 /**
  * Check whether a Claude plugin directory exists under the user's plugin roots.
- * We probe: ~/.claude/plugins/<name>  and  <repo>/.claude-plugin/<name>
+ * Probed paths (in order):
+ *   1. ~/.claude/plugins/<name>                           (direct install)
+ *   2. ~/.claude/plugins/cache/github.com/*\/*\/<name>    (marketplace cache, any org/repo)
+ *   3. <cwd>/plugins/<name>                               (local monorepo dev install)
+ *   4. `claude plugins list --json` fallback              (authoritative if CLI available)
  * Returns { installed: boolean, path: string|null }
  */
 function probePlugin(name) {
   const os = process.env.HOME || process.env.USERPROFILE || "";
-  const candidates = [
+  const direct = [
     join(os, ".claude", "plugins", name),
-    join(os, ".claude", "plugins", "cache", "github.com", "jaebit", "claudemate", name),
-    // local monorepo path (dev installs)
     join(cwd, "plugins", name),
   ];
-  for (const candidate of candidates) {
+  for (const candidate of direct) {
     try {
       if (statSync(candidate).isDirectory()) {
         return { installed: true, path: candidate };
@@ -37,7 +39,26 @@ function probePlugin(name) {
       // continue
     }
   }
-  // Also try: claude plugins list output (graceful — may not be available)
+  // Enumerate ~/.claude/plugins/cache/github.com/<org>/<repo>/<name>
+  try {
+    const root = join(os, ".claude", "plugins", "cache", "github.com");
+    for (const org of readdirSync(root)) {
+      const orgDir = join(root, org);
+      try {
+        for (const repo of readdirSync(orgDir)) {
+          const candidate = join(orgDir, repo, name);
+          try {
+            if (statSync(candidate).isDirectory()) {
+              return { installed: true, path: candidate };
+            }
+          } catch { /* continue */ }
+        }
+      } catch { /* continue */ }
+    }
+  } catch {
+    // cache root missing — skip
+  }
+  // Authoritative fallback via CLI
   try {
     const out = execFileSync("claude", ["plugins", "list", "--json"], { encoding: "utf-8", timeout: 5000 });
     const list = JSON.parse(out);
@@ -99,7 +120,25 @@ function checkPrerequisites() {
 }
 
 async function main() {
-  // --- Prerequisite check ---
+  // Early exit when the current project is not autopilot-scoped.
+  // SessionStart fires on every session in every project once the plugin is installed;
+  // emitting prerequisite warnings globally would leak autopilot noise into unrelated work.
+  // The `.autopilot/` directory serves as the project-scope sentinel (mirrors arch-guard's
+  // `arch-guard.json` pattern).
+  let autopilotProject = false;
+  try {
+    if (statSync(join(cwd, ".autopilot")).isDirectory()) {
+      autopilotProject = true;
+    }
+  } catch {
+    // Not an autopilot project — silent continue
+  }
+  if (!autopilotProject) {
+    console.log(JSON.stringify({ result: "continue" }));
+    return;
+  }
+
+  // --- Prerequisite check (only runs inside autopilot projects) ---
   const prereq = checkPrerequisites();
   if (!prereq.ok) {
     console.log(JSON.stringify({
@@ -108,8 +147,6 @@ async function main() {
     }));
     return;
   }
-  // Optional-plugin warnings surfaced only when an autopilot pipeline is active
-  // (checked below after state.json probe — we'll hold the notices for now)
   const optionalWarnings = prereq.notices;
   const statePath = join(cwd, ".autopilot", "state.json");
 
@@ -120,7 +157,6 @@ async function main() {
     state = JSON.parse(raw);
   } catch {
     // No state file — nothing to resume
-    // Still surface optional-plugin warnings so user knows before starting
     if (optionalWarnings.length > 0) {
       console.log(JSON.stringify({ result: "continue", additionalContext: optionalWarnings.join("\n") }));
     } else {

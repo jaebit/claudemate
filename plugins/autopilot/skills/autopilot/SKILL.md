@@ -166,7 +166,7 @@ On 3 consecutive failures in the same phase: stop and suggest manual skill invoc
 - Check availability: attempt to verify debate skill exists
 - If available:
   - Read `.caw/design/architecture.md`, extract top 2-3 key design decisions (component boundaries, technology choices, data model approaches)
-  - For each decision: invoke `Skill("multi-model-debate:debate-orchestration")` with the decision as topic
+  - For each decision: invoke `Skill("multi-model-debate:debate-start")` with the decision as topic
   - Fold consensus results into the architecture doc
 - If unavailable: print `[2/5] Debate skipped (multi-model-debate plugin not found)`
 
@@ -691,7 +691,7 @@ The subagent gets a fresh context, loads the skill content, and executes the ful
 **Will:**
 - Create `.autopilot/` directory and all artifacts within it
 - Invoke crew:explore, crew:go, crew:review via Agent tool (spawning agents that run the slash commands, since these skills have disable-model-invocation)
-- Invoke multi-model-debate:debate-orchestration via Skill tool (if available)
+- Invoke multi-model-debate:debate-start via Skill tool (if available)
 - Invoke arch-guard skills via Skill tool (if arch-guard.json exists), including arch-guard:adr for ADR generation
 - Invoke codex CLI via Agent (if codex CLI available)
 - Present one user gate after design phase via AskUserQuestion
