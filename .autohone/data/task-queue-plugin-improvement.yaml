@@ -14,7 +14,9 @@ queue:
   name: "Claudemate 플러그인 일괄 개선 (7개)"
   created_at: "2026-04-23T21:36:00+09:00"
   started_at: "2026-04-23T21:53:00+09:00"
-  status: "in_progress"           # pending | in_progress | completed | partially_completed
+  paused_at: "2026-04-23T22:08:00+09:00"
+  pause_reason: "pre-tool-security.sh hook blocks writes to commands/*.md, agents/*.md, hooks/hooks.json, .claude-plugin/plugin.json across all plugins. Affects Tasks 2/3/4/6/7. Requires user decision before queue can proceed."
+  status: "paused"                # pending | in_progress | paused | completed | partially_completed
   pipeline: "full-cycle"           # 기본: Planner→Contract→Worker→Evaluator→Verifier→Reflector(항상)+자동 스킬 개선
 
   # 큐 전역 가드레일 (Planner가 각 태스크 컨트랙트 작성 시 반드시 참고)
@@ -66,7 +68,14 @@ queue:
     - id: "t2-gemini-cli-harden"
       plugin: "gemini-cli"
       started_at: "2026-04-23T21:58:30+09:00"
-      status: "in_progress"
+      paused_at: "2026-04-23T22:08:00+09:00"
+      status: "blocked"
+      partial_score: 0.6   # AC1/AC3/AC5 PASS; AC2/AC4 blocked by pre-tool-security.sh
+      commits: ["42fd190", "c05140a"]
+      blocker_ref: "ci-commands-md-gate"
+      carry_over_issues:
+        - "ci-commands-md-gate: pre-tool-security.sh blocks commands/*.md writes globally"
+        - "ci-auth-probe-offline-spurious: session-init.mjs auth probe may false-warn offline"
       description: |
         gemini-cli 플러그인의 SessionStart prerequisite 체크 동작을 검증하고,
         commands와 hooks가 gemini CLI 부재·인증 실패 상황을 graceful하게 처리하도록 보강.
