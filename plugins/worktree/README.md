@@ -2,6 +2,13 @@
 
 Git worktree lifecycle management for Claude Code. Create isolated worktrees for agent-driven development, merge them back, and clean up afterward.
 
+## Version
+
+| Component | Version |
+|-----------|---------|
+| plugin.json | 0.1.0 |
+| marketplace.json | 0.1.0 |
+
 ## Installation
 
 ```bash
