@@ -44,7 +44,12 @@ queue:
     - id: "t1-worktree-polish"
       plugin: "worktree"
       started_at: "2026-04-23T21:53:00+09:00"
-      status: "in_progress"
+      completed_at: "2026-04-23T21:58:00+09:00"
+      status: "completed"
+      run_id: "queue-t1-worktree-polish-20260423"
+      score: 1.0
+      commits: ["7568d9b", "ab96509", "9746f97"]
+      golden_example_eligible: true
       description: |
         worktree 플러그인을 Golden Rules에 정렬하고 v0.1.0 alpha 상태를 다진다.
         3개 skill(create/merge/cleanup)의 메타데이터·문서·예시를 일관화.
