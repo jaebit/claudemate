@@ -2,6 +2,7 @@
 name: debate-resume
 description: "Resume an interrupted multi-model debate from the last completed round. Use when the user invokes /debate:resume to continue a previously started debate."
 argument-hint: "[debate-dir]"
+user_invocable: true
 disable-model-invocation: true
 ---
 

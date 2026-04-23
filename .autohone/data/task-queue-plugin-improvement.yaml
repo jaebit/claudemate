@@ -93,7 +93,12 @@ queue:
     - id: "t3-codex-cli-harden"
       plugin: "codex-cli"
       started_at: "2026-04-23T22:31:00+09:00"
-      status: "in_progress"
+      completed_at: "2026-04-23T22:37:00+09:00"
+      status: "completed"
+      run_id: "queue-t3-codex-cli-harden-20260423"
+      score: 1.0
+      commits: ["1f2e982", "9781687"]
+      golden_example_eligible: true
       description: |
         codex-cli는 MCP 래퍼 플러그인. mcpServers 설정의 견고성을 검증하고,
         commands가 codex CLI 실패를 gracefully 처리하며 설치 prerequisite를 문서화.
@@ -109,6 +114,15 @@ queue:
     # ─────────────────────────────────────────────────────────────
     - id: "t4-arch-guard-docs"
       plugin: "arch-guard"
+      started_at: "2026-04-23T22:38:00+09:00"
+      completed_at: "2026-04-23T22:44:00+09:00"
+      status: "completed"
+      run_id: "queue-t4-arch-guard-docs-20260423"
+      score: 0.95
+      commits: ["7a51769"]
+      golden_example_eligible: true
+      carry_over_issues:
+        - "AC4 deferred: root CLAUDE.md edit blocked by pre-tool-security.sh governance rule (unaffected by the /autohone/ narrowing). Add '- **[Arch Guard](./plugins/arch-guard/CLAUDE.md)**' to Active Plugins section."
       description: |
         arch-guard는 12개 skill과 Stop hook을 가진 내부 도구성 플러그인.
         누락된 CLAUDE.md를 추가하고, 과거 fix된 Stop hook 글로벌 실행 이슈가 회귀하지 않았는지 검증.
@@ -118,13 +132,14 @@ queue:
         - "plugins/arch-guard/skills/*/SKILL.md: user_invocable:false 12/12 유지 (내부 전용)"
         - "루트 CLAUDE.md의 'Active Plugins' 섹션에 arch-guard 링크 추가 검토"
         - "plugin.json 스키마 준수 유지"
-      status: "pending"
 
     # ─────────────────────────────────────────────────────────────
     # Task 5: multi-model-debate (v1.0.0 / 3 skills / user_invocable 누락)
     # ─────────────────────────────────────────────────────────────
     - id: "t5-debate-metadata-fix"
       plugin: "multi-model-debate"
+      started_at: "2026-04-23T22:45:00+09:00"
+      status: "in_progress"
       description: |
         3개 skill 모두 user_invocable 플래그가 누락됨 (실제 확인). 명시적으로 설정하고,
         round_limit·timeout 등 토론 파이프라인의 제어 변수를 문서화.
@@ -134,7 +149,6 @@ queue:
         - "plugins/multi-model-debate/README.md: 라운드 제한·토론 종료 조건·세 모델 간 역할 분담 명시"
         - "Claude/Codex/Gemini 중 하나라도 미설치 시 degraded mode 또는 명확한 에러 (silent fail 금지)"
         - "plugin.json 스키마 준수 유지"
-      status: "pending"
 
     # ─────────────────────────────────────────────────────────────
     # Task 6: crew (v4.1.1 / 16 skills / tests 있음 / 성숙)
