@@ -15,8 +15,9 @@ queue:
   created_at: "2026-04-23T21:36:00+09:00"
   started_at: "2026-04-23T21:53:00+09:00"
   paused_at: "2026-04-23T22:08:00+09:00"
-  pause_reason: "pre-tool-security.sh hook blocks writes to commands/*.md, agents/*.md, hooks/hooks.json, .claude-plugin/plugin.json across all plugins. Affects Tasks 2/3/4/6/7. Requires user decision before queue can proceed."
-  status: "paused"                # pending | in_progress | paused | completed | partially_completed
+  resumed_at: "2026-04-23T22:26:00+09:00"
+  pause_reason: "pre-tool-security.sh regex narrowed to /autohone/ path anchor at 22:25 (backup: pre-narrow-20260423.bak). Queue resumed."
+  status: "in_progress"           # pending | in_progress | paused | completed | partially_completed
   pipeline: "full-cycle"           # 기본: Planner→Contract→Worker→Evaluator→Verifier→Reflector(항상)+자동 스킬 개선
 
   # 큐 전역 가드레일 (Planner가 각 태스크 컨트랙트 작성 시 반드시 참고)
