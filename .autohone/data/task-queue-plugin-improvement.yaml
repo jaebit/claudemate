@@ -161,7 +161,12 @@ queue:
     - id: "t6-crew-consistency"
       plugin: "crew"
       started_at: "2026-04-23T22:52:00+09:00"
-      status: "in_progress"
+      completed_at: "2026-04-23T23:00:00+09:00"
+      status: "completed"
+      run_id: "queue-t6-crew-consistency-20260423"
+      score: 1.0
+      commits: ["4085bc3", "dd45d92"]
+      golden_example_eligible: true
       description: |
         crew는 성숙한 9-stage orchestrator. 기존 tests/ 실행하여 회귀 없음 확인 후,
         최근 Opus 4.7/1M context 정렬 커밋(5ea4747, 8063cb2) 이후 16 skill 메타데이터가 일관한지 점검.
@@ -178,6 +183,8 @@ queue:
     # ─────────────────────────────────────────────────────────────
     - id: "t7-autopilot-integration"
       plugin: "autopilot"
+      started_at: "2026-04-23T23:01:00+09:00"
+      status: "in_progress"
       description: |
         autopilot은 crew+debate+arch-guard+codex-cli를 오케스트레이션하는 entry point.
         앞선 태스크들에서 각 의존 플러그인이 정렬된 뒤, autopilot의 연계 지점과 prerequisite를 검증.
@@ -187,4 +194,3 @@ queue:
         - "plugins/autopilot/skills/*/SKILL.md: user_invocable:true 1/1 유지 (사용자 진입점)"
         - "autopilot이 호출하는 subagent/command 경로가 앞선 6개 태스크의 변경사항과 일관"
         - "plugin.json 스키마 준수 + 버전 드리프트 없음 (0.4.0 3자 일치)"
-      status: "pending"
