@@ -1,7 +1,7 @@
 ---
 name: bootstrapper
 description: "Environment initialization agent that sets up the .caw/ workspace, detects project context, and prepares the workflow environment. Must run before Planner on new projects."
-model: claude-haiku-4-5
+model: claude-haiku-4-5-20251001
 whenToUse: |
   Use when initializing CAW workflow:
   - /crew:init to initialize environment
