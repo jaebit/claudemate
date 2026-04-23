@@ -62,7 +62,7 @@ One user confirmation point: after Phase 2 (design). Everything else runs autono
 |-------|------------------------|------------|----------|
 | 1 RESEARCH | `crew` | `Agent("/crew:explore --research-deep <topic>")` | yes |
 | 2a DESIGN arch | `crew` | `Agent("/crew:explore --arch <topic>")` | yes |
-| 2b DEBATE | `multi-model-debate` | `Skill("multi-model-debate:debate-orchestration")` | no — skipped if absent |
+| 2b DEBATE | `multi-model-debate` | `Skill("multi-model-debate:debate-start")` | no — skipped if absent |
 | 2c ARCH CONSTRAINTS | `arch-guard` | `Skill("arch-guard:arch-check")` | no — skipped if no arch-guard.json |
 | 2f ADR GENERATION | `arch-guard` | `Skill("arch-guard:adr", "<decision>")` | no |
 | 3a SCAFFOLDING | `arch-guard` | `Skill("arch-guard:scaffold")`, `Skill("arch-guard:contract-first")` | no |
